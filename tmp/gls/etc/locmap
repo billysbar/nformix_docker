@@ -1,0 +1,134 @@
+# Collation Attribute Type:
+# 0 	 French
+# 1 	 Alternate Handling
+# 2 	 Case First
+# 3 	 Case Level
+# 4 	 Normalization Mode
+# 4 	 Decomposition Mode
+# 5 	 Strength
+# 6 	 Hiragana Quaternary Mode
+# 
+# Collation Attribute Value:
+# -1 	 Default
+# 0 	 Primary
+# 1 	 Secondary
+# 2 	 Tertiary
+# 2 	 Default Strength
+# 3 	 CE Strength Limit
+# 3 	 Quaternary
+# 15 	 Identical
+# 16 	 Strength Limit
+# 16	 Off
+# 17	 On
+# 20 	 Shifted
+# 21 	 Non-Ignorable
+# 24 	 Lower First
+# 25 	 Upper First
+# 28 	 On Without Hangul
+#
+# GLS lcspec	ICU locale name		Collation Attribute (type, value)
+ar_ae		ar_AE
+ar_ae_greg	ar_AE
+ar_ae_isla	ar_AE
+ar_bh		ar_BH
+ar_bh_greg	ar_BH
+ar_bh_isla	ar_BH
+ar_kw		ar_KW
+ar_kw_greg	ar_KW
+ar_kw_isla	ar_KW
+ar_om		ar_OM
+ar_om_greg	ar_OM
+ar_om_isla	ar_OM
+ar_qa		ar_QA
+ar_qa_greg	ar_QA
+ar_qa_isla	ar_QA
+ar_sa		ar_SA
+ar_sa_greg	ar_SA
+ar_sa_isla	ar_SA
+bg_bg		bg_BG
+cs_cz		cs_CZ
+cs_cz_sis	cs_CZ
+da_dk		da_DK
+da_dk_euro	da_DK
+de_at		de_AT_PREEURO
+de_at_bun1	de_AT_PREEURO
+de_at_bund	de_AT_PREEURO
+de_at_dud1	de_AT_PREEURO
+de_at_dude	de_AT_PREEURO
+de_at_ebu1	de_AT_PREEURO
+de_at_edu1	de_AT_PREEURO
+de_at_euro	de_AT
+de_ch		de_CH
+de_ch_bun1	de_CH
+de_ch_bund	de_CH
+de_ch_dude	de_CH
+de_ch_dud1	de_CH
+de_ch_ebu1	de_CH
+de_ch_edu1	de_CH
+de_ch_euro	de_CH
+de_de		de_DE_PREEURO
+de_de_bund	de_DE_PREEURO
+de_de_dude	de_DE_PREEURO
+de_de_bun1	de_DE_PREEURO
+de_de_dud1	de_DE_PREEURO
+de_de_ebu1	de_DE_PREEURO
+de_de_edu1	de_DE_PREEURO
+de_de_euro	de_DE
+el_gr		el_GR_PREEURO
+en_au		en_AU
+en_gb		en_GB_PREEURO
+en_gb_euro	en_GB
+en_us		en_US
+en_us_dict	en_US
+en_us_dresdner	en_US
+en_us_edic	en_US
+en_us_euro	en_US
+es_es		es_ES_PREEURO
+es_es_ra94	es_ES
+es_es_euro	es_ES
+et_ee		et_EE
+fi_fi		fi_FI_PREEURO
+fi_fi_euro	fi_FI
+fr_be		fr_BE_PREEURO
+fr_be_euro	fr_BE
+fr_ca		fr_CA
+fr_ch		fr_CH
+fr_ch_euro	fr_CH
+fr_fr		fr_FR_PREEURO
+fr_fr_euro	fr_FR
+hr_hr		hr_HR
+hu_hu		hu_HU
+is_is		is_IS
+it_it		it_IT_PREEURO
+it_it_euro	it_IT
+iw_il		iw_IL
+iw_il_greg	iw_IL
+iw_il_hebr	iw_IL
+ja_jp		ja_JP
+ja_jp_emat	ja_JP
+ko_kr		ko_KR
+lt_lt		lt_LT
+lv_lv		lv_LV
+nl_be		nl_BE_PREEURO
+nl_be_euro	nl_BE
+nl_nl		nl_NL_PREEURO
+nl_nl_euro	nl_NL
+no_no		no_NO
+no_no_euro	no_NO	
+pl_pl		pl_PL
+pt_br		pt_BR
+pt_pt		pt_PT_PREEURO
+pt_pt_euro	pt_PT
+ro_ro		ro_RO
+ru_ru		ru_RU
+sh_hr		sh
+sk_sk		sk_SK
+sk_sk_sn	sk_SK
+sv_se		sv_SE
+sv_se_euro	sv_SE
+th_th		th_TH
+tr_tr		tr_TR
+tr_tr_ifix	tr_TR
+uk_ua		uk_UA
+zh_cn		zh_CN
+zh_tw		zh_TW

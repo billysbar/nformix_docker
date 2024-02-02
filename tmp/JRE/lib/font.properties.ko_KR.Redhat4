@@ -1,0 +1,191 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.ko_KR.Redhat4, fontprop, ax142, 20050221 1.29.2.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2000, 2004. All Rights Reserved
+# ===========================================================================
+#
+# Change activity:
+#
+# Reason  Date   Origin    Description
+# ------  ----   ------    -------------------------------------------------- 
+# 88490  100505  sampaths  GVT:updateinstall panel displays garbled characters 
+# ===========================================================================
+# font.properties.ko
+#
+# Intended for Korean
+# Intended for Linux
+# Note: modification of this file is risky and not supported
+#    see http://java.sun.com/products/jdk/1.2/docs/guide/internat/fontprop.html
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1  
+serif.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.plain.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.plain.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.plain.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.plain.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bold.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialoginput.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.italic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.bold.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialoginput.bolditalic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+
+# default char definition
+default.char=02ff
+
+# exclusion info
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+
+fontset.serif.plain=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.italic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bold=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bolditalic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.sansserif.plain=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.italic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bold=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bolditalic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.monospaced.plain=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.italic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bold=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bolditalic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialog.plain=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.italic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bold=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bolditalic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialoginput.plain=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.italic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.bold=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.bolditalic=\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-iso10646-1

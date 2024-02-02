@@ -1,0 +1,25 @@
+{####################################################################
+ # FORM: f_answer                                                   #
+ # PURPOSE: Displays an alert message and takes a one-character     #
+ #	    response from a short list of possible responses.       #
+ # 4GL PROGRAM: ex20.4gl, ex27.4gl                                  #
+ ####################################################################}
+
+DATABASE formonly
+
+SCREEN
+{
+ 
+  [msg                                               ]
+  [msg                                               ]
+  [msg                                               ]
+  [msg                                               ]
+
+
+}
+
+ATTRIBUTES
+  msg = formonly.msgtext, WORDWRAP;
+
+INSTRUCTIONS
+  DELIMITERS "  "

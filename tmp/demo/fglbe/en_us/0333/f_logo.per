@@ -1,0 +1,36 @@
+{###################################################################
+ # FORM: f_logo                                                    #
+ # PURPOSE: Displays application logo on screen. Can display while #
+ #          application's initialization tasks are being performed.#
+ # 4GL PROGRAM: ex1.4gl, ex26.4gl                                  #
+ ###################################################################}
+
+DATABASE formonly
+SCREEN
+{
+
+        4    4    GGGGG    L             BBBBB    Y     Y
+        4    4   G         L             B    B    Y   Y
+        4    4   G         L             B    B     Y Y
+        444444   G         L             BBBBB       Y 
+             4   G   GGG   L             B    B      Y
+             4   G    G    L             B    B      Y
+             4    GGGG     LLLLLL        BBBBB       Y
+
+  EEEEEE   X     X    AAAA    M     M   PPPPPP   L        EEEEEE
+  E         X   X    A    A   M M M M   P    P   L        E
+  E          X X     A    A   M  M  M   P    P   L        E
+  EEEEE       X      AAAAAA   M     M   PPPPPP   L        EEEEE
+  E          X X     A    A   M     M   P        L        E
+  E         X   X    A    A   M     M   P        L        E
+  EEEEEE   X     X   A    A   M     M   P        LLLLLL   EEEEEE
+
+  		       [d1                ]
+
+}
+ATTRIBUTES
+d1 = formonly.appdate type date, format = "(ddd) mmm dd, yyyy";
+
+INSTRUCTIONS
+  DELIMITERS "  "
+

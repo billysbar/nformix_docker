@@ -1,0 +1,4 @@
+- hosts: common
+  gather_facts: False
+  roles:
+    - roles/common

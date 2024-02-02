@@ -1,0 +1,540 @@
+: '
+: *************************************************************************
+:
+:                   IBM  INFORMIX SOFTWARE, INC.
+:
+:                       PROPRIETARY DATA
+:
+:     THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF
+:     INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:     CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR
+:     DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT
+:     SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:     THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:     SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE.
+:     UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:     Title     :c4gl
+:     Description:
+:
+:       c4gl - call fglc for each .4gl file, using shared libes if provided
+:
+: *************************************************************************
+: '
+
+if [ $# -lt 1 ]
+then
+    echo "Usage: c4gl [-Vaeqcz] [-phase 12345] [-ansi] [-anyerr]"
+    echo "       [-globcurs | -localcurs] [-nokeep | -keep]"
+    echo "       [-static | -shared] [-nolinenos | -linenos] [-otherargs]"
+    echo "       [source.4gl ...] [othersrc.c ...] [otheresql.ec ...]"
+    echo "       [otherobj.o ...] [yourlib.a ...] [-o outfile]"
+    echo ""
+    echo "  -V            Display version of 4gl only"
+    echo "  -a            Do array bounds checking"
+    echo "  -e            Preprocess only, no compilation or linking"
+    echo "  -q            Quiet mode for i4glc1 [phase 1]"
+    echo "  -c            Preprocess & compile only, no linking"
+    echo "  -z            Allow variable number of arguments to functions"
+    echo "  -phase 12345  Process only the phase that indicated"
+    echo "  -ansi         Check SQL statements for ANSI compliance"
+    echo "  -anyerr       Set status variable after expressions"
+    echo "  -globcurs     Make cursor definitions global to program"
+    echo "  -localcurs    Make cursor definitions local to module (default)"
+    echo "  -nokeep       Delete intermediate .4ec, .ec, and .c files (default)"
+    echo "  -keep         Keep intermediate .4ec, .ec, and .c files"
+    echo "  -linenos      Produce #line numbering in .c file (default)"
+    echo "  -nolinenos    Suppress #line numbering in .c file"
+    echo "  -shared       Use shared libraries (default)"
+    echo "  -static       Use static libraries"
+    echo "  -shared       Use dynamic linking and shared libraries"
+    echo "  -otherargs    Other arguments are passed to the C compiler"
+    echo "  -o            Next argument is name of executable"
+    exit 1
+fi
+
+# Exit with status 3 if signalled with HUP, INT, QUIT, PIPE or TERM
+trap "exit 3" 1 2 3 13 15
+
+INFDIR=${INFORMIXTOOLDIR:-${INFORMIXDIR:=/usr/informix}}
+LIBDIR=${INFDIR}/lib
+I4GLC1=${LIBDIR}/tools/i4glc1
+I4GLC2=${LIBDIR}/tools/i4glc2
+I4GLC3=${LIBDIR}/tools/i4glc3
+I4GLC4=${LIBDIR}/tools/i4glc4
+: '
+: INFORMIX Asian Language Support extensions
+:
+:     Please set an appropriate value to the LEVEL variable.
+: ----------------------------------------------------------------------------
+:    LEVEL       Remarks
+: ----------------------------------------------------------------------------
+:
+:      0         C compiler does not allow 8th bit set bytes in literal
+:                strings,comments and identifiers.
+:                C compiler does not handle multibyte characters in literal
+:                                strings
+:
+:      1         C compiler does not allow 8th bit set bytes in literal
+:                strings and identifiers.
+:                C compiler does not handle multibyte characters in literal
+:                                strings
+:
+:      2         C compiler does not allow 8th bit set bytes in identifiers 
+:                C compiler does not handle multibyte characters in literal
+:                                strings
+:
+:          3         C compiler does not allow 8th bit set bytes in identifiers
+: '
+LEVEL=2
+CPP=${INFORMIXCPP:-c++}
+CC=${CC:-cc}
+INFORMIXC=${INFORMIXC:-${CC}}
+STAT=0
+TEMP=0
+A=""
+ANSIFLG=
+ANYFLG=
+BFLG=
+ZFLG=
+DORM=1
+DOSHARED=1	#Changed for 7.30 Tools to make shared the default option
+CURSCOPE=""
+RMFILES=""
+INCLUDE=""
+QUIET=
+PHASE=0
+P1=1
+P2=1
+P3=1
+P4=1
+P5=1
+GREP=grep
+LINENOFLG=
+TOTALFILELIST=""
+ESQLFLG=-local
+
+ITOOLS=${INFDIR}/incl/tools
+IESQLC=${INFDIR}/incl/esql
+
+UNAME=`uname -m`
+C4GL_COPTS_AMD32=
+if [ x$UNAME = "xx86_64" ]
+then
+   CPP="$CPP $C4GL_COPTS_AMD32";
+   INFORMIXC="$INFORMIXC $C4GL_COPTS_AMD32";
+fi
+
+## Check for static option and set STATOPT if option is set
+for pass in $*
+do
+    case $pass in
+        -static )
+                STATOPT="TRUE"
+            ;;
+     esac
+done
+
+# If libraries are added or removed make sure to update -libs option
+if [ "x$STATOPT" != "x" ]
+then
+    LINKLIBES="${INFDIR}/lib/esql/libifos.a ${INFDIR}/lib/esql/libifgen.a ${INFDIR}/lib/esql/libifsql.a ${INFDIR}/lib/libifasf.a ${INFDIR}/lib/esql/libifos.a ${INFDIR}/lib/esql/libifgen.a ${INFDIR}/lib/esql/libifgls.a -lpthread -lm -ldl -lcrypt ${INFDIR}/lib/esql/libifglx.a "
+    FLIB=${INFDIR}/lib/tools/lib4gl.a
+    MLIB=${INFDIR}/lib/tools/libnforms.a
+    FELIB=${INFDIR}/lib/tools/libfe.a
+    SHLIB=" " 
+else
+    LINKLIBES="-lifsql -lifasf -lifgen -lifos -lifgls -lpthread -lm -ldl -lcrypt ${INFDIR}/lib/esql/checkapi.o -lifglx "
+    SHLIB=-l4gsh
+fi
+
+
+SYSLIB="-lm -ldl -lcrypt -Wl,-Bstatic -lelf -Wl,-Bdynamic -lpam "
+TLIB="-lncurses "
+SYSNLIB=""
+TLILIB=""
+DOLINK=yes
+
+#Define network libraries
+NETTLISTUB="${LIBDIR}/netstub.a "
+
+nettli="FALSE"
+# Check to see if the TLI library exists.
+if [ "$TLILIB" != "" -a -f "$TLILIB" ]
+then
+    # File exists
+    nettli="TRUE"
+fi
+
+# Build network library
+# For the system that does not provided TLI library, we have to use netstub.a
+if [ $nettli = "FALSE" ]
+then
+    SYSNLIB=`echo $SYSNLIB | sed -e s:-lstr:: -e s:-lnsl_s:"$NETTLISTUB": -e s:-lnsl:"$NETTLISTUB":`
+fi
+
+# Some libraries have to be rescanned on some systems.
+STATICLIBS="$FLIB $MLIB $FELIB $TLIB $LINKLIBES"
+STATLIBSUB="$SYSNLIB $SYSLIB $TLIB"
+SHAREDLIBS="$LINKLIBES $SHLIB"
+
+if [ -n "$C4GLFLAGS" ]
+then
+    set -- $C4GLFLAGS ${@:+"$@"}
+fi
+
+while [ $# -gt 0 ]
+do
+  F="$1"
+  case "$1" in
+    -a )
+       BFLG=$F
+      ;;
+    -c ) 
+       DOLINK=no
+       A="$A $F"
+      ;;
+    -ansi )
+       ANSIFLG=$F
+      ;;
+    -z )
+       ZFLG=$F
+      ;;
+    -anyerr )
+       ANYFLG=$F
+      ;;
+    -q )
+       QUIET=$F
+      ;;
+    -linenos )
+       LINENOFLG=
+      ;;
+    -nolinenos )
+       LINENOFLG=-nln
+      ;;
+    -keep )
+       DORM=0
+      ;;
+    -nokeep )
+       DORM=1
+      ;;
+    -shared )
+       if [ ".so " != ".NULL" ]
+       then
+          DOSHARED=1
+       else
+          echo "WARNING: No shared library support available." >&2
+          echo "         Using static libraries." >&2
+       fi
+      ;;
+    -static )
+       DOSHARED=0
+      ;;
+    -globcurs )
+       CURSCOPE="-globcurs"
+      ;;
+    -localcurs )
+       CURSCOPE=""
+      ;;
+    -I* )
+       A="$A $F"
+       INCLUDE="$INCLUDE $F"
+      ;;
+    -phase )
+       shift
+       P1=0
+       P2=0
+       P3=0
+       P4=0
+       P5=0
+
+        case $1 in
+          1|12|123|1234|12345)
+          P1=1
+          PHASE=1
+        esac
+
+        case $1 in
+          12|123|1234|12345|2|23|234|2345)
+          PHASE=1
+          P2=1
+        esac
+
+        case $1 in
+          123|1234|12345|23|234|2345|3|34|345)
+          PHASE=1
+          P3=1
+        esac
+
+        case $1 in
+          1234|12345|234|2345|34|345|4|45)
+          PHASE=1
+          P4=1
+        esac
+
+        case $1 in
+          12345|2345|345|45|5)
+          PHASE=1
+          P5=1
+        esac
+
+        if [ $PHASE -eq 0 ]
+        then
+          echo "Invalid argument in -phase.  Valid arguments are:" >&2
+          echo "1 12 123 1234 12345 2 23 234 2345 3 34 345 4 45 5" >&2
+          exit 1
+        fi
+      ;;
+    *.4gl )
+        FBASE=`basename $F .4gl`
+        TOTALFILELIST="$TOTALFILELIST $FBASE.o"
+        if [ $P1 -eq 1 ]
+        then
+          $I4GLC1 $BFLG $ZFLG $ANSIFLG $CURSCOPE $ANYFLG $QUIET $F
+          TEMP=$?
+
+          if [ $TEMP -eq 6 ] # Non-ANSI Warnings...
+          then
+              TEMP=0
+              STAT=$TEMP
+          fi
+          else
+              echo "Cannot process .4gl files without phase 1" >&2
+              exit 1
+          fi
+
+          if [ $TEMP -eq 0 -a $P2 -eq 1 ]
+          then
+              RMFILES="$RMFILES $FBASE.4ec"
+              $I4GLC2 -4GL $FBASE.4ec
+              TEMP=$?
+          fi
+
+          if [ $TEMP -eq 0 -a $P3 -eq 1 ]
+          then
+              RMFILES="$RMFILES $FBASE.ec"
+              $I4GLC3 -I$ITOOLS $LINENOFLG $ANSIFLG $INCLUDE $FBASE.ec
+              TEMP=$?
+          fi
+
+          if [ $TEMP -eq 0 -a $P4 -eq 1 ]
+          then
+              $I4GLC4 -D -L $LEVEL -o $FBASE.c
+              TEMP=$?
+              if [ $P5 -eq 1 ]
+              then
+                  RMFILES="$RMFILES $FBASE.c"
+              fi
+          fi
+
+          A="$A $FBASE.c"
+      ;;
+    *.4ec )
+        FBASE=`basename $F .4ec`
+        TOTALFILELIST="$TOTALFILELIST $FBASE.o"
+        if [ $P2 -eq 1 ]
+        then
+            $I4GLC2 -4GL $F
+            TEMP=$?
+        else
+            echo "Cannot process .4ec files without phase 2" >&2
+            exit 1
+        fi
+
+        if [ $TEMP -eq 0 -a  $P3 -eq 1 ]
+        then
+           $I4GLC3 -I$ITOOLS $LINENOFLG $ANSIFLG $INCLUDE $FBASE.ec
+           TEMP=$?
+
+           if [ $P4 -eq 1 ]
+           then
+              RMFILES="$RMFILES $FBASE.ec"
+           fi
+        fi
+
+        if [ $TEMP -eq 0 -a  $P4 -eq 1 ]
+        then
+          if $GREP '^#define I4GL_SQLCA' $F >/dev/null
+          then
+              DFLAG=-D
+          else
+              DFLAG=""
+          fi
+
+          $I4GLC4 $DFLAG -L $LEVEL -o $FBASE.c
+          TEMP=$?
+
+          if [ $P5 -eq 1 ]
+          then
+            RMFILES="$RMFILES $FBASE.c"
+          fi
+        fi
+        A="$A $FBASE.c"
+      ;;
+    *.ec )
+        FBASE=`basename $F .ec`
+        TOTALFILELIST="$TOTALFILELIST $FBASE.o"
+
+        if [ $P3 -eq 1 ]
+        then
+          if [ "$CURSCOPE" = "-globcurs" ]
+          then
+             $I4GLC3 -I$ITOOLS $LINENOFLG $ANSIFLG $INCLUDE $F
+             TEMP=$?
+          else
+             $I4GLC3 -I$ITOOLS $LINENOFLG $ANSIFLG $ESQLFLG $INCLUDE $F
+             TEMP=$?
+          fi
+        else
+            echo "Cannot process .ec files without phase 3" >&2
+            exit 1
+        fi
+
+        if [ $TEMP -eq 0 -a $P4 -eq 1 ]
+        then
+          if $GREP '^#define I4GL_SQLCA' $F >/dev/null
+          then DFLAG=-D
+          else DFLAG=""
+          fi
+#ifdef ASIAN
+          $I4GLC4 $DFLAG -L $LEVEL -o $FBASE.c
+#else
+#         $I4GLC4 $DFLAG -o $FBASE.c
+#endif /* ASIAN */
+          TEMP=$?
+          if [ $P5 -eq 1 ]
+          then
+            RMFILES="$RMFILES $FBASE.c"
+          fi
+        fi
+        A="$A $FBASE.c"
+      ;;
+    *.c )
+        if $GREP '^#define SQLCA_INCL /\* I4GLC4 \*/' $F >/dev/null
+        then : OK -- already processed by I4GLC4
+        elif $GREP '^#define I4GL_SQLCA' $F >/dev/null
+        then
+          # C file derived from I4GL but not yet processed by I4GLC4
+          if [ $P4 -eq 1 ]
+          then
+#ifdef ASIAN
+            $I4GLC4 -D -L $LEVEL -o $F
+#else
+#           $I4GLC4 -D -o $F
+#endif /* ASIAN */
+            TEMP=$?
+          else
+            echo "Cannot process .c files derived from I4GL without phase 4" >&2
+            exit 1
+          fi
+        fi
+        A="$A $F"
+        TOTALFILELIST="$TOTALFILELIST `basename $F .c`.o"
+      ;;
+    *.o )
+        if [ "x$GL_USEGLU" = "x1" ]
+        then
+           TOTALFILELIST="$TOTALFILELIST $F" 
+        else
+           A="$A $F"
+        fi
+      ;;
+    -e )
+       P1=1
+       P2=1
+       P3=1
+       P4=1
+       P5=0
+      ;;
+    -V )
+        $I4GLC1 $F
+        exit 0
+      ;;
+    -o )
+        if [ "x$GL_USEGLU" = "x1" ]
+        then
+            TOTALFILELIST="$TOTALFILELIST $F"
+            shift
+            TOTALFILELIST="$TOTALFILELIST $1"
+        else
+            A="$A $F"
+        fi
+      ;;
+    * )
+        A="$A $F"
+        TOTALFILELIST="$TOTALFILELIST $F"
+      ;;
+  esac
+  shift
+
+  if [ $TEMP -ne 0 ]
+  then
+    if [ $STAT -eq 0 -o $STAT -eq 6 ]
+    then
+        STAT=$TEMP
+    fi
+  fi
+done
+
+if [ $P5 -eq 1 -a $STAT -eq 0 ]
+then
+
+ if [ $DOLINK = no ]
+ then
+   # c4gl invoked with only -c option. So libraries not required
+   STATICLIBS=""
+   STATLIBSUB=""
+   SHAREDLIBS=""
+ fi
+
+ if [ $DOSHARED -eq 0 ]
+ then
+
+  if [ "x$GL_USEGLU" = "x1" ]
+  then
+    if test "$A"
+    then 
+    $INFORMIXC -w -fpic  -DASIAN -I$ITOOLS -I$IESQLC -c $A
+    STAT=$?
+    fi
+    if [ $DOLINK != no ]
+    then
+      $CPP -w -fpic  -DASIAN -I$ITOOLS -I$IESQLC $TOTALFILELIST  -L${LIBDIR} $STATICLIBS
+      STAT=$?
+    fi
+  else
+    $INFORMIXC -w -fpic  -DASIAN -I$ITOOLS -I$IESQLC $A -L${LIBDIR} $STATICLIBS
+    STAT=$?
+  fi
+ else
+  if [ "x$GL_USEGLU" = "x1" ]
+  then
+    if test "$A"
+    then
+    $INFORMIXC -w -fpic  -fPIC  -DASIAN -I$ITOOLS -I$IESQLC -c $A
+    STAT=$?
+    fi
+    if [ $DOLINK != no ]
+    then
+      $CPP -w -fpic  -fPIC  -DASIAN -I$ITOOLS -I$IESQLC $TOTALFILELIST  -L${LIBDIR} -L${LIBDIR}/esql -L${LIBDIR}/tools $SHAREDLIBS $STATLIBSUB 
+      STAT=$?
+    fi
+  else
+    $INFORMIXC -w -fpic  -fPIC  -DASIAN -I$ITOOLS -I$IESQLC $A  -L${LIBDIR} -L${LIBDIR}/esql -L${LIBDIR}/tools $SHAREDLIBS $STATLIBSUB 
+    STAT=$?
+  fi
+ fi
+fi
+
+# Remove files only when process successfully completed
+if [ $STAT -eq 0 -a $DORM -eq 1 -a  "$RMFILES" != "" ]
+then
+    rm -f $RMFILES
+fi
+
+# Exit status 3 reserved to indicate signal interrupted processing!
+if [ $STAT = 3 ]
+then STAT=1
+fi
+exit $STAT

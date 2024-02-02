@@ -1,0 +1,50 @@
+{####################################################################
+ # FORM: f_catalog                                                  #
+ # PURPOSE: Displays catalog information for viewing.               #
+ # NOTE: The "catalog" table is ONLY available when the database    #
+ #       is created with an OnLine engine. This table uses data     #
+ #       types available only with the OnLine engine.               #
+ #                                                                  #
+ # 4GL PROGRAM: ex18.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
++---------------------------------------------------------------------------+
+| Catalog #  Pic?  Txt?   Stock #  Stock Description     Manufacturer       |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]    |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]    |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]    |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]    |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]    |
+|                                                                           |
+|---------------------------------------------------------------------------|
+|        ACTIONS               		          KEY SEQUENCES             |
+|   To exit                                   Accept twice or CONTROL-E     |
+|   To scroll up and down 		      Arrow keys                    |
+|   To view or update:                                                      |
+|      catalog advertising (varchar)          F4 or CONTROL-V               |
+|      catalog description (text)             F5 or CONTROL-T               |
++---------------------------------------------------------------------------+
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+  cnum	= catalog.catalog_num;
+  p	= FORMONLY.has_pic TYPE CHAR, NOENTRY;
+  t	= FORMONLY.has_desc TYPE CHAR, NOENTRY;
+  snum	= catalog.stock_num, NOENTRY;
+  sdesc	= stock.description, NOENTRY;
+  manu	= manufact.manu_name, NOENTRY;
+
+INSTRUCTIONS
+  SCREEN RECORD sa_cat[5] (catalog_num, stock_num, manu_name,
+				has_pic, has_desc, description)
+
+END

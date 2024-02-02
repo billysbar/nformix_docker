@@ -1,0 +1,175 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.zh_TW_UTF8.SuSE9, fontprop, ax142, 20060311 1.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2002, 2003. All Rights Reserved
+# ===========================================================================
+# Change activity:
+# 
+# Reason  Date   Origin    Description
+# ------  ----   ------    -------------------------------------------------- 
+# 76559  230804  smithwil  Enable os-specific font.properties, support SLES9
+#                          Create this file
+#
+# ===========================================================================
+# File Information:
+#
+# DESCRIPTION:
+#
+# Intended for Linux: SuSE SLES 9
+# Intended for Traditional Chinese with UTF-8 encoding
+# 
+# Font packages in SLES9:
+# -founder-mingtib-* fonts come from
+# /usr/X11R6/lib/X11/fonts/truetype/FZMingTiB.ttf
+# installed by ttf-founder-traditional-* RPM package
+#
+# -arphic-ar pl mingti2l big5-* fonts come from
+# /usr/X11R6/lib/X11/fonts/truetype/bsmi00lp.ttf
+# installed by ttf-arphic-bsmi00lp-* RPM package
+#
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-founder-mingtib-medium-r-normal--*-%d-75-75-c-*-iso10646-1
+serif.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-founder-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.bold.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-founder-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-founder-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-founder-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-founder-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-founder-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-founder-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.3=-monotype-timesnewromanwt-medium-i-normal--*-%d-75-75-p-*-iso10646-1
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-founder-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.3=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-founder-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.3=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-founder-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.3=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-founder-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.3=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-founder-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-founder-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-founder-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.bolditalic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-founder-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.2=-arphic-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.3=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+alias.dialoginput=monospaced
+
+# default char definition
+default.char=02ff
+
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+
+fontset.serif.plain=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.italic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bold=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bolditalic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.sansserif.plain=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.italic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bold=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bolditalic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.monospaced.plain=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.italic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bold=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bolditalic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialog.plain=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.italic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bold=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bolditalic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialoginput.plain=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.italic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.bold=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialoginput.bolditalic=\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1

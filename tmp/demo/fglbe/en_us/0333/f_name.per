@@ -1,0 +1,23 @@
+{####################################################################
+ # FORM: f_name                                                     #
+ # PURPOSE: Accepts a single character string (max 50 chars). This  #
+ #          character is not connected to a particular field in the #
+ #          database so that the form can be used throughout the    #
+ #          application. The form has an extra blank line at the    #
+ #          top to allow the calling program to provide its own     #
+ #          descriptive heading.                                    #
+ # 4GL PROGRAM: ex13.4gl, ex30.4gl                                  #
+ ####################################################################}
+
+DATABASE formonly
+
+SCREEN
+{
+
+
+  Name:[f000                                              ]
+
+}
+
+ATTRIBUTES
+f000 = formonly.a_char TYPE CHAR;

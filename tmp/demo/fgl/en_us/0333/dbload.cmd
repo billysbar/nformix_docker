@@ -1,0 +1,14 @@
+file stock.unl delimiter "|" 6;
+insert into stock;
+file items.unl delimiter "|" 6;
+insert into items;
+file manufact.unl delimiter "|" 2;
+insert into manufact;
+file orders.unl delimiter "|" 10;
+insert into orders;
+file customer.unl delimiter "|" 10;
+insert into customer;
+file state.unl delimiter "|" 2;
+insert into state;
+file syscolatt.unl delimiter "|" 10;
+insert into syscolatt;

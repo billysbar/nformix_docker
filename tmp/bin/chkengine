@@ -1,0 +1,52 @@
+: '
+: *************************************************************************
+:
+:                          INFORMIX SOFTWARE, INC.
+:
+:                             PROPRIETARY DATA
+:
+:       THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF
+:       INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:       CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR
+:       DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT
+:       SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:       THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:       SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE.
+:       UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:   Title:      chkengine.sh
+:   Sccsid:    	@(#)chkengine.sh	11.1	10/6/94	16:59:33 
+:   Description:
+:               chkengine is used to determine what kind of database engine 
+:		that user is running. Unlike chkserver which is only used in
+:		6.0 environment, chkengine can be used in both 4.x and
+:		6.x environment.
+:		It return "se" for INFORMIX-SE.
+:		   return "on" for INFORMIX-OnLine.
+:		   return "" if it cannot determine the engine.
+:
+: *************************************************************************
+: '
+arg0=`basename $0 .sh`
+IDIR=${INFORMIXDIR:-/usr/informix}
+if test -x $IDIR/bin/chkserver
+then
+   engine=`$IDIR/bin/chkserver`
+else
+   engine="40"
+fi
+ 
+if [ "$engine" = "" ]
+then
+    echo ""
+    exit 1
+fi
+if [ ! -x $IDIR/lib/sqlturbo -a  "$engine" = ol -o "$engine" = on ] ||
+    [ X`basename $SQLEXEC` != "Xsqlexec" -a -x $IDIR/lib/sqlturbo ] 
+then
+    echo "on"
+else
+    echo "se"
+fi

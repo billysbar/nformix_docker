@@ -1,0 +1,4594 @@
+#!/usr/bin/perl -w
+#**************************************************************************
+#*  Licensed Materials - Property of IBM                                  *
+#*                                                                        *
+#*  "Restricted Materials of IBM"                                         *
+#*                                                                        *
+#*  IBM Informix 4GL                                                      *
+#*  Copyright IBM Corporation 2008, 2009. All rights reserved.                  *
+#*                                                                        *
+#*  Title:       w4glc.pl                                                 *
+#*  Description: Convert 4GL functions for deployment as web service      *
+#*                                                                        *
+#*  <Funcname_prov> or <Funcname_Prov> are functions for Provider
+#*  <Funcname_subs> or <Funcname_Subs> are functions for Subscriber
+#**************************************************************************
+
+use strict; 
+use IO::File;
+use Switch;
+use Data::Dumper;
+
+# Constants, data & function mappings and formatting functions
+use constant debug => 0;
+
+# constants
+my $I4GLSOA_VERSION = "IBM Informix-4GL 7.50.xC3";
+my $C4GL = "c4gl";
+my $usestr = "Usage: perl $0 { [-help] [-version] | [-silent] [-force] [-generate] [-compile] [-deploy] [-package]} <cfgfile>";
+my $useline1 = " -silent     - Do not display the progress";
+my $useline2 = " -force      - Avoid user prompts";
+my $useline3 = " -generate   - Generate the code";
+my $useline4 = " -compile    - Compile the generated code";
+my $useline5 = " -deploy     - Deploy the web service";
+my $useline6 = " -package    - Create a package (tar-format) file for web-service";
+
+my %words =
+(
+    year     => { lval =>  0, tval =>  0, lead => 4 },
+    month    => { lval =>  2, tval =>  2, lead => 2 },
+    day      => { lval =>  4, tval =>  4, lead => 2 },
+    hour     => { lval =>  6, tval =>  6, lead => 2 },
+    minute   => { lval =>  8, tval =>  8, lead => 2 },
+    second   => { lval => 10, tval => 10, lead => 2 },
+    fraction => { lval => 12, tval => 10, lead => 2 },
+);
+
+#WSDL constants
+my $WSDLDEF      = "wsdl:definitions";
+my $WSDLBUILTON  = "<!--WSDL built on ";
+my $WSDLTYPES    = "wsdl:types";
+my $WSDLMESG     = "wsdl:message";
+my $WSDLPART     = "wsdl:part";
+my $WSDLPORTTYPE = "wsdl:portType";
+my $WSDLOPER     = "wsdl:operation";
+my $WSDLINPUT    = "wsdl:input";
+my $WSDLOUTPUT   = "wsdl:output";
+my $WSDLBIND     = "wsdl:binding";
+my $WSDLSOAPBIND = "wsdlsoap:binding";
+my $WSDLSOAPOPER = "wsdlsoap:operation";
+my $WSDLSOAPBODY = "wsdlsoap:body";
+my $WSDLSERV     = "wsdl:service";
+my $WSDLPORT     = "wsdl:port";
+my $WSDLADDR     = "wsdlsoap:address";
+
+#4GL to C data-mappings
+my %I4GLToCdatamap = (
+    'char'             => 'char',
+    'character'        => 'char',
+    'nchar'            => 'char',
+    'nvarchar'         => 'char',
+    'lvarchar'         => 'char',
+    'varchar'          => 'char',
+    'double precision' => 'double',
+    'double'           => 'double',
+    'float'            => 'double',
+    'real'             => 'float',
+    'smallfloat'       => 'float',
+    'int'              => 'int',
+    'integer'          => 'int',
+    'serial'           => 'int', 
+    'smallint'         => 'short',
+    'bigint'           => 'ifx_int8_t',
+    'int8'             => 'ifx_int8_t',
+    'serial8'          => 'ifx_int8_t',
+    'dec'              => 'dec_t',
+    'decimal'          => 'dec_t',
+    'money'            => 'dec_t',
+    'numeric'          => 'dec_t',
+    'date'             => 'int4',	# its mapped to int4 in ifx_types.h
+    'datetime'         => 'dtime_t',   
+    'interval'         => 'intrvl_t', 
+    'byte'             => 'loc_t',
+    'text'             => 'loc_t',
+    'void'             => 'void', 
+    );
+
+#C to XSD data-mappings
+my %CToXSDdatamap = (
+    'char'             => 'xsd:string',
+    'double'           => 'xsd:double',
+    'float'            => 'xsd:float',
+    'int'              => 'xsd:int',
+    'short'            => 'xsd:short',
+    'ifx_int8_t'       => 'xsd:int',
+    'dec_t'            => 'xsd:decimal',
+    'int4'             => 'xsd:date',			
+    'intrvl_t'         => 'xsd:duration',
+    'loc_t'            => 'xsd:hexBinary',
+    );
+
+#Special Mapping required for datetime to XSD
+my %I4GLDatetimeToXSD = (
+    'datetime year to year'        => 'xsd:gYear',
+    'datetime year to month'       => 'xsd:gYearMonth',
+    'datetime year to day'         => 'xsd:date',
+    'datetime year to hour'        => 'xsd:dateTime',
+    'datetime year to minute'      => 'xsd:dateTime',
+    'datetime year to second'      => 'xsd:dateTime',
+    'datetime year to fraction'    => 'xsd:dateTime',
+    'datetime year to fraction(1)'    => 'xsd:dateTime',
+    'datetime year to fraction(2)'    => 'xsd:dateTime',
+    'datetime year to fraction(3)'    => 'xsd:dateTime',
+    'datetime year to fraction(4)'    => 'xsd:dateTime',
+    'datetime year to fraction(5)'    => 'xsd:dateTime',
+    'datetime month to month'      => 'xsd:gMonth',
+    'datetime month to day'        => 'xsd:gMonthDay',
+    'datetime month to hour'       => 'xsd:dateTime',
+    'datetime month to minute'     => 'xsd:dateTime',
+    'datetime month to second'     => 'xsd:dateTime',
+    'datetime month to fraction'   => 'xsd:dateTime',
+    'datetime month to fraction(1)'   => 'xsd:dateTime',
+    'datetime month to fraction(2)'   => 'xsd:dateTime',
+    'datetime month to fraction(3)'   => 'xsd:dateTime',
+    'datetime month to fraction(4)'   => 'xsd:dateTime',
+    'datetime month to fraction(5)'   => 'xsd:dateTime',
+    'datetime day to day'          => 'xsd:gDay',
+    'datetime day to hour'         => 'xsd:dateTime',
+    'datetime day to minute'       => 'xsd:dateTime',
+    'datetime day to second'       => 'xsd:dateTime',
+    'datetime day to fraction'     => 'xsd:dateTime',
+    'datetime day to fraction(1)'     => 'xsd:dateTime',
+    'datetime day to fraction(2)'     => 'xsd:dateTime',
+    'datetime day to fraction(3)'     => 'xsd:dateTime',
+    'datetime day to fraction(4)'     => 'xsd:dateTime',
+    'datetime day to fraction(5)'     => 'xsd:dateTime',
+    'datetime hour to hour'        => 'xsd:time',
+    'datetime hour to minute'      => 'xsd:time',
+    'datetime hour to second'      => 'xsd:time',
+    'datetime hour to fraction'    => 'xsd:time',
+    'datetime hour to fraction(1)'    => 'xsd:time',
+    'datetime hour to fraction(2)'    => 'xsd:time',
+    'datetime hour to fraction(3)'    => 'xsd:time',
+    'datetime hour to fraction(4)'    => 'xsd:time',
+    'datetime hour to fraction(5)'    => 'xsd:time',
+    'datetime minute to minute'    => 'xsd:time',
+    'datetime minute to second'    => 'xsd:time',
+    'datetime minute to fraction'  => 'xsd:time',
+    'datetime minute to fraction(1)'  => 'xsd:time',
+    'datetime minute to fraction(2)'  => 'xsd:time',
+    'datetime minute to fraction(3)'  => 'xsd:time',
+    'datetime minute to fraction(4)'  => 'xsd:time',
+    'datetime minute to fraction(5)'  => 'xsd:time',
+    'datetime second to second'    => 'xsd:time',
+    'datetime second to fraction'  => 'xsd:time',
+    'datetime second to fraction(1)'  => 'xsd:time',
+    'datetime second to fraction(2)'  => 'xsd:time',
+    'datetime second to fraction(3)'  => 'xsd:time',
+    'datetime second to fraction(4)'  => 'xsd:time',
+    'datetime second to fraction(5)'  => 'xsd:time',
+    'datetime fraction to fraction'=> 'xsd:time',
+    'datetime fraction(1) to fraction(1)'=> 'xsd:time',
+    'datetime fraction(1) to fraction(2)'=> 'xsd:time',
+    'datetime fraction(1) to fraction(3)'=> 'xsd:time',
+    'datetime fraction(1) to fraction(4)'=> 'xsd:time',
+    'datetime fraction(1) to fraction(5)'=> 'xsd:time',
+    'datetime fraction(2) to fraction(2)'=> 'xsd:time',
+    'datetime fraction(2) to fraction(3)'=> 'xsd:time',
+    'datetime fraction(2) to fraction(4)'=> 'xsd:time',
+    'datetime fraction(2) to fraction(5)'=> 'xsd:time',
+    'datetime fraction(3) to fraction(3)'=> 'xsd:time',
+    'datetime fraction(3) to fraction(4)'=> 'xsd:time',
+    'datetime fraction(3) to fraction(5)'=> 'xsd:time',
+    'datetime fraction(4) to fraction(4)'=> 'xsd:time',
+    'datetime fraction(4) to fraction(5)'=> 'xsd:time',
+    'datetime fraction(5) to fraction(5)'=> 'xsd:time',
+    );
+
+my %XSDScannerMap = (
+    'xsd:gYear'        => 'XSD_gYear',
+    'xsd:gYearMonth'   => 'XSD_gYearMonth',
+    'xsd:date'         => 'XSD_date',
+    'xsd:gMonth'       => 'XSD_gMonth',
+    'xsd:gMonthDay'    => 'XSD_gMonthDay',
+    'xsd:gDay'         => 'XSD_gDay',
+    'xsd:dateTime'     => 'XSD_dateTime',
+    'xsd:time'         => 'XSD_time',
+);
+
+#String conversion functions for C datatypes
+my %StrConvFuncMap = (
+    'double'           => 'rstod(',
+    'float'            => 'rstod(',
+    'int'              => 'rstol(',
+    'short'            => 'rstoi(',
+    'ifx_int8_t'       => 'ifx_int8cvasc(',
+    'dec_t'            => 'deccvasc(',
+    'int4'             => 'rdefmtdate(',
+    'dtime_t'          => 'dtcvxsddatetime(',
+    'intrvl_t'         => 'incvxsdduration(',
+    'loc_t'            => '',
+    ); #char datatype needs no conversion
+
+my %PrintFuncMap = (
+    'char'             => '%s',
+    'double'           => '%lf',
+    'float'            => '%f',
+    'int'              => '%d',
+    'short'            => '%d',
+    'int4'             => '%ld',
+    'dec_t'            => '',
+    'dtime_t'          => '',
+    'intrvl_t'         => '',
+    'loc_t'            => '',  
+    );
+
+#4GL Push and Pop functions
+my %DatatypeToPushfuncmap = (
+    'byte'             => 'ibm_lib4gl_pushBlobLocator(&',
+    'text'             => 'ibm_lib4gl_pushBlobLocator(&',
+    'date'             => 'ibm_lib4gl_pushDate(',
+    'smallint'         => 'ibm_lib4gl_pushInt2(',
+    'int'              => 'ibm_lib4gl_pushInt4(',
+    'integer'          => 'ibm_lib4gl_pushInt4(',
+    'serial'           => 'ibm_lib4gl_pushInt4(',
+    'bigint'           => 'ibm_lib4gl_pushInt8(&',
+    'int8'             => 'ibm_lib4gl_pushInt8(&',
+    'serial8'          => 'ibm_lib4gl_pushInt8(&', 
+    'varchar'          => 'ibm_lib4gl_pushVarChar(',
+    'nvarchar'         => 'ibm_lib4gl_pushVarChar(',
+    'lvarchar'         => 'ibm_lib4gl_pushVarChar(',	# Dubious!!!
+    'nchar'            => 'ibm_lib4gl_pushQuotedStr(',
+    'char'             => 'ibm_lib4gl_pushQuotedStr(',
+    'character'        => 'ibm_lib4gl_pushQuotedStr(',
+    'smallfloat'       => 'ibm_lib4gl_pushFloat(&',
+    'float'            => 'ibm_lib4gl_pushDouble(&',
+    'real'             => 'ibm_lib4gl_pushFloat(&',
+    'double precision' => 'ibm_lib4gl_pushDouble(&',
+    'double'           => 'ibm_lib4gl_pushDouble(&',
+    'money'            => 'ibm_lib4gl_pushMoney(&',
+    'interval'         => 'ibm_lib4gl_pushInterval(&',
+    'decimal'          => 'ibm_lib4gl_pushDecimal(&',
+    'numeric'          => 'ibm_lib4gl_pushDecimal(&',
+    'datetime'         => 'ibm_lib4gl_pushDateTime(&',
+    );
+
+my %DatatypeToPopFuncmap = (
+    'byte'             => 'ibm_lib4gl_popBlobLocator(',
+    'text'             => 'ibm_lib4gl_popBlobLocator(',
+    'bigint'           => 'ibm_lib4gl_popInt8(',
+    'int8'             => 'ibm_lib4gl_popInt8(',
+    'serial8'          => 'ibm_lib4gl_popInt8(',
+    'int'              => 'ibm_lib4gl_popInt4(',
+    'integer'          => 'ibm_lib4gl_popInt4(',
+    'serial'           => 'ibm_lib4gl_popInt4(',
+    'smallint'         => 'ibm_lib4gl_popInt2(',
+    'date'             => 'ibm_lib4gl_popDate(',
+    'varchar'          => 'ibm_lib4gl_popVarChar(',
+    'nvarchar'         => 'ibm_lib4gl_popVarChar(',
+    'lvarchar'         => 'ibm_lib4gl_popVarChar(',
+    'nchar'            => 'ibm_lib4gl_popQuotedStr(',
+    'smallfloat'       => 'ibm_lib4gl_popFloat(',
+    'float'            => 'ibm_lib4gl_popDouble(',
+    'real'             => 'ibm_lib4gl_popFloat(',
+    'double precision' => 'ibm_lib4gl_popDouble(',
+    'double'           => 'ibm_lib4gl_popDouble(',
+    'money'            => 'ibm_lib4gl_popMoneyVar(',
+    'interval'         => 'ibm_lib4gl_popInterval(',
+    'decimal'          => 'ibm_lib4gl_popDecimal(',
+    'numeric'          => 'ibm_lib4gl_popDecimal(',
+    'datetime'         => 'ibm_lib4gl_popDateTime(',
+    'char'             => 'ibm_lib4gl_popQuotedStr(',
+    'character'        => 'ibm_lib4gl_popQuotedStr(',
+    );
+
+# Define the Globals
+my $SilentMode = 0;   # Silent Mode is False by default
+my $ForceMode    = 0;   # Interactive by default
+my $KeepMode   = "";  # Keeping intermediate files is off by default
+
+my $CheckPhase    = "";	# Check the configuration file
+my $GeneratePhase = "";	# Generate source code
+my $CompilePhase  = "";	# Compile source code
+my $DeployPhase   = "";	# Deploy web service
+my $PackagePhase  = ""; # Package web service
+
+# Define the Globals - ReadConfig will populate these variables
+my $tmpdir    = "";   # Temporary directory
+my $funcname  = "";   # Function name
+my $database  = "";   # Database name
+
+my @inparams  = ();   # Input for the function
+my @outparams = ();   # Output for the function
+my @file      = ();   # List of 4gl files
+
+##############################################
+# Reset the Indentation Level back to Zero
+##############################################
+my @LevelArr = ();
+my @TempFiles = ();
+
+##############################################
+# Manage the Indentation Level of code
+##############################################
+
+use constant Delta => 4;
+my $Level = 0;
+my $Indent = "";
+
+sub ResetLevel
+{
+    @LevelArr = ( 0 );
+    $Indent = " " x $Level;
+}
+
+###################################
+# Increase the Indentation level
+###################################
+sub IncrementLevel
+{
+    $Level += Delta;
+    $Indent = " " x $Level;
+}
+
+###################################
+# Decrease the Indentation level
+###################################
+sub DecrementLevel
+{
+    $Level -= Delta if ($Level >= Delta);
+    $Indent = " " x $Level;
+}
+
+###################################
+# Function to begin tag
+###################################
+sub BeginTag
+{
+    my($str) = @_;
+    BeginTagX($str, "");
+}
+
+###################################
+# Function to end tag
+###################################
+sub EndTag
+{
+    my($str) = @_;
+
+    IndWriteLn("</$str>");
+    DecrementLevel;
+}
+
+############################################
+# Function to begin tag with extra arguments
+############################################
+sub BeginTagX
+{
+    my($str, @extra) = @_;
+
+    IncrementLevel;
+    IndWrite("<$str");
+    if (@extra)
+    {
+        Write(join " ", @extra);
+    }
+    WriteLn(">");
+}
+
+# Write solo tag <tag/> or <tag key="value"/>
+sub SoloTag
+{
+    my($tag) = @_;
+    IndWriteLn("<$tag/>");
+}
+
+#########################################
+# Functions to write to OUTFILE
+#########################################
+
+# Plain write (no indent, no extra newlines)
+sub Write
+{
+    my ($CurrentLine) = @_;
+    print OUTFILE $CurrentLine;
+}
+
+sub AddNewLine
+{
+    my ($cnt) = @_;
+    Write("\n" x $cnt);
+}
+
+####################################################
+# Write the passed string at the current location
+# of the file with indentation
+####################################################
+sub IndWrite
+{
+    my ($CurrentLine) = @_;
+    Write("$Indent$CurrentLine");
+}
+
+####################################################
+# Write the passed string at the current location
+# of the file and add a new line at the end
+####################################################
+sub WriteLn
+{
+    my ($CurrentLine) = @_;
+    Write("$CurrentLine\n");
+}
+
+# Indented write with newline
+sub IndWriteLn
+{
+    my ($CurrentLine) = @_;
+    IndWrite("$CurrentLine\n");
+}
+
+############################################
+# Check the status of the file or dir
+############################################
+sub FileStatus
+{
+   my ($FileName, $Op) = @_;
+
+   if ($Op eq "e")
+   {
+      # File exists?
+      if ( ! -e "$FileName" )
+      {
+         # File does not exists
+         return -1;
+      }
+   }
+   elsif ($Op eq "r")
+   {
+      if ( ! -r "$FileName" )
+      {
+         # No Read permission
+         return -2;
+      }
+   }
+   elsif ($Op eq "w")
+   {
+      if ( ! -w "$FileName" )
+      {
+         # No Write permission
+         return -3;
+      }
+   }
+   elsif ( $Op eq "d")
+   { 
+      # Is it a directory?
+      if (! -d "$FileName" )
+      {
+         # Not a directory
+         return -4;
+      }
+   }
+   return 0;
+}
+
+
+########################################################################
+# Deploy the generated service to the web server
+########################################################################
+sub DeployService_Prov
+{
+    my ($tmpdir, $svcname, $WsdlFile, $TargetSOFile) = @_;
+    my ($TargetXMLFile) = xml_filename_prov($tmpdir);
+
+    my $WSDirName = "$ENV{AXIS2C_HOME}/services/$svcname";
+
+    # Check for the existence of this directory and alert
+    # accordingly before removing. Assume YES on YES mode
+
+    #if (-d $WSDirName)
+    #{
+    #    my $ans = CheckForPermission("OK to remove directory $WSDirName?");
+    #    die "OK - not removing directory $WSDirName!" unless $ans eq "yes";
+    #}
+
+    # Move this block to a function and generalize it (as suggested above)
+    my ($Status, $Answer);
+
+    $Status = FileStatus($WSDirName, "e");
+    if ($Status eq 0)
+    {
+      print "\n\n" if ($SilentMode eq 0);
+      DisplayString ("$WSDirName already exists.\n");
+
+      $Status = FileStatus($WSDirName, "w");
+      if ($Status eq 0)
+      {
+         if ($ForceMode eq 0)
+         {
+            print "Do you want to re-deploy the service (yes/[no])?";
+            $Answer = <STDIN>;
+
+            if (($Answer =~ m/(?:(N|n)|(N|n)(O|o))/) or
+               !($Answer =~ m/(?:(Y|y)|(Y|y)(E|e)(S|s))/))
+            {
+               #die "Aborting ...\n";
+               die "Service not re-deployed ...\n";
+            }
+         }
+      }
+    }
+    system("rm -Rf $WSDirName >/dev/null 2>&1") == 0 or FatalError("Unable to remove $WSDirName");
+    system("mkdir $WSDirName >/dev/null 2>&1") == 0 or FatalError("Unable to make directory $WSDirName");
+
+    DisplayString ("Deploying the service. Please wait ...\n");
+
+#    FileStatus ($WSDirName, "d");
+#    FileStatus ($TargetSOFile, "r");
+
+    DisplayString ("Copying $TargetSOFile ...\n");
+    my $command = "cp $TargetSOFile $WSDirName";
+    system($command) == 0 or FatalError("Error executing: $command");
+
+
+#    FileStatus ("$TargetXMLFile", "r");
+    DisplayString ("Copying $TargetXMLFile ...\n");
+    $command = "cp $TargetXMLFile $WSDirName";
+    system($command) == 0 or FatalError ("Error executing: $command");
+
+#    FileStatus ($WsdlFile, "r");
+    DisplayString ("Copying $WsdlFile ...\n");
+    $command = "cp $WsdlFile $WSDirName";
+    system($command) == 0 or FatalError ("Error executing: $command");
+
+
+    DisplayString ("Service name: $svcname\n");
+    DisplayString ("Deployed at : $WSDirName\n\n");
+}
+
+########################################################################
+# Generate shared object
+########################################################################
+sub dll_filename_prov
+{
+    my($tmpdir, $svcname) = @_;
+    return "$tmpdir/lib$svcname.so" if ($tmpdir ne "");
+    return "lib$svcname.so" if ($tmpdir eq "");
+    #return "$tmpdir/lib$svcname.so";
+}
+
+sub filename_cons
+{
+    my ($tgtfile) = @_;
+    my ($lenoffile, $tmpstr, $ext);
+    $tmpstr = reverse($tgtfile);
+    $lenoffile = length($tgtfile);
+    $ext = substr $tmpstr, 0, 2;
+
+    #if ($ext =~ m/c./i)
+    if ($ext eq "c.")
+    {
+        #my $str = substr $tgtfile, 0, $lenoffile-2;
+        #return "$str.c";
+        return "$tgtfile";
+    }
+    else
+    {
+        return "$tgtfile.c";
+    }
+}
+
+sub GenerateSharedObject_Prov
+{
+    my ($tmpdir, $funcname, $svcname, $wrapfile, $DstCFile, $SvcCFile, $Arg_inparams, $Arg_outparams, @files) = @_;
+    my @inparams = @$Arg_inparams;
+    my @outparams = @$Arg_outparams;
+    my $found = 0;
+    foreach my $inparam (@inparams)
+    {
+        $found = 1 if (($inparam =~ m/interval/i) || ($inparam =~ m/datetime/i));
+    }
+    foreach my $outparam (@outparams)
+    {
+        $found = 1 if (($outparam =~ m/interval/i) || ($outparam =~ m/datetime/i));
+    }
+
+    DisplayString("Compiling code. Please wait...\n");
+
+    # Compile the sources
+    my $TargetSOFile = dll_filename_prov($tmpdir, $svcname);
+    my $Iflag = "-I$ENV{AXIS2C_HOME}/include/axis2-1.5.0";
+    my $Lflag = "-L$ENV{AXIS2C_HOME}/lib";
+    my $libaxis = "-laxis2_engine";
+    my $libutil = "$ENV{INFORMIXDIR}/lib/tools/w4glutil.a";
+    my $command = "";
+
+    if ($found == 1)
+    {
+        $command = join " ", $C4GL, $KeepMode, "--shared", "-o", $TargetSOFile,
+		$Iflag, $Lflag, $libaxis, $wrapfile, $DstCFile, $SvcCFile, @files, $libutil;
+    }
+    else
+    {
+        $command = join " ", $C4GL, $KeepMode, "--shared", "-o", $TargetSOFile,
+		$Iflag, $Lflag, $libaxis, $wrapfile, $DstCFile, $SvcCFile, @files;
+    }
+
+    if ($SilentMode eq 1)
+    {
+       #$command = $command . " >>/tmp/w4glerr.log 2>&1";
+       $command = $command . " 2>>/tmp/w4glerr.log";
+    }
+
+    DisplayString("Executing: $command\n");
+
+    system($command) == 0 or FatalError("Error executing: $command");
+
+    DisplayString("Compilation done.\n");
+
+    # Log the Temp file
+    LogTempFile($TargetSOFile);
+    $found = 0;
+}
+
+sub GenerateObject_Cons
+{
+    my ($srvcname, $i4glfunc, $tgtfile, $tgtdir) = @_;
+    my ($ofile, $f_ext);
+    
+    my $targetfile = filename_cons($tgtfile);
+    my $Iflag = "-I$ENV{AXIS2C_HOME}/include/axis2-1.5.0";
+    my $Lflag = "-L$ENV{AXIS2C_HOME}/lib";
+    my $libaxis = "-laxis2_engine";
+    my $libutil = "$ENV{INFORMIXDIR}/lib/tools/w4glutil.a";
+    chdir ("$tgtdir");
+    my $command = join " ", $C4GL, "-c", "$tgtdir/$targetfile", $Iflag;
+    if ($SilentMode eq 1)
+    {
+        #$command = $command . " >>$tgtdir/$targetfile.err 2>&1";
+        $command = $command . " 2>>$tgtdir/$targetfile.err";
+    }
+
+    DisplayString("Executing: $command\n");
+    system($command) == 0 or FatalError("Error executing: $command");
+
+    #If error file exists, open the file, read contents
+    #If contents found retain file, else delete file
+    if (-e "$tgtdir/$targetfile.err")
+    {
+        if (! -s "$tgtdir/$targetfile.err")
+        {
+            system("rm -f $tgtdir/$targetfile.err 2> /dev/null");
+        }
+        else
+        {
+            #Contents exist in file
+        }
+    }
+    else
+    {
+        #File does not exist
+    }
+
+    $f_ext = substr $targetfile, -2, length($targetfile);
+    if ($f_ext eq ".c")
+    {
+        $ofile = substr $targetfile, 0, length($targetfile)-2;
+    }
+    else
+    {
+        $ofile = $targetfile;
+    }
+    DisplayString ("The target object file is $tgtdir/$ofile.o \n");
+    my $modhfile = $tgtdir . "/axis2_stub_" . $srvcname . "_" . $i4glfunc .".h";
+    system("rm -f $modhfile 2> /dev/null");
+}
+
+#################################################
+# Generate check with fatal error on failed check
+#################################################
+sub WriteFatalError
+{
+    my($condition, $error) = @_;
+    IndWriteLn("if ($condition)");
+    IncrementLevel;
+    #IndWriteLn("ibm_lib4gl_fglFatalError(fgl_modname, __LINE__, $error);");
+    IndWriteLn("return -1;");
+    DecrementLevel;
+    AddNewLine(2);
+}
+
+sub GetTime
+{
+    my ($ss, $mm, $hh, $dom, $mon, $yr, $dow, $doy, $dl) = localtime();
+    my ($CurTime);
+
+    $CurTime = sprintf("%02d:%02d:%02d", $hh, $mm, $ss);
+    return ($CurTime);
+}
+
+sub FatalError
+{
+    my ($ErrStr) = @_;
+
+    print ERRLOGFILE GetTime() . ": ";
+    print ERRLOGFILE "$ErrStr\n";
+
+    if ($SilentMode eq 1)
+    {
+       exit (-1);
+    }
+    die $ErrStr;
+}
+#############################################
+# Add DB operation Error Check condition
+#############################################
+sub DBErrorCheck
+{
+    IndWriteLn("status = sqlca.sqlcode;");
+    AddNewLine(1);
+    WriteFatalError("status < 0", "status");
+}
+
+###########################################################
+# Add Error Check condition for Interval / datetime types
+###########################################################
+sub print_error
+{
+    #print "@_\n" if debug;
+    FatalError ("@_\n");
+    #return -1;
+}
+
+########################################################################
+# Regexes to recognize Informix types
+########################################################################
+my($rx_time) = qr%(?:year|month|day|hour|minute|second|fraction(?:\([1-5]\))?)%;
+#my($dtrx) = qr%(datetime\s+$rx_time\s+to\s+$rx_time)%;
+my($dtrx) = qr%
+                datetime
+                \s+
+                (year|month|day|hour|minute|second|fraction)\b
+                \s*
+                (?:\(\s*(\d+)\s*\))?
+                \s*
+                to \s+
+                (year|month|day|hour|minute|second|fraction)
+                \s*
+                (?:\(\s*(\d+)\s*\))?
+            %ix;
+my($ivrx) = qr%
+                interval
+                \s+
+                (year|month|day|hour|minute|second|fraction)\b
+                \s*
+                (?:\(\s*(\d+)(?:\s*,\s*(\d+))?\s*\))?
+                (?:
+                    \s*
+                    to \s+
+                    (year|month|day|hour|minute|second|fraction)
+                    \s*
+                    (?:\(\s*(\d+)\s*\))?
+                )?
+            %ix;
+# Capture complete type information
+#(?:money|numeric|decimal)\s*(?:\(\s*\d+(?:\s*,\s*\d+\s*)?\))?   |
+my($rx_type) = qr%
+		    ^(?:\s*,?\s*)?   # Commas and spaces at start of string
+                  (               # Capture complete type name (spaces, 
+                                  # commas and all)
+		    (?:money|numeric|decimal)\s*(?:\(\s*\d+(?:\s*,\s*\d+\s*)?\))?   |
+		    $dtrx |
+                    $ivrx |
+                    (?:character)(?:\(\d+(?:,\d+)?\))? |
+		    (?:[ln]?(?:var)?char)(?:\(\d+(?:,\d+)?\))? |
+		    real |
+		    float |
+		    smallfloat |
+                    int8  |
+		    int(?:eger)?  |
+                    serial(?:8)?  |
+		    smallint      |
+		    date |
+		    serial |
+		    bigint |
+		    double\s+precision |
+		    byte |
+		    text |
+		    void
+		    )
+		%ix;
+
+# Capture base name of type - first word
+my($rx_base) = qr% (\w+) %x;
+
+# Collect next type from string, returning type found and residual string
+sub next_type
+{
+    my($string) = @_;
+    my($type) = "";
+
+    if ($string =~ m/$rx_type/i)
+    {
+	$type = $1;
+	$string =~ s/$rx_type//;
+	return(lc($type), lc($string));
+    }
+    return;
+}
+
+sub split_type_list
+{
+    my($string) = @_;
+    my($type) = "";
+    my(@list) = ();
+    while (($type, $string) = next_type($string))
+    {
+    	push @list, $type;
+    }
+    return(@list);
+}
+
+sub split_var_list
+{
+    my($varArray) = @_;
+    my(@Arg_var) = split(',', $varArray);
+    my(@list) = ();
+    foreach my $var(@Arg_var)
+    {
+        $var =~ s/^\s+//;
+        $var =~ s/\s+$//;
+        push @list, $var;
+    }
+    return (@list);
+}
+
+sub CheckParamNames
+{
+    my($varArray) = @_;
+    my(@Arg_var) = split(',', $varArray);
+    my(@glb_arr) = @Arg_var;
+    my $var = "";
+    my $i = 0;
+    foreach $var(@Arg_var)
+    {
+        $var =~ s/^\s+//;
+        $var =~ s/\s+$//;
+        for (my $cnt = 0; $cnt<@glb_arr; $cnt++)
+        {
+            FatalError ("Parameters Names Cannot Be Identical") if (($var eq $glb_arr[$cnt]) && ($cnt != $i));
+        }
+        $var = "";
+        $i++;
+    }
+}
+
+# Determine the length for a string type
+sub char_length
+{
+    my($type) = @_;
+    my($len)  = 1;
+    #$len = $1 if ($type =~ m/^(?:[ln]?(?:var)?char)\((\d+)(?:,\d+)?\)?/);
+    $len = $1 if (($type =~ m/^(?:[ln]?(?:var)?char)\((\d+)(?:,\d+)?\)?/) ||
+                  ($type =~ m/^(?:character)\((\d+)(?:,\d+)?\)?/));
+    return($len);
+}
+
+# Determine scale and precision for a precise numeric type
+sub dec_scale_prec
+{
+    my($type) = @_;
+    my($scale) = 16;
+    my($prec)  = 2;	# Technically a lie for DECIMAL
+
+    if ($type =~ m/^(?:money|numeric|decimal)\s*(?:\(\s*(\d+)\s*(?:,\s*(\d+))\s*\))/)
+    {
+	$scale = $1 if defined($1);
+	$prec  = $2 if defined($2);
+    }
+    return($scale, $prec);
+}
+
+
+# Determine basic name of type (returns double for 'double precision'
+sub basic_type
+{
+    my($type) = @_;
+    my($name) = "XXXX";
+    if ($type =~ m/$rx_base/i)
+    {
+    	$name = $1;
+    }
+    return(lc($name));
+}
+
+########################################################################
+# Generate the Axis wrapper function for the I4GL function
+########################################################################
+
+sub wrapfilename_prov
+{
+    my($tmpdir, $funcname) = @_;
+    return "$tmpdir/${funcname}_wrap.c";
+}
+
+###################################
+# Clean up all the Tempoorary files
+###################################
+sub CleanupTempFiles
+{
+    foreach my $TempFile (@TempFiles)
+    {
+       DisplayString("Removing $TempFile ...\n");
+       unlink($TempFile);
+    }
+}
+
+sub encode_interval
+{
+    my($str) = @_;
+    return print_error "Mismatch" if ($str !~ m/$ivrx/);
+    # In INTERVAL DAY(9) TO FRACTION(5):
+    # $head = DAY, $lnum1 = 9, $lnum2 undef, $tail = FRACTION, $tnum = 5.
+    # In INTERVAL SECOND(9,3) TO FRACTION(5)    # BOGUS!!!
+    # $head = SECOND, $lnum1 = 9, $lnum2 = 3, $tail = FRACTION, $tnum = 5.
+    my($head, $lnum1, $lnum2, $tail, $tnum) = ($1, $2, $3, $4, $5);
+    $tail = $head if (!defined $tail);
+    $head = lc $head;
+    $tail = lc $tail;
+    my($vref1) = $words{$head};
+    my($vref2) = $words{$tail};
+    # Reject, for example, INTERVAL SECOND TO HOUR
+    FatalError("Invalid INTERVAL format") if ($vref1->{lval} > $vref2->{lval});
+    # Reject, for example, INTERVAL DAY(9,3)
+    FatalError("Invalid INTERVAL format") if (defined $lnum2 && $head ne "second" && $head ne "fraction");
+    # Reject, for example, INTERVAL SECOND(8,2) TO FRACTION(5)
+    FatalError("Invalid INTERVAL format") if (defined $lnum2 && defined $tnum);
+    # Reject, for example, INTERVAL DAY TO MINUTE(3)
+    FatalError("Invalid INTERVAL format") if (defined $tnum && $tail ne "second" && $tail ne "fraction");
+    $lnum1 = $vref1->{lead} if !defined $lnum1;
+    # Reject, for example, INTERVAL MINUTE(12)
+    FatalError("Invalid INTERVAL format") if ($lnum1 > 9);
+    $tnum = $lnum2 if defined $lnum2;
+    $tnum = 3 if !defined $tnum && $tail eq "fraction";        # Default FRACTION(3)
+    $tnum = 0 if !defined $tnum;        # Default FRACTION(3)
+
+    # Reject, for example, INTERVAL MINUTE TO SECOND(12)
+    FatalError("Invalid INTERVAL format") if ($tnum > 5);
+
+    # Reject, for example, INTERVAL FRACTION TO FRACTION(0)
+    # Accept, for example, INTERVAL SECOND   TO FRACTION(0)
+    FatalError("Invalid INTERVAL format") if (($tnum == 0 || $lnum1 != 2) && $head eq "fraction" && $tail eq "fraction");
+    # Reject, for example, INTERVAL YEAR TO DAY
+    FatalError("Invalid INTERVAL format")
+        if (($head eq "year" || $head eq "month") && ($tail ne "year" && $tail ne "month"));
+
+    #print "Analysis: $head($lnum1) TO $tail($tnum)\n" if debug;
+
+    my($ec_tail) = $vref2->{tval} + $tnum;
+    my($ec_head) = $vref1->{lval};
+    my($ec_ilen) = $lnum1;
+
+    my($result) = (($ec_tail - $ec_head + $ec_ilen) << 8) | ($ec_head << 4) | $ec_tail;
+    #printf "Result: l = $lnum1, h = $ec_head, t = $ec_tail, r = %d (0x%04X)\n",
+            #$result, $result if debug;
+
+    return $result;
+}
+
+sub encode_datetime
+{
+    my($str) = @_;
+    return print_error "Mismatch" if ($str !~ m/$dtrx/);
+    # In DATETIME only FRACTION has numeric part
+    my($head, $lnum, $tail, $tnum) = ($1, $2, $3, $4);
+    $lnum = 0 if (!defined $lnum);
+    $tnum = 0 if (!defined $tnum);
+
+    FatalError("Invalid DATETIME format") if (!defined $head);
+    FatalError("Invalid DATETIME format") if (!defined $tail);
+
+    $head = lc $head;
+    $tail = lc $tail;
+    my($vref1) = $words{$head};
+    my($vref2) = $words{$tail};
+    $lnum = 3 if (defined $lnum && $head eq "fraction");
+    $tnum = 3 if (defined $tnum && $tail eq "fraction");
+
+    FatalError("Invalid DATETIME format") if ($vref1->{lval} > $vref2->{lval});
+    FatalError("Invalid DATETIME format") if (defined $lnum && $lnum != 0 && $head ne "fraction");
+    FatalError("Invalid DATETIME format") if (defined $tnum && $tnum != 0 && $tail ne "fraction");
+    FatalError("Invalid DATETIME format") if (defined $lnum && $lnum > 5 && $head eq "fraction");
+    FatalError("Invalid DATETIME format") if (defined $tnum && $tnum > 5 && $tail eq "fraction");
+    FatalError("Invalid DATETIME format") if ((defined $lnum) && (defined $tnum) && ($tnum > $lnum) && (defined $head) && (defined $tail) && ($tail eq "fraction") && ($head eq "fraction"));
+    my($ec_tail) = $vref2->{tval} + $tnum;
+    my($ec_head) = $vref1->{lval};
+    my($ec_ilen) = ($ec_head == 0) ? 4 : 2;
+    my($result) = (($ec_tail - $ec_head + $ec_ilen) << 8) | ($ec_head << 4) | $ec_tail;
+    return $result;
+}
+
+###################################
+# Generate the wrapper file
+###################################
+sub GenerateI4GLWrap_Prov
+{
+    my($tmpdir, $funcname, $database, $client_locale, 
+       $db_locale, $Arg_inparams, $Arg_outparams, $infx_svr, $db_date) = @_;
+
+    my(@inparams) = @$Arg_inparams;
+    my(@outparams) = @$Arg_outparams;
+    my $outcnt = 0;
+    my ($strlength, $scale, $prec, $scaleprec);
+
+    my $WrapFileName = wrapfilename_prov($tmpdir, $funcname);
+
+    DisplayString ("The wrapper file is $WrapFileName \n");
+    ResetLevel;
+
+    open (OUTFILE, ">", $WrapFileName) || FatalError("Error writing ($!): $WrapFileName");
+
+    IndWriteLn(qq%#include <stdlib.h>%);
+    IndWriteLn(qq%#include <fglapi.h>%);
+    IndWriteLn(qq%#include <fglsys.h>%);
+    IndWriteLn(qq%#include <stdio.h>%);
+    IndWriteLn(qq%#include <ifxtypes.h>%);   
+
+    my ($decfound, $invfound, $int8found, $dtfound);
+    $decfound = 0; $invfound = 0; $int8found = 0; $dtfound = 0;
+    foreach my $inparam (@inparams)
+    {
+        if ((c_datatype($inparam) eq "ifx_int8_t"))
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if ((c_datatype($inparam) eq "dec_t") ||
+            (c_datatype($inparam) eq "intrvl_t"))
+        {
+            IndWriteLn(qq%#include <decimal.h>%) if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($inparam) eq "intrvl_t")
+        {
+            IndWriteLn(qq%#include <datetime.h>%) if ($invfound == 0);
+            $invfound = 1;
+        }
+        if (c_datatype($inparam) eq "dtime_t")
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+
+    foreach my $outparam (@outparams)
+    {
+        if (c_datatype($outparam) eq "ifx_int8_t")
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if ((c_datatype($outparam) eq "dec_t") ||
+            (c_datatype($outparam) eq "intrvl_t"))
+        {
+            IndWriteLn(qq%#include <decimal.h>%) if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($outparam) eq "intrvl_t")
+        {
+            IndWriteLn(qq%#include <datetime.h>%) if ($invfound == 0);
+            $invfound = 1;
+        }
+        if (c_datatype($outparam) eq "dtime_t")
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+   
+    AddNewLine(1);
+    IndWriteLn(qq%extern struct%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%int4 sqlcode;%);
+    IndWriteLn(qq%char sqlerrm[72];%);
+    IndWriteLn(qq%char sqlerrp[8];%);
+    IndWriteLn(qq%int4 sqlerrd[6];%);
+    IndWriteLn(qq%char sqlawarn[8];%);
+    DecrementLevel;
+    IndWriteLn(qq%} sqlca;%);
+
+    AddNewLine(1);
+    IndWriteLn(qq%static const char fgl_modname[] = "${funcname}_wrap.c";%);
+    AddNewLine(1);
+
+    # Create output structure for multiple values; variable for single values
+    # Generate function header
+    my $return_type = "";
+    if (@outparams > 1)
+    {
+        IndWriteLn(qq%struct out_struct%);
+        IndWriteLn(qq%{%);
+	IncrementLevel;
+        for (my $i = 0; $i < @outparams; $i++)
+	{
+            # check for all types of chars such as char, nchar, varchar
+            # Do we support LVARCHAR?
+	    my $base = basic_type($outparams[$i]);
+	    my $qual = "";
+
+            if ($base =~ m/char/i)
+            {
+		my $len = char_length($outparams[$i]) + 1;
+		$qual = "[$len]";
+            }
+	    IndWriteLn(qq%$I4GLToCdatamap{$base} out_par$i$qual;%);
+            $outcnt++;
+        }
+	DecrementLevel;
+        IndWriteLn(qq%};%);
+        AddNewLine(2);
+	$return_type = "struct out_struct * out, ";
+    }
+    else
+    {
+    	
+	my $ptr = " *";
+	my $base = basic_type($outparams[0]);
+        if($base eq "void" || $base eq "")
+        {
+            $return_type="";
+        }
+        else
+        {
+            $return_type = "$I4GLToCdatamap{$base}$ptr out,";
+        }
+        $outcnt = 1;
+    }
+
+    IndWrite(qq%int call_$funcname($return_type %);
+
+    my $lenofinp = scalar(@inparams);
+    my $pad = "";
+    for (my $i = 0; $i < $lenofinp; $i++)
+    {
+	my $base = basic_type($inparams[$i]);
+        my $ptr = "";
+        if ($base ne "void")
+        {
+            $ptr = "*" if ($inparams[$i] =~ m/char/i);
+            Write("$pad$I4GLToCdatamap{$base} ${ptr}param$i");
+            $pad = ", ";
+        }
+        else
+        {
+            $lenofinp = 0; # Its a work-around to support VOID datatypes for INPUT
+        }
+    }
+
+    IndWriteLn(qq%)%);
+    IndWriteLn(qq%{%);
+    
+    IncrementLevel;
+    IndWriteLn(qq%int i;%);
+
+    AddNewLine(1);
+    IndWriteLn(qq%/* pass the name of the file containing the p-code to execute */%);
+    IndWriteLn(qq%int rc;%);
+    IndWriteLn("/* set the 4GL environment */");
+
+    PutEnv("INFORMIXSERVER", $infx_svr);
+    PutEnv("CLIENT_LOCALE", $client_locale);
+    PutEnv("DB_LOCALE", $db_locale);
+
+    AddNewLine(1);
+
+    IndWriteLn(qq%fgl_start("$funcname");%);
+    IndWriteLn(qq%ibm_lib4gl_recordTssAndHwmState((char *)0);%);
+    IndWriteLn(qq%ibm_lib4gl_recordDynArrStack();%);
+    
+    AddNewLine(1);
+
+    # Open database
+    if ($database ne "")
+    {
+        AddNewLine(1);
+        IndWriteLn(qq%sqli_db_open("$database",0);%);
+
+        # Add condition to check for any database errors
+        DBErrorCheck;
+    }
+
+    # Push arguments onto I4GL stack
+    for (my $i = 0; $i < @inparams; $i++)
+    {
+	my $in = $inparams[$i];
+	my $base = basic_type($in);
+	my $tail = "";
+        $scale = "";
+        $prec = "";
+
+        if ($base ne "void")
+        {
+            if ($base =~ m/^(?:char|nchar|character)/)
+            {
+                # Not sure if length incr by 1
+                my $len  = char_length($in);
+                $tail = ", $len";
+                IndWriteLn("if ((strlen(param$i)) < $len)");
+                IndWriteLn(qq%{%);
+                IncrementLevel;
+                IndWriteLn("for (i = $len; i > strlen(param$i); i--)");
+                IndWriteLn(qq%{%);
+                IncrementLevel;
+                IndWriteLn(qq% param$i = strcat(param$i," ");%);
+                DecrementLevel;
+                IndWriteLn(qq%}%);
+                DecrementLevel;
+                IndWriteLn(qq%}%);
+            }
+            elsif ($base =~ m/^(?:varchar|[nl]varchar)/)
+            {
+	        my $len  = char_length($in);
+	        $tail = ", ((strlen(param$i) < $len) ? strlen(param$i) : $len)";
+            }
+            elsif ($base =~ m/^(?:decimal|numeric|money)/)
+            {
+                ($scale, $prec) = dec_scale_prec($in);
+                $tail = ", PRECMAKE ($scale, $prec)";
+            }
+	    IndWriteLn(qq%$DatatypeToPushfuncmap{$base}param$i$tail);%);
+        }
+    }
+
+    # What about marking and restoring the I4GL stack?
+
+    # Call the I4GL function
+    AddNewLine(1);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%int n_ret = fgl_call($funcname, $lenofinp);%);
+    
+    if($outparams[0] eq "void")
+    {
+        WriteFatalError("n_ret != 0 ","-1320");
+    }
+    else
+    { 
+        WriteFatalError("n_ret != " . @outparams, " -1320");
+    }
+
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+    AddNewLine(1);
+
+    # Popping the stack instead of resetting and loading as I4GL does 
+    # ... probably OK.
+    if (@outparams > 1)
+    {
+        for (my $i = @outparams - 1; $i >= 0; $i--)
+        {
+	    my $base = basic_type($outparams[$i]);
+            if ($base =~ m/char/i)
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}out->out_par$i, " . char_length($outparams[$i]) . " + 1);");
+            }
+            elsif ($base =~ m/interval/i)
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&out->out_par$i, " . encode_interval($outparams[$i]) . ");");
+            }
+            elsif ($base =~ m/datetime/i)
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&out->out_par$i, " . encode_datetime($outparams[$i]) . ");");
+            }
+            elsif ($base =~ m/money/i)
+            {
+                $scale = ""; $prec = "";
+                ($scale, $prec) = dec_scale_prec($outparams[$i]);
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&out->out_par$i, PRECMAKE ($scale, $prec));");
+            }
+            else
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&out->out_par$i);");
+            }
+        }
+    }
+    elsif ($outparams[0] eq "void")
+    {
+        IndWriteLn("/* No Pop because no return type */");
+    }
+    else
+    {
+        my $tail = "";
+	my $base = basic_type($outparams[0]);
+        if ($base =~ m/char/i)
+        {
+            #$strlength = char_length($outparams[0]);
+            $strlength = char_length($outparams[0]) + 1;
+            $tail= ", $strlength";
+        }
+        elsif ($base =~ m/interval/i)
+        {
+            $tail= ", " . encode_interval($outparams[0]);
+        }
+        elsif ($base =~ m/datetime/i)
+        {
+            $tail= ", " . encode_datetime($outparams[0]);
+        }
+        elsif ($base =~ m/money/i)
+        { 
+            $scale = ""; $prec = "";
+            ($scale, $prec) = dec_scale_prec($outparams[0]);
+            $tail = ", PRECMAKE ($scale, $prec)";
+        }
+        IndWriteLn($DatatypeToPopFuncmap{$base} . "out$tail);");
+    }
+    #IndWriteLn("fflush(0);"); #Not sure if to use this, need more testing hence retaining it
+
+    if ($database ne "")
+    {
+        IndWriteLn(qq%sqli_db_close();%);
+        DBErrorCheck;
+    }
+
+    AddNewLine(1);
+    IndWriteLn(qq%ibm_lib4gl_relUnwantedTssEntries();%);
+    IndWriteLn(qq%ibm_lib4gl_restoreHwmState();%);
+    IndWriteLn(qq%ibm_lib4gl_releaseDynArrStack();%);
+    IndWriteLn(qq%ibm_lib4gl_allocSpaceForStrInTss($outcnt);%); #Not sure whether to use this
+    IndWriteLn(qq%fgl_end();%);
+    AddNewLine(1);
+
+    my $retval = "";
+    $retval = " out" if ($outparams[0] ne "void");
+    IndWriteLn(qq%return $outcnt;%);
+
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    close(OUTFILE);
+
+    # Log the temp file name
+    LogTempFile ($WrapFileName);
+}
+
+sub GenerateI4GLWrap_Cons
+{
+    my($funcname, $srvcname, $WsdlFilePath, $wsdl_ns, $i4glfunc, $tgtfile, $tgtdir, 
+       $Arg_inparams, $Arg_invars, $Arg_outparams, $Arg_outvars) = @_;
+    #Use the wsdl to generate the source
+    my $cfile = $tgtdir . "/axis2_stub_" . $srvcname . ".c";
+    my $hfile = $tgtdir . "/axis2_stub_" . $srvcname . ".h";
+    #create the modified header file
+    my $modhfile = $tgtdir . "/axis2_stub_" . $srvcname . "_" . $i4glfunc .".h";
+    my $token_qualified = "elementFormDefault=" . '"qualified"';
+
+    if (! -e "$WsdlFilePath")
+    {
+        my $targetfile = filename_cons($tgtfile);
+        my $ErrLogFile = "$tgtdir/$targetfile.err";
+        open(OUTFILE, " >> $ErrLogFile") || FatalError("Error $!: Cannot open wsdl file $ErrLogFile");
+        IndWriteLn("Cannot open wsdl file $WsdlFilePath");
+        FatalError("Error $!: Cannot open wsdl file $WsdlFilePath");
+        close(OUTFILE);
+    }
+
+    open(FH, "$WsdlFilePath");
+    my @lines = <FH>;
+    my $qual_found = 0;
+    foreach my $line(@lines)
+    {
+        if (index ($line, $token_qualified) >= 0)
+        {
+            $qual_found = 1;
+            last;
+        }
+    }
+    close(FH);
+
+    my $command = "java org.apache.axis2.wsdl.WSDL2C -o $tgtdir -uri $WsdlFilePath -sd -d none";
+    if ($SilentMode eq 1)
+    {
+       #$command = $command . ">/dev/null 2>&1";
+       $command = $command . " 2 >/dev/null";
+    }
+
+    system($command) == 0
+           or FatalError("Error ($!): " . $command);
+
+    #Delete the header and C file generated
+    system("rm -f $hfile 2> /dev/null");
+    system("rm -f $modhfile 2> /dev/null");
+    #and create it manually
+    open(OUTFILE, ">> $modhfile") || FatalError("Error $!: Cannot open header file $modhfile");
+    IndWriteLn(qq%#include <stdio.h>%);
+    IndWriteLn(qq%#include <axiom.h>%);
+    IndWriteLn(qq%#include <axutil_utils.h>%);
+    IndWriteLn(qq%#include <axiom_soap.h>%);
+    IndWriteLn(qq%#include <axis2_client.h>%);
+    IndWriteLn(qq%#include <axis2_stub.h>%);
+    IndWriteLn("axis2_stub_t* axis2_stub_" . $srvcname . "_" . $i4glfunc . "_create (const axutil_env_t *env, axis2_char_t *client_home, axis2_char_t *endpoint_uri);");
+    IndWriteLn("void axis2_stub_" . $srvcname . "_" . $i4glfunc . "_populate_services( axis2_stub_t *stub, const axutil_env_t *env);");
+    IndWriteLn("axis2_char_t *axis2_stub_" . $srvcname . "_" . $i4glfunc . "_get_endpoint_uri_from_wsdl ( const axutil_env_t *env );");
+    IndWriteLn("axiom_node_t* axis2_stub_" . $srvcname . "_" . $i4glfunc . "( axis2_stub_t *stub, const axutil_env_t *env, axiom_node_t* $funcname);");
+    IndWriteLn("void axis2_stub_" . $srvcname . "_" . $i4glfunc . "_start( axis2_stub_t *stub, const axutil_env_t *env, axiom_node_t* $funcname, axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t* ) , axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t*, int ));");
+    close (OUTFILE);
+
+    #Open a file handle to read the file
+    #Delete the lines based on token
+    #cat the remaining lines of cfile to wrapper file
+    #Append the deleted lines to wrapper file
+    open(FH, "+< $cfile") || die ("Cannot open file");
+    @lines = <FH>;
+
+    my $soap_token = "axis2_options_set_soap_version";
+    my $soap_stmt = "";
+    foreach my $line(@lines) 
+    {
+        if (index ($line, $soap_token) >= 0)
+        {
+            $soap_stmt = $line;
+            last;
+        }
+    }
+    my $addr_token = "endpoint_uri = " . '"http://';
+    my $uri = "";
+    foreach my $line(@lines)
+    {
+        if (index ($line, $addr_token) >= 0)
+        {
+            $uri = $line;
+            last;
+        }
+    }
+    #I4GL function implementation
+
+    my(@inparams) = @$Arg_inparams;
+    my(@outparams) = @$Arg_outparams;
+    my(@invars) = @$Arg_invars;
+    my(@outvars) = @$Arg_outvars;
+
+    my $i4glfile = filename_cons($tgtfile);
+    my $i4glFilename = "$tgtdir/$i4glfile";
+    my $i = 0;
+    my $pad = "";
+    my $ptr = "";
+    my $qual = "";
+    my $len = "";
+    my ($in, $input, $out, $output);
+    my $base = "";
+    my ($reqstr, $reqstr1, $reqstr2);
+    my $tail = "";
+    my $scale = "";
+    my $prec = "";
+    my $found = 0;
+    my ($int8found, $decfound, $invfound, $dtfound);
+    $int8found = 0; $decfound = 0; $invfound = 0; $dtfound = 0;
+
+    DisplayString ("The i4gl file is $i4glFilename \n");
+    ResetLevel;
+    open (OUTFILE, ">", $i4glFilename) || FatalError("Error writing ($!): $i4glFilename");
+
+    IndWriteLn(qq%#include <stdlib.h>%);
+    IndWriteLn(qq%#include <fglapi.h>%);
+    IndWriteLn(qq%#include <fglsys.h>%);
+    IndWriteLn(qq%#include <stdio.h>%);
+    IndWriteLn(qq%#include <ifxtypes.h>%);
+    IndWriteLn(qq%#include <axiom.h>%);
+    IndWriteLn(qq%#include <axis2_util.h>%);
+    IndWriteLn(qq%#include <axiom_soap.h>%);
+    IndWriteLn(qq%#include <axis2_client.h>%);
+    IndWriteLn("#include " . '"axis2_stub_' . $srvcname . "_" . $i4glfunc . '.h"');
+    IndWriteLn(qq%#include <axis2_msg.h>%);
+
+    foreach my $in(@inparams)
+    {
+        if ((c_datatype($in) eq "ifx_int8_t"))
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if (((c_datatype($in) eq "dec_t")) || (c_datatype($in) eq "intrvl_t"))
+        {
+            IndWriteLn(qq%#include <decimal.h>%) if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($in) eq "intrvl_t")
+        {
+            IndWriteLn(qq%#include <datetime.h>%) if ($invfound == 0);
+            $invfound = 1;
+        }
+        if (c_datatype($in) eq "dtime_t")
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+    foreach my $out(@inparams)
+    {
+        if (c_datatype($out) eq "ifx_int8_t")
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if (((c_datatype($out) eq "dec_t")) || (c_datatype($out) eq "intrvl_t"))
+        {
+            IndWriteLn(qq%#include <decimal.h>%) if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($out) eq "intrvl_t")
+        {
+            IndWriteLn(qq%#include <datetime.h>%) if ($invfound == 0);
+            $invfound = 1;
+        }
+        if (c_datatype($out) eq "dtime_t")
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+   
+    if ($dtfound == 1)
+    {
+        IndWriteLn("typedef enum");
+        IndWriteLn("{");
+        IncrementLevel;
+        IndWriteLn("XSD_date,");
+        IndWriteLn("XSD_dateTime,");
+        IndWriteLn("XSD_gDay,");
+        IndWriteLn("XSD_gMonthDay,");
+        IndWriteLn("XSD_gMonth,");
+        IndWriteLn("XSD_gYear,");
+        IndWriteLn("XSD_gYearMonth,");
+        IndWriteLn("XSD_time,");
+        IndWriteLn("XSD_gMonthTime,");
+        IndWriteLn("XSD_gDayTime");
+        DecrementLevel;
+        IndWriteLn("} XSD_dt_t;");
+    }
+ 
+    AddNewLine(1);
+    IndWriteLn(qq%static const char fgl_modname[] = "${i4glfile}";%);
+    AddNewLine(1); 
+    $reqstr = "";
+    for ($i = 0; $i <= @inparams - 1; $i++)
+    {
+        $reqstr .= "${pad}char*";
+        $reqstr1 .= "${pad}inreq$i";
+        $reqstr2 .= "${pad}char* inreq$i";
+        $pad = ", ";
+    }
+    
+    IndWriteLn("axiom_node_t *build_om_request_" . $srvcname . "_" . $i4glfunc . "(const axutil_env_t *env, " . substr($reqstr, 0, (length($reqstr))) . ");");
+    AddNewLine(1);
+    IndWriteLn("const axis2_char_t * process_om_response_" . $srvcname . "_" . $i4glfunc . "(const axutil_env_t *env, axiom_node_t *node);");
+    AddNewLine(1);
+
+    IndWriteLn(qq%int ${i4glfunc}(int nargs)%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%const axutil_env_t *env = NULL;%);
+    IndWriteLn(qq%axis2_endpoint_ref_t* endpoint_ref = NULL;%);
+    IndWriteLn(qq%const axis2_char_t *client_home = NULL;%);
+    IndWriteLn(qq%axiom_node_t *payload = NULL;%);
+    IndWriteLn(qq%axiom_node_t *ret_node = NULL;%);
+    IndWriteLn(qq%axiom_node_t *res_node = NULL;%);
+    IndWriteLn(qq%int rc = 0;%);
+    AddNewLine(1);
+    $i = 0;
+    foreach $in(@inparams)
+    {
+        $base = basic_type($inparams[$i]);
+        if ($base =~ m/char/i)
+        {
+            $len = char_length($in) + 1;
+            $qual = "[$len]";
+            IndWriteLn("$I4GLToCdatamap{$base} input$i$qual; char inreq$i$qual;");
+        }
+        else
+        {
+            $qual = "[256] = " . '"\0";';
+            IndWriteLn("$I4GLToCdatamap{$base} input$i; char inreq$i$qual;");
+        }        
+        $i++;
+    }
+    
+    AddNewLine(1);
+    IndWriteLn(qq%env = axutil_env_create_all("test_client.log", AXIS2_LOG_LEVEL_ERROR);%);
+    IndWriteLn(qq%client_home = AXIS2_GETENV("AXIS2C_HOME");%);
+    WriteFatalError("nargs != " . @inparams , " -1320");
+
+    IndWriteLn("axis2_char_t* endpoint_uri = axis2_stub_" . $srvcname . "_" . $i4glfunc . "_get_endpoint_uri_from_wsdl(env);");
+    IndWriteLn("axis2_stub_t* stub = axis2_stub_" . $srvcname . "_" . $i4glfunc . "_create(env, client_home, endpoint_uri);");
+
+
+    # For all inputs Pop from stack, convert to string and pop to create the reequest
+    $pad = "";
+    $base = "";
+    for ($i = @inparams - 1; $i >= 0; $i--)
+    {
+        $base = basic_type($inparams[$i]);
+        $input = $I4GLToCdatamap{$base};
+        if ($input eq "intrvl_t")
+        {
+            IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i, " . encode_interval($inparams[$i]) . ");");
+            IndWriteLn("rc = intoxsdduration(&input$i, inreq$i, sizeof(inreq$i)-1);");
+            IndWriteLn("if (rc < 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($input eq "dtime_t")
+        {
+            IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i, " . encode_datetime($inparams[$i]) . ");");
+            IndWriteLn("XSD_dt_t *xsd_type;") if ($found == 0);
+            $found = 1;
+
+            if ((lc($inparams[$i]) eq "datetime month to hour") || (lc($inparams[$i]) eq "datetime month to minute") || (lc($inparams[$i]) eq "datetime month to second") || (lc($inparams[$i]) eq "datetime month to fraction"))
+            {
+                IndWriteLn("xsd_type = XSD_gMonthTime;");
+            }
+            elsif ((lc($inparams[$i]) eq "datetime day to hour") || (lc($inparams[$i]) eq "datetime day to minute") || (lc($inparams[$i]) eq "datetime day to second") || (lc($inparams[$i]) eq "datetime day to fraction"))
+            {
+                IndWriteLn("xsd_type = XSD_gDayTime;");
+            }
+            else
+            {
+                IndWriteLn("xsd_type = " . $XSDScannerMap{$I4GLDatetimeToXSD{$inparams[$i]}} . ";");
+            }
+
+            IndWriteLn("rc = dttoxsddatetime(&input$i, inreq$i, sizeof(inreq$i), &xsd_type);");
+            IndWriteLn("if (rc < 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel; 
+        }
+        elsif ($input eq "dec_t")
+        {
+            my ($scale, $prec) = dec_scale_prec($inparams[$i]);
+            if ($inparams[$i] =~ m/money/i)
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i, PRECMAKE($scale, $prec));");
+            }
+            else
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i);");
+            }
+            IndWriteLn("decround(&input$i, $prec);");
+            IndWriteLn("if ((input$i.dec_exp) > (input$i.dec_ndgts))");
+            IncrementLevel;
+            IndWriteLn("rc = dectoasc(&input$i, inreq$i, (((input$i.dec_exp)*2)), -1);");
+            DecrementLevel;
+            IndWriteLn("else");
+            IncrementLevel;
+            IndWriteLn("rc = dectoasc(&input$i, inreq$i, (((input$i.dec_ndgts)*2)), -1);");
+            DecrementLevel;
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        } 
+        elsif ($input eq "ifx_int8_t")
+        {
+            IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i);");
+            IndWriteLn("rc = ifx_int8toasc(&input$i, inreq$i, sizeof(inreq$i)-1);");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($input eq "int4")
+        {
+            IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i);");
+            IndWriteLn("if((rc = rfmtdate(input$i,".'"yyyy/mm/dd"'.",inreq$i))< 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        else
+        {
+            if ($input =~ m/char/i)
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}input$i, " . char_length($inparams[$i]) . " + 1);");
+            }
+            else
+            {
+                IndWriteLn("$DatatypeToPopFuncmap{$base}&input$i);");
+            }
+	    IndWriteLn("sprintf(inreq$i," . '"' . $PrintFuncMap{$I4GLToCdatamap{$base}} . '", input' . $i. ");");
+	}
+    }
+
+    IndWriteLn("payload = build_om_request_" . $srvcname . "_" . $i4glfunc . "(env, " . substr($reqstr1, 0, (length($reqstr1))) . ");");
+    IndWriteLn("ret_node = axis2_stub_" . $srvcname . "_" . $i4glfunc . "(stub, env, payload);");
+    IndWriteLn(qq%if (ret_node)%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn("const axis2_char_t *greeting = process_om_response_" . $srvcname . "_" . $i4glfunc . "(env, ret_node);");
+    IndWriteLn(qq%axiom_node_free_tree(ret_node, env);%);
+    IndWriteLn(qq%ret_node = NULL;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+    IndWriteLn(qq%else%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+    AddNewLine(1);
+
+    IndWriteLn(qq%if (payload)%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%axiom_node_free_tree(payload, env);%);
+    IndWriteLn(qq%payload = NULL;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    IndWriteLn(qq%if (env)%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%axutil_env_free((axutil_env_t *) env);%);
+    IndWriteLn(qq%env = NULL;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    my $outcnt = @outparams;
+    IndWriteLn(qq%return $outcnt;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%); 
+
+    AddNewLine(1);
+    IndWriteLn("axiom_node_t * build_om_request_" . $srvcname . "_" . $i4glfunc . "(const axutil_env_t *env, " . substr($reqstr2, 0, (length($reqstr2))) . ")");
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%axiom_namespace_t *tns = NULL;%);
+    IndWriteLn(qq%axiom_node_t *echo_om_node = NULL;%);
+    IndWriteLn(qq%axiom_element_t* echo_om_ele = NULL;%);
+    IndWriteLn(qq%axiom_node_t* text_om_node = NULL;%);
+    IndWriteLn(qq%axiom_element_t * text_om_ele = NULL;%);
+
+    IndWriteLn("tns = axiom_namespace_create(env, " . '"' . $wsdl_ns . '"' . ', "tns");');
+    IndWriteLn(qq%echo_om_ele = axiom_element_create(env, NULL, "${funcname}", tns, &echo_om_node);%);
+    $i = 0;
+    foreach my $varname(@invars)
+    {
+        # How to decide whether to put the tns names for text elements
+        IndWriteLn("text_om_ele = axiom_element_create(env, echo_om_node, " . '"' . $varname . '"' . ", NULL, &text_om_node);") if ($qual_found == 0);
+        IndWriteLn("text_om_ele = axiom_element_create(env, echo_om_node, " . '"' . $varname . '"' . ", tns, &text_om_node);") if ($qual_found == 1);
+        #IndWriteLn("text_om_ele = axiom_element_create(env, echo_om_node, " . '"' . $varname . '"' . ", NULL, &text_om_node);");
+        IndWriteLn(qq%axiom_element_set_text(text_om_ele, env, inreq$i, text_om_node);%);
+        $i++;
+    }
+    IndWriteLn(qq%return echo_om_node;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    AddNewLine(1);
+    IndWriteLn("const axis2_char_t * process_om_response_" . $srvcname . "_" . $i4glfunc . "(const axutil_env_t *env, axiom_node_t *node)");
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%axiom_element_t *first_element = NULL;%);
+    IndWriteLn(qq%axiom_child_element_iterator_t *ci = NULL;%);
+    IndWriteLn(qq%axiom_element_t *ce = NULL;%);
+    IndWriteLn(qq%axiom_node_t *cn = NULL;%);
+    IndWriteLn(qq%axiom_text_t *result = NULL;%);
+    my $outcount = scalar(@outparams);
+    for ($i = 0; $i < $outcount ; $i++)
+    {
+        $base = basic_type($outparams[$i]);
+        $ptr = "";
+        $ptr = "*" if ($outparams[$i] =~ m/char/i);
+        if ($base eq "real" || $base eq "smallfloat")
+        {
+            IndWriteLn("double ${ptr}param$i;");
+        }
+        elsif ( $base eq "smallint")
+        {
+            IndWriteLn("int ${ptr}param$i;");
+        }
+        else
+        {
+            IndWriteLn("$I4GLToCdatamap{$base} ${ptr}param$i;");
+        }
+    }
+    IndWriteLn("axiom_text_t *textArr[$outcount];");
+    IndWriteLn("int i = 0;");
+    IndWriteLn("int rc = 0;");
+
+    IndWriteLn("if (!node)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("AXIS2_ERROR_SET(env->error, AXIS2_ERROR_SVC_SKEL_INVALID_XML_FORMAT_IN_REQUEST, AXIS2_FAILURE);");
+    IndWriteLn(q%printf("ERROR: invalid XML in request\n");%);
+    DecrementLevel;
+    IndWriteLn("}");
+
+    #Get the first element
+    IndWriteLn("first_element = axiom_node_get_data_element(node, env);");
+    IndWriteLn("if (!first_element)");
+    IndWriteLn("{");
+
+    IncrementLevel;
+    IndWriteLn("AXIS2_ERROR_SET(env->error, AXIS2_ERROR_SVC_SKEL_INVALID_XML_FORMAT_IN_REQUEST, AXIS2_FAILURE);");
+    IndWriteLn(q%printf("ERROR: invalid XML in request\n");%);
+    DecrementLevel;
+    IndWriteLn("}");
+
+    IndWriteLn(qq%if ((ci = axiom_element_get_child_elements(first_element, env, node)) != NULL)%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%while(AXIS2_TRUE == axiom_child_element_iterator_has_next(ci, env))%);
+    IndWriteLn(qq%{%);
+    IncrementLevel;
+    IndWriteLn(qq%cn = axiom_child_element_iterator_next(ci, env);%);
+    IndWriteLn(qq%ce = axiom_node_get_data_element(cn, env);%);
+    IndWriteLn(qq%result = axiom_element_get_text(ce, env, cn);%);
+    IndWriteLn("textArr[i] = result;"); # Form an array of all values
+    IndWriteLn("i++;");
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    #IndWriteLn(qq%ibm_lib4gl_recordTssAndHwmState((char *)0);%);
+    #IndWriteLn(qq%ibm_lib4gl_recordDynArrStack();%);
+
+    #Convert string into C types and Push onto stack
+    my $cnt = 1;
+    my $outtype = "";
+    $i = 0;
+    foreach $out(@outparams)
+    {
+        IndWriteLn(qq%ibm_lib4gl_recordTssAndHwmState((char *)0);%);
+        IndWriteLn(qq%ibm_lib4gl_recordDynArrStack();%);
+        $base = basic_type($out);
+        $output = $I4GLToCdatamap{$base};
+        $tail = "";
+        $scale = "";
+        $prec = "";
+        if ($output =~ m/char/i)
+        {
+            IndWriteLn("param" . $i . " = textArr[$i];");
+            if ($base =~ m/^(?:char|nchar|character)/)
+            {
+                $len  = char_length($out);
+                $tail = ", $len";
+                IndWriteLn("if ((strlen(param$i)) < $len)");
+                IndWriteLn(qq%{%);
+                IncrementLevel;
+                #IndWriteLn("for (i = strlen(param$i); i < $len; i++)");
+                IndWriteLn("for (i = $len; i > strlen(param$i); i--)");
+                IndWriteLn(qq%{%);
+                IncrementLevel;
+                IndWriteLn(qq% param$i = strcat(param$i," ");%);
+                DecrementLevel;
+                IndWriteLn(qq%}%);
+                DecrementLevel;
+                IndWriteLn(qq%}%);
+            }
+            elsif ($base =~ m/^(?:varchar|[nl]varchar)/)
+            {
+                $len  = char_length($out);
+                $tail = ", ((strlen(param$i) < $len) ? strlen(param$i) : $len)";
+            }
+        }
+        elsif (($output eq "short") || ($output eq "int") || ($output eq "float") || ($output eq "double")) # We are now using esql conversion functions
+        {
+            if ($base eq "real" || $base eq "smallfloat")
+            {
+                #IndWriteLn("rc = rstod(textArr[$i], &param" . $i . ");");
+                IndWriteLn("rc = rstod(textArr[$i], &param$i);");
+            }
+            elsif ( $base eq "smallint")
+            {
+                #IndWriteLn("rc = rstol(textArr[$i], &param" . $i . ");");
+                IndWriteLn("rc = rstol(textArr[$i], &param$i);");
+            }
+            else
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$output} . "textArr[$i], &param" . $i . ");");
+            }
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($output eq "dec_t")
+        {
+            IndWriteLn("rc = deccvasc(textArr[$i], strlen(textArr[$i]), &param" . $i . ");");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+            ($scale, $prec) = dec_scale_prec($out);
+            $tail = ", PRECMAKE ($scale, $prec)";
+        }
+        elsif ($output eq "int4")
+        {
+            IndWriteLn("if((rc = rdefmtdate(&param$i,".'"yyyy/mm/dd"'.",textArr[$i]))< 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($output =~ m/intrvl_t/i)
+        {
+            IndWriteLn("rc = " . $StrConvFuncMap{$output} ."textArr[$i], " . encode_interval($out) . ", &param$i);");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($output =~ m/dtime_t/i)
+        {
+            if ((lc($out) eq "datetime month to hour") || (lc($out) eq "datetime month to minute") || (lc($out) eq "datetime month to second") || (lc($out) eq "datetime month to fraction"))
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$output} ."textArr[$i], XSD_gMonthTime, " . encode_datetime($out) . ", &param$i);");
+            }
+            elsif ((lc($out) eq "datetime day to hour") || (lc($out) eq "datetime day to minute") || (lc($out) eq "datetime day to second") || (lc($out) eq "datetime day to fraction"))
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$output} ."textArr[$i], XSD_gDayTime, " . encode_datetime($out) . ", &param$i);");
+            }
+            else
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$output} ."textArr[$i], " . $XSDScannerMap{$I4GLDatetimeToXSD{$out}} . ", " . encode_datetime($out) . ", &param$i);");
+            }
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($output =~ m/ifx_int8_t/i)
+        {
+            IndWriteLn("rc = " . $StrConvFuncMap{$output} ."textArr[$i], strlen(textArr[$i])" . ", &param$i);");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        else
+        {
+            IndWriteLn("param" . $i . " = " .$StrConvFuncMap{$output} ."textArr[$i], (char **)NULL);");
+        }
+
+        if ($base eq "real" || $base eq "smallfloat")
+        {
+            IndWriteLn(qq%ibm_lib4gl_pushDouble(&param$i$tail);%);
+        }
+        elsif ( $base eq "smallint")
+        {
+            IndWriteLn(qq%ibm_lib4gl_pushInt4(param$i$tail);%);
+        }
+        else
+        {
+            IndWriteLn(qq%$DatatypeToPushfuncmap{$base}param$i$tail);%);
+        }
+
+        $i++;
+        #IndWriteLn(qq%ibm_lib4gl_relUnwantedTssEntries();%);
+        #IndWriteLn(qq%ibm_lib4gl_restoreHwmState();%);
+        #IndWriteLn(qq%ibm_lib4gl_releaseDynArrStack();%);
+        #IndWriteLn(qq%ibm_lib4gl_allocSpaceForStrInTss(1);%);
+        AddNewLine(1);
+    }
+ 
+    IndWriteLn(qq%ibm_lib4gl_relUnwantedTssEntries();%);
+    IndWriteLn(qq%ibm_lib4gl_restoreHwmState();%);
+    IndWriteLn(qq%ibm_lib4gl_releaseDynArrStack();%);
+    IndWriteLn(qq%ibm_lib4gl_allocSpaceForStrInTss($i);%);
+    IndWriteLn(qq%return NULL;%);
+    DecrementLevel;
+    IndWriteLn(qq%}%);
+
+    AddNewLine(1);
+    IndWriteLn("axis2_stub_t* axis2_stub_" . $srvcname . "_" . $i4glfunc . "_create (const axutil_env_t *env, axis2_char_t *client_home, axis2_char_t *endpoint_uri)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_stub_t *stub = NULL;");
+    IndWriteLn("axis2_endpoint_ref_t *endpoint_ref = NULL;");
+    IndWriteLn("AXIS2_FUNC_PARAM_CHECK ( client_home, env, NULL)");
+    IndWriteLn("if (NULL == endpoint_uri )");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("endpoint_uri = axis2_stub_" . $srvcname . "_" . $i4glfunc . "_get_endpoint_uri_from_wsdl( env );");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn("endpoint_ref = axis2_endpoint_ref_create(env, endpoint_uri);");
+    IndWriteLn("stub = axis2_stub_create_with_endpoint_ref_and_client_home ( env, endpoint_ref, client_home );");
+    IndWriteLn("axis2_stub_" . $srvcname . "_" . $i4glfunc . "_populate_services( stub, env );");
+    IndWriteLn("return stub;");
+    DecrementLevel;
+    IndWriteLn("}");
+
+    AddNewLine(1);
+    IndWriteLn("void axis2_stub_" . $srvcname . "_" . $i4glfunc . "_populate_services( axis2_stub_t *stub, const axutil_env_t *env)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_svc_client_t *svc_client = NULL;");
+    IndWriteLn("axutil_qname_t *svc_qname =  NULL;");
+    IndWriteLn("axutil_qname_t *op_qname =  NULL;");
+    IndWriteLn("axis2_svc_t *svc = NULL;");
+    IndWriteLn("axis2_op_t *op = NULL;");
+    IndWriteLn("axis2_op_t *annon_op = NULL;");
+    IndWriteLn("axis2_msg_t *msg_out = NULL;");
+    IndWriteLn("axis2_msg_t *msg_in = NULL;");
+    IndWriteLn("axis2_msg_t *msg_out_fault = NULL;");
+    IndWriteLn("axis2_msg_t *msg_in_fault = NULL;");
+    IndWriteLn("svc_client = axis2_stub_get_svc_client (stub, env );");
+    IndWriteLn("svc = (axis2_svc_t*)axis2_svc_client_get_svc( svc_client, env );");
+    IndWriteLn("annon_op = axis2_svc_get_op_with_name(svc, env, AXIS2_ANON_OUT_IN_OP);");
+    IndWriteLn("msg_out = axis2_op_get_msg(annon_op, env, AXIS2_MSG_OUT);");
+    IndWriteLn("msg_in = axis2_op_get_msg(annon_op, env, AXIS2_MSG_IN);");
+    IndWriteLn("msg_out_fault = axis2_op_get_msg(annon_op, env, AXIS2_MSG_OUT_FAULT);");
+    IndWriteLn("msg_in_fault = axis2_op_get_msg(annon_op, env, AXIS2_MSG_IN_FAULT);");
+    IndWriteLn(qq%axutil_qname_create(env, "$srvcname", NULL, NULL);%);
+    IndWriteLn("axis2_svc_set_qname (svc, env, svc_qname);");
+    IndWriteLn("op_qname = axutil_qname_create(env, " . '"' . $funcname . '", ' . '"' . $wsdl_ns .'"' . ", NULL);");
+    IndWriteLn("op = axis2_op_create_with_qname(env, op_qname);");
+    IndWriteLn("axis2_op_set_msg_exchange_pattern(op, env, AXIS2_MEP_URI_OUT_IN);");
+    IndWriteLn("axis2_msg_increment_ref(msg_out, env);");
+    IndWriteLn("axis2_msg_increment_ref(msg_in, env);");
+    IndWriteLn("axis2_msg_increment_ref(msg_out_fault, env);");
+    IndWriteLn("axis2_msg_increment_ref(msg_in_fault, env);");
+    IndWriteLn("axis2_op_add_msg(op, env, AXIS2_MSG_OUT, msg_out);");
+    IndWriteLn("axis2_op_add_msg(op, env, AXIS2_MSG_IN, msg_in);");
+    IndWriteLn("axis2_op_add_msg(op, env, AXIS2_MSG_OUT_FAULT, msg_out_fault);");
+    IndWriteLn("axis2_op_add_msg(op, env, AXIS2_MSG_IN_FAULT, msg_in_fault);");
+    IndWriteLn("axis2_svc_add_op(svc, env, op);");
+    DecrementLevel;
+    IndWriteLn("}");
+   
+    AddNewLine(1);
+    IndWriteLn("axiom_node_t* axis2_stub_" . $srvcname . "_" . $i4glfunc . "( axis2_stub_t *stub, const axutil_env_t *env, axiom_node_t* " . $funcname . ")");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_svc_client_t *svc_client = NULL;");
+    IndWriteLn("axis2_options_t *options = NULL;");
+    IndWriteLn("axiom_node_t *ret_node = NULL;");
+    IndWriteLn("const axis2_char_t *soap_action = NULL;");
+    IndWriteLn("axutil_qname_t *op_qname =  NULL;");
+    IndWriteLn("axiom_node_t *payload = NULL;");
+    IndWriteLn("axis2_bool_t is_soap_act_set = AXIS2_TRUE;");
+    IndWriteLn("axutil_string_t *soap_act = NULL;");
+    IndWriteLn("payload = $funcname;");
+    IndWriteLn("options = axis2_stub_get_options( stub, env);");
+    IndWriteLn("if ( NULL == options )");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI," . '"options is null in stub: Error code: %d :: %s"' . ", env->error->error_number, AXIS2_ERROR_GET_MESSAGE(env->error));");
+    IndWriteLn("return NULL;");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn("svc_client = axis2_stub_get_svc_client(stub, env );");
+    IndWriteLn("soap_action = axis2_options_get_action( options, env );");
+    IndWriteLn("if (NULL == soap_action)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("is_soap_act_set = AXIS2_FALSE;");
+    #IndWriteLn("soap_action =" . '"\"\""' . ";");
+    #IndWriteLn("soap_act = axutil_string_create(env, " . '"\"\"")' . ";");
+    IndWriteLn("soap_action =" . '"' . $wsdl_ns . $funcname . '"' . ";");
+    IndWriteLn("soap_act = axutil_string_create(env, " . '"' . $wsdl_ns . $funcname . '"' . ");");
+    IndWriteLn("axis2_options_set_soap_action(options, env, soap_act);");
+    IndWriteLn("axis2_options_set_action( options, env, soap_action );");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn(qq%$soap_stmt%);
+    IndWriteLn("op_qname = axutil_qname_create(env, " . '"' . $funcname . '"' . ", " . '"' . $wsdl_ns . '"' . ", NULL);");
+    IndWriteLn("ret_node =  axis2_svc_client_send_receive_with_op_qname( svc_client, env, op_qname, payload);");
+    IndWriteLn("if (!is_soap_act_set)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_options_set_soap_action(options, env, NULL);");
+    IndWriteLn("axis2_options_set_action( options, env, NULL);");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn("return ret_node;");
+    DecrementLevel;
+    IndWriteLn("}");
+
+    AddNewLine(1);
+    IndWriteLn("void axis2_stub_" . $srvcname . "_" . $i4glfunc . "_start( axis2_stub_t *stub, const axutil_env_t *env, axiom_node_t* $funcname, axis2_status_t ( AXIS2_CALL *on_complete ) (struct axis2_callback *, const axutil_env_t *) , axis2_status_t ( AXIS2_CALL *on_error ) (struct axis2_callback *, const axutil_env_t *, int ) )");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_callback_t *callback = NULL;");
+    IndWriteLn("axis2_svc_client_t *svc_client = NULL;");
+    IndWriteLn("axis2_options_t *options = NULL;");
+    IndWriteLn("const axis2_char_t *soap_action = NULL;");
+    IndWriteLn("axiom_node_t *payload = NULL;");
+    IndWriteLn("axis2_bool_t is_soap_act_set = AXIS2_TRUE;");
+    IndWriteLn("axutil_string_t *soap_act = NULL;");
+    IndWriteLn("options = axis2_stub_get_options( stub, env);");
+    IndWriteLn("if (NULL == options)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI," . '"options is null in stub: Error code: %d :: %s"' . ", env->error->error_number, AXIS2_ERROR_GET_MESSAGE(env->error));");
+    IndWriteLn("return;");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn("svc_client = axis2_stub_get_svc_client (stub, env);");
+    IndWriteLn("soap_action =axis2_options_get_action (options, env);");
+    IndWriteLn("if (NULL == soap_action)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("is_soap_act_set = AXIS2_FALSE;");
+    #IndWriteLn("soap_action =" . '"\"\""' . ";");
+    #IndWriteLn("soap_act = axutil_string_create(env, " . '"\"\"")' . ";");
+    IndWriteLn("soap_action =" . '"' . $wsdl_ns . $funcname . '"' . ";");
+    IndWriteLn("soap_act = axutil_string_create(env, " . '"' . $wsdl_ns . $funcname . '"' . ");");
+    IndWriteLn("axis2_options_set_soap_action(options, env, soap_act);");
+    IndWriteLn("axis2_options_set_action( options, env, soap_action);");
+    DecrementLevel;
+    IndWriteLn("}");
+    IndWriteLn("$soap_stmt");
+    IndWriteLn("callback = axis2_callback_create(env);");
+    IndWriteLn("axis2_callback_set_on_complete(callback, on_complete);");
+    IndWriteLn("axis2_callback_set_on_error(callback, on_error);");
+    IndWriteLn("axis2_svc_client_send_receive_non_blocking(svc_client, env, payload, callback);");
+    IndWriteLn("if (!is_soap_act_set)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_options_set_soap_action(options, env, NULL);");
+    IndWriteLn("axis2_options_set_action(options, env, NULL);");
+    DecrementLevel;
+    IndWriteLn("}");
+    DecrementLevel;
+    IndWriteLn("}");
+
+    AddNewLine(1);
+    IndWriteLn("axis2_char_t* axis2_stub_" . $srvcname . "_" . $i4glfunc . "_get_endpoint_uri_from_wsdl ( const axutil_env_t *env )");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("axis2_char_t *endpoint_uri = NULL;");
+    IndWriteLn($uri);
+    IndWriteLn("return endpoint_uri;");
+    DecrementLevel;
+    IndWriteLn("}");
+
+    system("rm -f $cfile 2> /dev/null");
+    $cfile = "";
+    $found = 0;
+}
+
+sub PutEnv
+{
+    my ($lhs, $rhs, $writetofile) = @_;
+    my ($PutEnvStr) = qq%rc = putenv("$lhs=$rhs");%;
+
+    IndWriteLn($PutEnvStr);
+    WriteFatalError ("rc", "-1");
+}
+###################################
+# Construct various File Names
+###################################
+sub xml_filename_prov
+{
+    my($tmpdir) = @_;
+    return "$tmpdir/services.xml";
+}
+
+sub skel_h_filename_prov
+{
+    my($tmpdir, $svcname) = @_;
+    return "$tmpdir/axis2_skel_$svcname.h";
+}
+
+sub skel_c_filename_prov
+{
+    my($tmpdir, $svcname) = @_;
+    return "$tmpdir/axis2_skel_$svcname.c";
+}
+
+sub svc_skel_c_filename_prov
+{
+    my($tmpdir, $svcname) = @_;
+    return "$tmpdir/axis2_svc_skel_$svcname.c";
+}
+sub wsdlfilename_prov
+{
+    my($tmpdir, $funcname) = @_;
+    return "$tmpdir/$funcname.wsdl" if ($tmpdir ne "");
+    return "$funcname.wsdl" if ($tmpdir eq "");
+    #return "$tmpdir/$funcname.wsdl";
+}
+
+# Convert I4GL data type to corresponding C data type
+sub c_datatype
+{
+    my($i4gl_type) = @_;
+    my($base_type) = basic_type($i4gl_type);
+    if ($base_type =~ m/interval/i)
+    {
+        encode_interval($i4gl_type);
+    }
+    if ($base_type =~ m/datetime/i)
+    {
+        encode_datetime($i4gl_type);
+    }
+    FatalError ("Failed to map I4GL type $i4gl_type to basic type") unless defined $base_type;
+    my($cmap_type) = $I4GLToCdatamap{$base_type};
+    FatalError ("Failed to map I4GL type $i4gl_type to C type") unless defined $cmap_type;
+    return($cmap_type);
+}
+
+# Convert I4GL data type to corresponding XSD data type
+sub xsd_datatype
+{
+    my($i4gl_type) = @_;
+    my($cmap_type) = c_datatype($i4gl_type);
+    my($xsd_type) = "";
+    if ($cmap_type =~ m/dtime_t/i) #Only for Datetime we define separate XSD types
+    {
+        $xsd_type = $I4GLDatetimeToXSD{$i4gl_type};
+    }
+    else
+    {
+        $xsd_type = $CToXSDdatamap{$cmap_type};
+    }
+    FatalError ("Failed to map I4GL type $i4gl_type to XSD type") unless defined $xsd_type;
+    return($xsd_type);
+}
+
+###################################
+# Generate WSDL File
+###################################
+sub GenerateWSDLFile_Prov
+{
+    my ($tmpdir, $funcname, $svcname, $Arg_inparamtypes, $Arg_inparamnames, $Arg_outparamtypes, $Arg_outparamnames, $hostname, $portno) = @_;
+
+    my (@inparamtypes, @inparamnames, @outparamtypes, @outparamnames);
+    my ($WsdlFileName);
+    my ($base);                     # to store the base data type name
+
+    @inparamnames = @$Arg_inparamnames;
+    @inparamtypes = @$Arg_inparamtypes;
+    @outparamnames = @$Arg_outparamnames;
+    @outparamtypes = @$Arg_outparamtypes;
+
+    $WsdlFileName = wsdlfilename_prov($tmpdir, $funcname);
+
+    ResetLevel;
+
+    open(OUTFILE, ">$WsdlFileName") || FatalError ("Error writing ($!): $WsdlFileName");
+
+    IndWriteLn('<?xml version="1.0" encoding="UTF-8"?>');
+
+    BeginTagX($WSDLDEF,
+        qq% targetNamespace="http://www.ibm.com/$funcname"%,
+        qq% xmlns="http://schemas.xmlsoap.org/wsdl/"%,
+        qq% xmlns:tns="http://www.ibm.com/$funcname"%,
+        qq% name="$funcname"%,
+        qq% xmlns:apachesoap="http://xml.apache.org/xml-soap"%,
+        qq% xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"%,
+        qq% xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"%,
+        qq% xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/"%,
+        qq% xmlns:xsd="http://www.w3.org/2001/XMLSchema"%);
+
+    IndWriteLn($WSDLBUILTON . `date` . "-->");
+
+    # WSDL Type Definitions
+    BeginTag($WSDLTYPES);
+
+    BeginTagX("schema", ' elementFormDefault="qualified" targetNamespace="http://www.ibm.com/' .  $funcname . '" xmlns="http://www.w3.org/2001/XMLSchema"');
+
+    BeginTagX("element", qq% name="${funcname}"%);
+    BeginTag("complexType");
+    BeginTag("sequence");
+
+    # allinputstr - String consisting of all input types
+    my $allinputstr = "";
+    my $pad = "";
+    my $cnt = 0;
+
+    IncrementLevel;
+    #foreach my $input (@inparamtypes)
+    for (my $i=0; $i<@inparamnames; $i++)
+    {
+        my($base, $xsd_type);
+        $base = basic_type($inparamtypes[$i]);
+        if ($base ne "void")
+        {
+            $xsd_type = xsd_datatype($inparamtypes[$i]);
+            SoloTag(qq%element name="$inparamnames[$i]" type="$xsd_type"%);
+            #$allinputstr = "${allinputstr}${pad}in$cnt";
+            $cnt++;
+            $pad = " ";
+        }
+    }
+    DecrementLevel;
+
+    EndTag("sequence");
+    EndTag("complexType");
+    EndTag("element");
+
+    BeginTagX("element", qq% name="${funcname}response"%);
+
+    BeginTag("complexType");
+    BeginTag("sequence");
+
+    if ($outparamtypes[0] ne "void") #Check if called function returns void
+    {
+        $cnt = 0;
+        #foreach my $out (@outparamtypes)
+        for (my $i=0; $i<@outparamnames; $i++)
+        {
+            my ($base, $xsd_type);
+            $base = basic_type($outparamtypes[$i]);
+            $xsd_type = xsd_datatype($outparamtypes[$i]);
+            SoloTag(qq%element name="$outparamnames[$i]" type="$xsd_type"%);
+            $cnt++;
+        }
+    }
+    EndTag("sequence");
+    EndTag("complexType");
+    EndTag("element");
+    EndTag("schema");
+    EndTag($WSDLTYPES);
+
+    # WSDL Messages
+    BeginTagX($WSDLMESG, qq% name="${funcname}resp"%);
+    SoloTag(qq%$WSDLPART name="body" element="tns:${funcname}response"%);
+    EndTag($WSDLMESG);
+
+    BeginTagX($WSDLMESG, qq% name="${funcname}req"%);
+    SoloTag(qq%$WSDLPART name="body" element="tns:${funcname}"%);
+    EndTag($WSDLMESG);
+   
+
+    # WSDL Ports
+    BeginTagX($WSDLPORTTYPE, qq% name="${funcname}porttype"%);
+    BeginTagX($WSDLOPER, qq% name="$funcname"%);
+    #BeginTagX($WSDLOPER, qq% name="$funcname" parameterOrder="$allinputstr"%);
+
+    BeginTagX($WSDLINPUT, qq% message="tns:${funcname}req" name="${funcname}request"%);
+    EndTag($WSDLINPUT);
+
+    BeginTagX($WSDLOUTPUT, qq% message="tns:${funcname}resp" name="${funcname}response"%);
+    EndTag($WSDLOUTPUT);
+   
+    EndTag($WSDLOPER);
+    EndTag($WSDLPORTTYPE);
+ 
+    # WSDL Binding
+    BeginTagX($WSDLBIND, qq% name="${funcname}soapbinding" type="tns:${funcname}porttype"%);
+
+    SoloTag(qq%$WSDLSOAPBIND style="document" transport="http://schemas.xmlsoap.org/soap/http"%);
+
+    BeginTagX($WSDLOPER, qq% name="$funcname"%);
+    SoloTag(qq%$WSDLSOAPOPER soapAction=""%);
+
+    BeginTag($WSDLINPUT);
+    SoloTag(qq%$WSDLSOAPBODY use="literal"%);
+    EndTag($WSDLINPUT);
+
+    BeginTag($WSDLOUTPUT);
+    SoloTag(qq%$WSDLSOAPBODY use="literal"%);
+    EndTag($WSDLOUTPUT);
+
+
+    EndTag($WSDLOPER);
+    EndTag($WSDLBIND);
+
+    # WSDL Service
+    BeginTagX($WSDLSERV, qq% name="$svcname"%);
+    BeginTagX($WSDLPORT, qq% binding="tns:${funcname}soapbinding" name="${funcname}service"%);
+    #SoloTag(qq%$WSDLADDR location="$ENV{AXIS2C_HOME}/services/$svcname"%);
+    SoloTag(qq%$WSDLADDR location="http://$hostname:$portno/axis2/services/$svcname"%);
+    EndTag($WSDLPORT);
+    EndTag($WSDLSERV);
+
+
+    EndTag($WSDLDEF);
+
+    close (OUTFILE);
+
+    # Log the temp file created here
+    LogTempFile ($WsdlFileName);
+}
+
+########################################################
+# Keep track of all the intermediate files created
+# so that they can be cleaned up upon KeepMode="-keep"
+########################################################
+sub LogTempFile
+{
+    my ($TempFileName) = @_;
+    push (@TempFiles, $TempFileName);
+}
+
+############################################
+# This script generates the server skeleton
+# This function should be split into two
+############################################
+sub GenerateSkelHdrs_Prov
+{
+    my($tmpdir, $funcname, $svcname) = @_;
+
+    # Construct file name with its absolute path
+    my $WsdlFilePath = wsdlfilename_prov($tmpdir, $funcname);
+    my $TargetXMLFile = xml_filename_prov($tmpdir);
+    my $DestHFile = skel_h_filename_prov($tmpdir, $svcname);
+    my $DestCFile = svc_skel_c_filename_prov($tmpdir, $svcname);
+    my $command = "java org.apache.axis2.wsdl.WSDL2C -o $tmpdir -uri $WsdlFilePath -ss -sd -d none";
+
+    # tp remove Repeated includes in .h file
+    system("rm -f $DestHFile 2> /dev/null");
+
+    if ($SilentMode eq 1)
+    {
+       #$command = $command . ">/dev/null 2>&1";
+       $command = $command . " 2>/dev/null";
+    }
+    # Run java application WSDL2C to generate the AXIS files
+    # from the WSDL file
+
+    system($command) == 0 
+           or FatalError("Error ($!): " . $command);
+
+    # The above WSDL2C will generate 4 files namely, axis2_skel_$svcname.h 
+    # axis2_skel_$svcname.c axis2_svc_skel_$svcname.c and services.xml
+
+    ResetLevel;
+
+    # Append additional code in to the generated header file
+    open (OUTFILE, ">>$DestHFile") || 
+                   FatalError("Error $!: Cannot open output file $DestHFile");
+
+    IndWriteLn(qq%#include <axutil_array_list.h>%);
+    IndWriteLn(qq%#include <axis2_op.h>%);
+    IndWriteLn(qq%#include <stdlib.h>%);
+    
+
+    close (OUTFILE);
+
+    system("rm -f $TargetXMLFile 2> /dev/null");
+    open (OUTFILE, ">>$TargetXMLFile") ||
+                   FatalError("Error $!: Cannot open output file $TargetXMLFile");
+    IndWriteLn(qq%<service name="$svcname">%);
+    IncrementLevel;
+    IndWriteLn(qq%<parameter name="wsdl_path">$ENV{AXIS2C_HOME}/services/$svcname/$funcname.wsdl</parameter>%);
+    IndWriteLn(qq%<parameter name="ServiceClass">$svcname</parameter>%);
+    IndWriteLn(qq%<description>$svcname Service </description>%);
+    IndWriteLn(qq%<operation name="$funcname" />%);
+    #IndWriteLn(q%<parameter name="wsamapping">\"\"</parameter>%);
+    DecrementLevel;
+    IndWriteLn(qq%</service>%);
+
+    close (OUTFILE);
+
+    # Log the temporary files we created
+    LogTempFile($DestHFile);
+    LogTempFile($DestCFile);
+    LogTempFile($TargetXMLFile);
+}
+
+
+sub GenerateSkelImpl_Prov
+{
+    my ($tmpdir, $funcname, $svcname, $Arg_inparams, $Arg_inparamnames, $Arg_outparams, $Arg_outparamnames) = @_;
+   
+    my ($in, $input, $inp, $out);
+    my @inparams = @$Arg_inparams;
+    my @outparams = @$Arg_outparams;
+    my @inparamnames = @$Arg_inparamnames;
+    my @outparamnames = @$Arg_outparamnames;
+    my @outtemp= @$Arg_outparams;
+    my $msg = 'sprintf(client_ret0, ';
+    my $DestSkelCFile = skel_c_filename_prov($tmpdir, $svcname);
+    my $strlength="";   
+    my $found = 0;
+    
+    ResetLevel;
+
+    open (OUTFILE, ">$DestSkelCFile") || 
+          FatalError("Error $!: Cannot open output file $DestSkelCFile");
+
+    IndWriteLn(qq%#include "axis2_skel_$svcname.h"%);
+    IndWriteLn(qq%#include <ifxtypes.h>%);    
+
+    my $decfound = 0; my $invfound = 0; my $int8found = 0; my $dtfound = 0;
+    foreach my $inparam (@inparams)
+    {
+        if ((c_datatype($inparam) eq "ifx_int8_t"))
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if ((c_datatype($inparam) eq "dec_t") || 
+            (c_datatype($inparam) eq "intrvl_t"))
+        {
+            IndWriteLn("#include <decimal.h>") if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($inparam) eq "intrvl_t")
+        {
+            IndWriteLn("#include <datetime.h>") if ($invfound == 0);
+            $invfound = 1;
+        }
+        if (c_datatype($inparam) eq "dtime_t")
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+
+    foreach my $outparam (@outparams)
+    {
+        if ((c_datatype($outparam) eq "ifx_int8_t"))
+        {
+            IndWriteLn(qq%#include <int8.h>%) if ($int8found == 0);
+            $int8found = 1;
+        }
+        if ((c_datatype($outparam) eq "dec_t") || 
+            (c_datatype($outparam) eq "intrvl_t"))
+        {
+            IndWriteLn("#include <decimal.h>") if ($decfound == 0);
+            $decfound = 1;
+        }
+        if (c_datatype($outparam) eq "intrvl_t")
+        {
+            IndWriteLn("#include <datetime.h>") if ($invfound == 0); 
+            $invfound = 1;
+        }
+        if ((c_datatype($outparam) eq "dtime_t"))
+        {
+            IndWriteLn("#include <datetime.h>") if (($invfound == 0) && ($dtfound == 0));
+            $dtfound = 1;
+        }
+    }
+
+    if ($dtfound == 1)
+    {
+        IndWriteLn("typedef enum");
+        IndWriteLn("{");
+        IncrementLevel;
+        IndWriteLn("XSD_date,");
+        IndWriteLn("XSD_dateTime,");
+        IndWriteLn("XSD_gDay,");
+        IndWriteLn("XSD_gMonthDay,");
+        IndWriteLn("XSD_gMonth,");
+        IndWriteLn("XSD_gYear,");
+        IndWriteLn("XSD_gYearMonth,");
+        IndWriteLn("XSD_time,");
+        IndWriteLn("XSD_gMonthTime,");
+        IndWriteLn("XSD_gDayTime");
+        DecrementLevel;
+        IndWriteLn("} XSD_dt_t;");
+    }
+
+    my $i = 0;
+    $inp = "";
+    foreach my $inx (@inparams)
+    {
+        my $base = basic_type($inparams[$i]);
+        $in = $I4GLToCdatamap{$base};
+        if (($in eq "void"))
+        {
+            $inp =  $inp . $in . "";
+        }
+        else
+        {
+            if (($in =~ m/char/i))
+            {
+                $input = $in . "*";
+                $inp = $inp . $input . ", ";
+            }
+            else
+            {
+                $inp =  $inp . $in . ", ";
+            }
+        }
+        $i++;
+    }
+    my $outp= "";
+    my $output = "";
+    my $outcnt = @outparams; #Total count of output parameters
+
+
+    #If count is more than 1 treat output as structure
+    #else get the value
+    if ($outcnt == 1)
+    {
+        if ($outparams[0] eq "void")
+        {
+            $out = "";
+            $output = "";
+            $outcnt = 0;
+        }
+        else
+        {
+            my $base = basic_type($outparams[0]);
+            $out = $I4GLToCdatamap{$base};
+        }
+        if ($out =~ m/char/i)
+        {
+            $outp = $outp . $out;
+            $output = $output . $out ." ";
+        }
+        else
+        {
+            $outp = $outp . $out;
+            $output = $output . $out ." ";
+        }
+    }
+    elsif ($outcnt > 1)
+    {
+        $outp = "struct";
+        $output = "struct out_struct";
+    }
+
+    my $reqtxt = "";
+    $i = 0;
+
+    if ($outcnt != 0)
+    {
+	my $reqtxt = "";
+	my $pad = "";
+        for (my $i = 0; $i < $outcnt; $i++)
+        {
+            $reqtxt .= "${pad}axis2_char_t *rettext$i";
+	    $pad = ", ";
+        }
+        IndWriteLn("axiom_node_t *build_res_text_response_$funcname(const axutil_env_t *env, $reqtxt);");
+    }
+
+    if ($outcnt > 1)
+    {
+        #Define structure
+        IndWriteLn("struct out_struct {");
+        IncrementLevel;
+        $i = 0;
+        my $qual = "";
+        my $len = "";
+        foreach $out(@outparams)
+        {
+            my $base = basic_type($outparams[$i]);
+            if ($base =~ m/char/i)
+            {
+                $len = char_length($out) + 1;
+                $qual = "[$len]";
+            }
+            if ($I4GLToCdatamap{$base} =~ m/char/i)
+            {
+                IndWriteLn("$I4GLToCdatamap{$base}  outparam$i$qual;");
+            }
+            else
+            {
+                IndWriteLn("$I4GLToCdatamap{$base}  outparam$i;");
+            }
+            $i++;
+        }
+        DecrementLevel;
+        IndWriteLn("} ;");
+    }
+
+    if ($inp eq "")
+    {
+        if ($outcnt > 1)
+        {
+            IndWriteLn("int call_$funcname($output *);");
+        } 
+        else
+        {
+            if($outparams[0] ne "void")
+            { 
+                IndWriteLn("int call_$funcname($output *);");
+            }
+            else
+            {
+                IndWriteLn("int call_$funcname();");
+            }
+        }
+    }
+    else
+    {
+        if ($outcnt > 1)
+        {
+            IndWriteLn("int call_$funcname ($output *, " . substr($inp, 0, (length($inp))-2) . ");");
+        } 
+        else
+        {
+            if($outparams[0] ne "void")
+            {
+                IndWriteLn("int call_$funcname ($output *, " . substr($inp, 0, (length($inp))-2) . ");");
+            }
+            else
+            {
+                IndWriteLn("int call_$funcname (".substr($inp, 0, (length($inp))-2) . ");");
+            }
+        }
+    }
+
+    IndWriteLn("axiom_node_t* axis2_skel_" . "$svcname" . "_$funcname (const axutil_env_t *env, axiom_node_t* node)");
+    IndWriteLn("{");
+
+    IncrementLevel;
+    IndWriteLn("axiom_element_t *first_element = NULL;");
+    IndWriteLn("axiom_child_element_iterator_t *ci = NULL;");
+    IndWriteLn("axiom_element_t *ce = NULL;");
+    IndWriteLn("axiom_node_t *cn = NULL;");
+    IndWriteLn("axiom_node_t *response_node = NULL;");
+    IndWriteLn("axiom_text_t *result = NULL;");
+    my $inpcount = scalar(@inparams);
+    IndWriteLn("axiom_text_t *textArr[$inpcount];");
+    IndWriteLn("int i = 0;");
+
+    if($outcnt >1)
+    {
+      IndWriteLn("struct out_struct outps;");
+    }
+ 
+    IndWriteLn("int rc;");    
+
+    IndWriteLn("int out;");
+    
+    if($outparams[0] ne "void")
+    {   
+       $i = 0;
+       foreach $out (@outparams)
+       {
+           my $base = basic_type($outparams[$i]);
+           if ($I4GLToCdatamap{$base} =~ m/char/i)
+           {
+               $strlength = char_length($outtemp[$i]) + 1;
+               IndWriteLn($I4GLToCdatamap{$base} . " outparam" . $i . "[$strlength];");
+          
+               IndWriteLn("char *client_ret$i;");
+           }
+           else
+           {
+               IndWriteLn($I4GLToCdatamap{$base} . " outparam" . $i . ";");
+               IndWriteLn("char client_ret" . $i . "[256] = " . '"\0";');
+           }
+           $i++;
+        }
+    }
+
+    $i = 0; # $i contains total number of input variables
+    my $totcount = 0;
+    foreach $in(@inparams)
+    {
+        my $base = basic_type($inparams[$i]);
+        if ($base ne "void")
+        {
+            if ($base eq "real" || $base eq "smallfloat")
+            {
+                $input ="double";
+            } 
+            elsif ( $base eq "smallint")
+            {
+                $input ="int";
+            }
+            else
+            {
+                $input = $I4GLToCdatamap{$base};
+            }
+
+            if ($input =~ m/char/i)
+            {
+                IndWriteLn($input . " *inparam" . $i . ";");
+            }
+            else
+            {
+                IndWriteLn($input . " inparam" . $i . ";");
+            }
+            $i++;
+            $totcount = $i;
+        }
+        else
+        {
+            $totcount = 0;
+        }
+    }
+
+    IndWriteLn("AXIS2_ENV_CHECK(env, NULL);");
+    IndWriteLn("if (!node)");
+    IndWriteLn("{");
+
+    IncrementLevel;
+
+    IndWriteLn("AXIS2_ERROR_SET(env->error, AXIS2_ERROR_SVC_SKEL_INVALID_XML_FORMAT_IN_REQUEST, AXIS2_FAILURE);");
+    IndWriteLn(q%printf("ERROR: invalid XML in request\n");%);
+
+    DecrementLevel;
+    IndWriteLn("}");
+
+    #Get the first element
+    IndWriteLn("first_element = axiom_node_get_data_element(node, env);");
+    IndWriteLn("if (!first_element)");
+    IndWriteLn("{");
+
+    IncrementLevel;
+    IndWriteLn("AXIS2_ERROR_SET(env->error, AXIS2_ERROR_SVC_SKEL_INVALID_XML_FORMAT_IN_REQUEST, AXIS2_FAILURE);");
+    IndWriteLn(q%printf("ERROR: invalid XML in request\n");%);
+
+    DecrementLevel;
+    IndWriteLn("}");
+
+    IndWriteLn("if ((ci = axiom_element_get_child_elements(first_element, env, node)) != NULL)");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("while(AXIS2_TRUE == axiom_child_element_iterator_has_next(ci, env))");
+    IndWriteLn("{");
+    IncrementLevel;
+    IndWriteLn("cn = axiom_child_element_iterator_next(ci, env);");
+    IndWriteLn("ce = axiom_node_get_data_element(cn, env);");
+    IndWriteLn("result = axiom_element_get_text(ce, env, cn);");
+    IndWriteLn("textArr[i] = result;");
+    IndWriteLn("i++;");
+    DecrementLevel;
+    IndWriteLn("}");
+    DecrementLevel;
+    IndWriteLn("}");
+
+    #Loop through input array and obtain
+    my $cnt = 1;
+    $input = "";
+    $in = "";
+    $i = 0;
+    foreach $in(@inparams)
+    {
+        my $base = basic_type($in);
+        $input = $I4GLToCdatamap{$base};
+
+        if ($input ne "void") 
+        {
+            if ($input =~ m/char/i)
+            {
+                IndWriteLn("inparam" . $i . " = textArr[$i];");
+                #if ($base =~ m/^(?:char|nchar|character)/)
+                #{
+                    #my $len  = char_length($in);
+                    #IndWriteLn("if ((strlen(inparam$i)) < $len)");
+                    #IndWriteLn(qq%{%);
+                    #IncrementLevel;
+                    #IndWriteLn("for (i = $len; i > strlen(inparam$i); i--)");
+                    #IndWriteLn(qq%{%);
+                    #IncrementLevel;
+                    #IndWriteLn(qq% inparam$i = strcat(inparam$i," ");%);
+                    #DecrementLevel;
+                    #IndWriteLn(qq%}%);
+                    #DecrementLevel;
+                    #IndWriteLn(qq%}%);
+                #}
+                #else
+                #{
+                    #IndWriteLn("inparam" . $i . " = textArr[$i];");
+                #}
+            }
+            elsif (($input eq "short") || ($input eq "int") || ($input eq "float") || ($input eq "double")) # We are now using esql conversion functions
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$input} . "textArr[$i], &inparam" . $i . ");");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            elsif ($input eq "dec_t")
+            {
+                IndWriteLn("rc = deccvasc(textArr[$i], strlen(textArr[$i]), &inparam" . $i . ");");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            elsif ($input eq "int4")
+            {
+                IndWriteLn("if((rc = rdefmtdate(&inparam$i,".'"yyyy/mm/dd"'.",textArr[$i]))< 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;            
+            }
+            elsif ($input =~ m/intrvl_t/i)
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$input} ."textArr[$i], " . encode_interval($in) . ", &inparam$i);");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            elsif ($input =~ m/ifx_int8_t/i)
+            {
+                IndWriteLn("rc = " . $StrConvFuncMap{$input} ."textArr[$i], strlen(textArr[$i])" . ", &inparam$i);");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            elsif ($input =~ m/dtime_t/i)
+            {
+                if ((lc($in) eq "datetime month to hour") || (lc($in) eq "datetime month to minute") || (lc($in) eq "datetime month to second") || (lc($in) eq "datetime month to fraction"))
+                {
+                    IndWriteLn("rc = " . $StrConvFuncMap{$input} ."textArr[$i], XSD_gMonthTime, " . encode_datetime($in) . ", &inparam$i);");
+                }
+                elsif ((lc($in) eq "datetime day to hour") || (lc($in) eq "datetime day to minute") || (lc($in) eq "datetime day to second") || (lc($in) eq "datetime day to fraction"))
+                {
+                    IndWriteLn("rc = " . $StrConvFuncMap{$input} ."textArr[$i], XSD_gDayTime, " . encode_datetime($in) . ", &inparam$i);");
+                }
+                else
+                {
+                    IndWriteLn("rc = " . $StrConvFuncMap{$input} ."textArr[$i], " . $XSDScannerMap{$I4GLDatetimeToXSD{$in}} . ", " . encode_datetime($in) . ", &inparam$i);");
+                }
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            else
+            {
+                IndWriteLn("inparam" . $i . " = " .$StrConvFuncMap{$input} ."textArr[$i], (char **)NULL);");
+            }
+        }
+        $cnt++;
+        $i++;
+    } #For loop ends here
+     
+    #Call to intermediary C code
+    my $paramlist = "";
+    my $pad = "";
+
+    for ($i=0; $i<$totcount; $i++)
+    {
+        $paramlist .= "${pad}inparam$i";
+        $pad = ", ";
+    }
+
+    my $rettype = "";
+    if ($outcnt == 0)
+    {
+        $rettype = "void";
+    }
+    elsif ($outcnt == 1)
+    {
+        $rettype = "outparam0";
+    }
+    elsif ($outcnt > 1)
+    {
+        $rettype = "outps";
+    }
+
+    if ($paramlist eq "")
+    {
+        if ($outcnt == 0)
+        {
+            IndWriteLn("out = " . "call_" . $funcname . "();");
+        }
+        else
+        {
+           IndWriteLn("out = " . "call_" . $funcname . "(&$rettype, " . substr($paramlist, 0, (length($paramlist))) . ");");
+        }
+    }
+    elsif ($paramlist ne "")
+    {
+        if ($outcnt == 0)
+        {
+           IndWriteLn("out = " . "call_" . $funcname . " (" . substr($paramlist, 0, (length($paramlist))) . ");");
+
+        }
+        else
+        {
+            IndWriteLn("out = " . "call_" . $funcname . " (&$rettype, " . substr($paramlist, 0, (length($paramlist))) . ");");
+        }
+    }
+    
+    IndWriteLn("if(out < 0 )");
+    IncrementLevel;
+    IndWriteLn("return NULL;");
+    DecrementLevel;
+    IndWriteLn("else");
+    IndWriteLn("{");
+   
+    if (($outcnt == 1) && ($outp ne ""))
+    {
+        if ($outp eq "dec_t")
+        {
+            my ($scale, $prec) = dec_scale_prec($outparams[0]);
+            IndWriteLn("decround(&outparam0,$prec);");
+            IndWriteLn("if ((outparam0.dec_exp) > (outparam0.dec_ndgts))");
+            IncrementLevel;
+            IndWriteLn("rc = dectoasc(&outparam0, client_ret0, (((outparam0.dec_exp)*2)), -1);");
+            DecrementLevel;
+            IndWriteLn("else");
+            IncrementLevel;
+            IndWriteLn("rc = dectoasc(&outparam0, client_ret0, (((outparam0.dec_ndgts)*2)), -1);");
+            DecrementLevel;
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+            AddNewLine(1);
+        }
+        elsif ($outp  eq "int4")
+        {
+            IndWriteLn("if((rc = rfmtdate(outparam0,".'"yyyy/mm/dd"'.",client_ret0)) < 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($outp =~ m/intrvl_t/i)
+        {
+            IndWriteLn("rc = intoxsdduration(&outparam0, client_ret0, sizeof(client_ret0)-1);");
+            IndWriteLn("if (rc < 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            #IndWriteLn('printf("Error Conversion from intrvl_t to xsd:duration \n");');
+            DecrementLevel;
+        }
+        elsif ($outp =~ m/ifx_int8_t/i)
+        {
+            IndWriteLn("rc = ifx_int8toasc(&outparam0, client_ret0, sizeof(client_ret0)-1);");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+            DecrementLevel;
+        }
+        elsif ($outp =~ m/dtime_t/i)
+        {
+            if ((lc($outparams[0]) eq "datetime month to hour") || (lc($outparams[0]) eq "datetime month to minute") || (lc($outparams[0]) eq "datetime month to second") || (lc($outparams[0]) eq "datetime month to fraction"))
+            {
+                IndWriteLn("XSD_dt_t *xsd_type = XSD_gMonthTime;");
+            }
+            elsif ((lc($outparams[0]) eq "datetime day to hour") || (lc($outparams[0]) eq "datetime day to minute") || (lc($outparams[0]) eq "datetime day to second") || (lc($outparams[0]) eq "datetime day to fraction"))
+            {
+                IndWriteLn("XSD_dt_t *xsd_type = XSD_gDayTime;");
+            }
+            else
+            {
+                IndWriteLn("XSD_dt_t *xsd_type = " . $XSDScannerMap{$I4GLDatetimeToXSD{$outparams[0]}} . ";");
+            }
+            IndWriteLn("rc = dttoxsddatetime(&outparam0, client_ret0, sizeof(client_ret0), &xsd_type);");
+            IndWriteLn("if (rc != 0)");
+            IncrementLevel;
+            IndWriteLn("return NULL;");
+        }
+        else
+        {
+            if  ($outp =~ m/char/i)
+            {
+                IndWriteLn(qq%if(outparam0==NULL) outparam0[0] = "";%);
+                IndWriteLn("client_ret0 = (char *) malloc ((strlen(outparam0))+1);");
+                #IndWriteLn("if(client_ret0==NULL) return NULL;");
+            }
+            IndWriteLn($msg . '"' . $PrintFuncMap{$outp} . '", outparam0);');
+        }
+    }
+    elsif ($outcnt > 1)
+    {
+        my $i = 0;
+        IncrementLevel;
+        foreach my $out(@outparams)
+        {
+            my $base = basic_type($out);
+            if (($I4GLToCdatamap{$base}) eq "dec_t")
+            {
+                my ($scale, $prec) = dec_scale_prec($out);
+                IndWriteLn("decround(&outps.outparam$i,$prec);");
+                IndWriteLn("if (((&outps.outparam$i)->dec_exp) > ((&outps.outparam$i)->dec_ndgts))");
+                IncrementLevel;
+                IndWriteLn("rc = dectoasc(&outps.outparam$i, client_ret$i, ((((&outps.outparam$i)->dec_exp)*2)), -1);");
+                DecrementLevel;
+                IndWriteLn("else");
+                IncrementLevel;
+                IndWriteLn("rc = dectoasc(&outps.outparam$i, client_ret$i, ((((&outps.outparam$i)->dec_ndgts)*2)), -1);");
+                DecrementLevel;
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+                AddNewLine(1);
+            }
+            elsif (($I4GLToCdatamap{$base}) eq "int4")
+            {
+                IndWriteLn("if((rfmtdate(outps.outparam$i,".'"yyyy/mm/dd"'.",client_ret$i)) < 0)");
+                IndWriteLn("{");
+                IncrementLevel;
+                IndWriteLn("if(rc == -1210)");
+                IndWriteLn("return -1;");
+                IndWriteLn("else if(rc == -1211)");
+                IndWriteLn("return -1;");
+                DecrementLevel;
+                IndWriteLn("}");
+                IndWriteLn("else");
+            }
+            elsif (($I4GLToCdatamap{$base}) eq "intrvl_t")
+            {
+                IndWriteLn("rc = intoxsdduration(&outps.outparam$i, client_ret$i, sizeof(client_ret$i)-1);");
+                IndWriteLn("if (rc < 0)");
+                IncrementLevel;
+                #IndWriteLn('printf("Error Conversion from intrvl_t to xsd:duration \n");');
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+                DecrementLevel;
+            }
+            elsif (($I4GLToCdatamap{$base}) eq "dtime_t")
+            {
+                IndWriteLn("XSD_dt_t *xsd_type;") if ($found == 0);
+                $found = 1;
+                if ((lc($out) eq "datetime month to hour") || (lc($out) eq "datetime month to minute") || (lc($out) eq "datetime month to second") || (lc($out) eq "datetime month to fraction"))
+                {
+                    IndWriteLn("xsd_type = XSD_gMonthTime;");
+                }
+                elsif ((lc($out) eq "datetime day to hour") || (lc($out) eq "datetime day to minute") || (lc($out) eq "datetime day to second") || (lc($out) eq "datetime day to fraction"))
+                {
+                    IndWriteLn("xsd_type = XSD_gDayTime;");
+                }
+                else
+                {
+                    IndWriteLn("xsd_type = " . $XSDScannerMap{$I4GLDatetimeToXSD{$out}} . ";");
+                }
+                IndWriteLn("rc = dttoxsddatetime(&outps.outparam$i, client_ret$i, sizeof(client_ret$i), &xsd_type);");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+                DecrementLevel;
+            }
+            elsif (($I4GLToCdatamap{$base}) eq "ifx_int8_t")
+            {
+                IndWriteLn("rc = ifx_int8toasc(&outps.outparam$i, client_ret$i, sizeof(client_ret$i)-1);");
+                IndWriteLn("if (rc != 0)");
+                IncrementLevel;
+                #IndWriteLn('printf("Error Conversion \n");');
+                IndWriteLn("return NULL;");
+                DecrementLevel;
+            }
+            else
+            {
+                if (($I4GLToCdatamap{$base}) =~ m/char/i)
+                {
+                    IndWriteLn("if(outparam$i==NULL) outparam" . $i . "[0] = " . '"";');
+                    IndWriteLn("client_ret$i = (char *)malloc ((strlen(outps.outparam$i))+1);");
+                    #IndWriteLn("if(client_ret$i==NULL) return NULL;");
+                }
+                IndWriteLn("sprintf(client_ret$i," . '"' . $PrintFuncMap{$I4GLToCdatamap{$base}} . '", outps.outparam' . $i. ");");
+            }
+            $i++;
+        }
+    }
+    elsif($outcnt == 0) 
+    {
+        IndWriteLn("return NULL;");
+        IndWriteLn("}");
+        DecrementLevel;
+    }
+
+    #Build response if function returns parameters
+    my $clientreq = "";
+    my $clientreq1 = "";
+    if ($outcnt != 0)
+    {
+        my $i = 0;
+        foreach my $out(@outparams)
+        {
+            my $base = basic_type($out);
+            if (($I4GLToCdatamap{$base}) =~ m/char/i)
+            {
+                $clientreq = $clientreq . "(axis2_char_t*)client_ret" . $i .", ";
+            }
+            else
+            {
+                $clientreq = $clientreq . "client_ret" . $i .", ";
+            }
+            $clientreq1 = $clientreq1 . "axis2_char_t *" . "rettext" . $i .", ";
+            $i++;
+        }
+        IndWriteLn("response_node = build_res_text_response_$funcname(env, " . substr($clientreq, 0, (length($clientreq)-2)) . ");");
+        
+        IndWriteLn("return response_node;");
+        IndWriteLn("}");
+        DecrementLevel;
+    }
+    DecrementLevel;
+    IndWriteLn("}");
+
+    if ($outcnt != 0)
+    {
+        IndWriteLn("axiom_node_t * build_res_text_response_$funcname(const axutil_env_t *env, " . substr($clientreq1, 0, (length($clientreq1)-2)) . ")");
+        IndWriteLn("{");
+        IncrementLevel;
+        IndWriteLn("axiom_node_t* om_node = NULL;");
+        IndWriteLn("axiom_element_t * om_elem = NULL;");
+        IndWriteLn("axiom_node_t* res_text_om_node = NULL;");
+        IndWriteLn("axiom_element_t * res_text_om_elem = NULL;");
+        
+        my $i = 0;
+        my $node = 0;
+        $out = "";
+        foreach my $out(@outparams)
+        {
+            if ($outcnt != 0)
+            {
+                if ($node == 0)
+                {
+                    IndWriteLn("om_elem = axiom_element_create(env, NULL, " . '"' .$funcname . 'response"' . ", NULL, &om_node);");
+                    $node = -1;
+                }
+                IndWriteLn("res_text_om_elem = axiom_element_create(env, om_node, " . '"' . $outparamnames[$i] . '",' . " NULL, &res_text_om_node);");
+                IndWriteLn("axiom_element_set_text(res_text_om_elem, env, rettext$i, res_text_om_node);");
+            }
+            if ((index($out,'(')) > 0)
+            {
+                $out = substr($out, 0, ((index($out,'('))));
+            }
+            my $base = basic_type($out);
+            if (($I4GLToCdatamap{$base}) =~ m/char/i)
+            {
+                IndWriteLn(qq%if(rettext$i != "" || rettext$i != NULL)%);
+                IncrementLevel;
+                IndWriteLn("free(rettext$i);");
+                DecrementLevel;
+            }
+            $i++;
+        }
+
+        IndWriteLn("return om_node;");
+        DecrementLevel;
+        IndWriteLn("}");
+    }
+
+    $found = 0;
+
+    close (OUTFILE);
+
+    # Log the temporary files created in this module
+    LogTempFile ($DestSkelCFile);
+}
+
+########################################################################
+# Read Configuration File - Support Functions
+########################################################################
+
+# Read one line from configuration file.
+# Strip comments, ignore blank lines, strip leading and trailing blanks.
+sub GetLine
+{
+    my($cfg) = @_;
+    my $line;
+    while ($line = <$cfg>)
+    {
+    	chomp $line;
+	$line =~ s/#.*//;			# Chop comments
+	$line =~ s/^\s+//;			# Leading blanks
+	$line =~ s/\s+$//;			# Trailing blanks
+	return($line) if $line !~ m/^\s*$/;	# Only accept non-blank lines
+    }
+    return($line);	# Empty string - EOF
+}
+
+# Dump content of spec reference.
+# The Dumper function (from Data::Dumper) does this automatically
+# Arguments:
+#	$tag 	-- string identifying which version of the %spec is being printed)
+#	$rspec 	-- reference to %spec
+#	$pad	-- optional argument to prefix (indent) all output
+sub dump_spec
+{
+    my($tag, $rspec, $pad) = @_;
+    my(%spec) = %$rspec;
+    print Dumper($rspec) if debug;
+    $pad = "" unless defined $pad;
+    print "${pad}[$tag]\n";
+    foreach my $key (sort keys %spec)
+    {
+	switch (ref($spec{$key}))
+	{
+	    case 'HASH'
+	    {
+		dump_spec("$key-HASH", $spec{$key}, "$pad    ");
+	    }
+	    case 'ARRAY'
+	    {
+		my($ref) = $spec{$key};
+		printf "** $key: %s\n", ref($ref) if debug;
+		my(@arr) = @$ref;
+		for (my $i = 0; $i < @arr; $i++)
+		{
+		    my($ref) = $arr[$i];
+		    printf "** $key-$i: %s\n", ref($ref) if debug;
+		    dump_spec("$key-$i-ARRAY", $ref, "$pad    ");
+		}
+	    }
+	    else
+	    {
+		printf "${pad}    %-15s = %s\n", $key, $spec{$key};
+	    }
+	}
+    }
+    print "${pad}[END-$tag]\n";
+}
+
+sub ReadConfigFile
+{
+    # Values to the following can be set to default values and for keywords
+    # for which values is mandatory we can set to null. So at the end of this
+    # script we can check for the keywords  which are null for which value is
+    # mandatory and throw an error.
+
+    my($ConfigFile, $typeVal) = @_;
+    my(%spec) = ();
+
+    my $cfg = new IO::File "$ConfigFile", "r"
+		    or FatalError("Failed to open configuration file $ConfigFile ($!)");
+
+    while (my $line = GetLine($cfg))
+    {
+	print "RC-LINE: $line\n" if debug;
+	if ($line eq "[SERVICE]")
+	{
+	    my $ref = ReadService($cfg, $typeVal, \%spec);
+	    %spec = %$ref;
+	}
+	else
+	{
+	    FatalError("Unexpected information (expected [SERVICE], got '$line')");
+	}
+    }
+
+    # $cfg automatically closed - which is useful!
+
+    return(%spec);
+}
+
+# Was all the necessary information provided - [SERVICE]
+sub CheckServiceComplete
+{
+    my($rspec, $typeVal) = @_;
+    my(%spec) = %$rspec;
+    my(@mandatory_keys); 
+    if ($typeVal =~ m/publisher/i)
+    {
+        @mandatory_keys = ( "TYPE",
+                            "INFORMIXSERVER",
+			    "CLIENT_LOCALE",
+			    "DB_LOCALE",
+			    "INFORMIXDIR",
+			    "WSHOME",
+			    "SERVICENAME",
+			    "TMPDIR",
+			    "DIRECTORY",
+			    "FUNCTION",
+                            "HOSTNAME",
+                            "PORTNO",
+			  );
+    }
+    elsif ($typeVal =~ m/subscriber/i)
+    {
+        @mandatory_keys = ( "TYPE",
+                            "TARGET_DIR",
+                            "I4GL_FUNCTION",
+                            "TARGET_FILE",
+                          );
+    }
+
+    dump_spec('CHECK-SERVICE-COMPLETE', $rspec) if debug;
+    my $errors = 0;
+    foreach my $key (@mandatory_keys)
+    {
+	if (!defined $spec{$key})
+	{
+	    print STDERR "Mandatory value $key not specified\n";
+	    $errors++;
+	}
+    }
+    FatalError ("Too many errors!") unless $errors == 0;
+    return(\%spec);
+}
+
+# Read [SERVICE] .. [END-SERVICE] (given that [SERVICE] was already read)
+sub ReadService
+{
+    my($cfg, $typeVal, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%keys);
+    if ($typeVal =~ m/publisher/i)
+    {
+        %keys = ( "TYPE"             => 1,
+		  "INFORMIXDIR"      => 1,
+                  "INFORMIXSERVER"   => 1,
+		  "CLIENT_LOCALE"    => 1,
+		  "DB_LOCALE"        => 1,
+		  "DATABASE"         => 1,
+		  "I4GLVERSION"      => 1,
+		  "WSHOME"           => 1,
+		  "WSVERSION"        => 1,
+		  "TMPDIR"           => 1,
+		  "SERVICENAME"      => 1,
+		  "HOSTNAME"         => 1,
+		  "PORTNO"           => 1);
+    }
+    elsif ($typeVal =~ m/subscriber/i)
+    {
+        %keys = ( "TYPE"             => 1,
+                  "TARGET_DIR",      => 1,
+                  "I4GL_FUNCTION"    => 1,
+                  "TARGET_FILE"      => 1 );
+    }
+
+    while (my $line = GetLine($cfg))
+    {
+        print "RS-LINE: $line\n" if debug;
+	if ($line eq "[END-SERVICE]")
+	{
+	    return CheckServiceComplete(\%spec, $typeVal);
+	}
+	elsif ($line eq "[FUNCTION]")
+	{
+	    my $ref = ReadFunction($cfg, $typeVal, \%spec);
+	    %spec = %$ref;
+	}
+	elsif (($line eq "[DIRECTORY]") && ($typeVal =~ m/publisher/i))
+	{
+	    my $ref = ReadDirectory($cfg, \%spec);
+	    %spec = %$ref;
+	}
+	elsif ($line eq "[WSDL_INFO]")
+	{
+	    my $ref = ReadWsdlInfo($cfg, $typeVal, \%spec);
+	    %spec = %$ref;
+	}
+	elsif ($line =~ m/^\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*$/)
+	{
+	    my($key, $val) = ($1, $2);
+	    $key =~ s/(.*)/\U$1/;
+
+            #$val = "" if (($typeVal =~ m/publisher_or_subscriber/i) && ($key =~ m/I4GLVERSION/) && (!defined $val));
+            $val = "7.50xC2" if (($typeVal =~ m/publisher/i) && ($key =~ m/I4GLVERSION/));
+            $val = "7.50xC3" if (($typeVal =~ m/subscriber/i) && ($key =~ m/I4GLVERSION/));
+
+	    if ($keys{$key})
+	    {
+	        $spec{$key} = $val;
+	    }
+	    else
+	    {
+	        FatalError("Unexpected key/value ($key = $val)") if (($key ne "OPTYPE") && ($typeVal =~ m/publisher/i));
+	    }
+	}
+	else
+	{
+	    my $msg = "Unexpected information (expected [FUNCTION],";
+            $msg   .= " [DIRECTORY]" if ($typeVal =~ m/publisher/i);
+	    $msg   .= " or KEY = value; got '$line')";
+	    FatalError("$msg");
+	}
+    }
+    FatalError("Unexpected EOF looking for [END-SERVICE]");
+}
+
+# Was all the necessary information provided - [FUNCTION]
+sub CheckFunctionComplete
+{
+    my($rspec, $rfunc) = @_;
+    FatalError("No function name specified") if (!defined $rfunc->{NAME});
+    FatalError("No function inputs specified")  if (!defined $rfunc->{INPUT});
+    FatalError("No function outputs specified") if (!defined $rfunc->{OUTPUT});
+    FatalError("Function $rspec->{FUNCTION}->{NAME} already specified ($rfunc->{NAME} not allowed)")
+	    if (defined $rspec->{FUNCTION} && defined $rspec->{FUNCTION}->{NAME});
+
+    $rspec->{FUNCTION} = $rfunc;
+    dump_spec("CHECK-FUNCTION-COMPLETE", $rspec) if debug;
+    return $rspec;
+}
+
+# Read [FUNCTION] .. [END-FUNCTION] (given that [FUNCTION] was already read)
+sub ReadFunction
+{
+    my($cfg, $type, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%func) = ();
+    my(%keys) = ();
+
+    if ($type =~ m/publisher/i)
+    {
+        %keys = ( "NAME"          => 1,
+                  "INPUT"         => 1,
+                  "OUTPUT"        => 1,
+                );
+    }
+    elsif ($type =~ m/subscriber/i)
+    {
+        %keys = ( "SERVICENAME"   => 1,
+                  "NAME"          => 1,
+                  "INPUT"         => 1,
+                  "OUTPUT"        => 1,
+                );
+    }
+
+    while (my $line = GetLine($cfg))
+    {
+	print "RF-LINE: $line\n" if debug;
+    	if ($line eq "[END-FUNCTION]")
+	{
+	    return CheckFunctionComplete(\%spec, \%func);
+	}
+        elsif ($line eq "[INPUT]")
+        {
+            my $ref = ReadINameType($cfg, \%func);
+            %func = %$ref;            
+        }
+        elsif ($line eq "[OUTPUT]")
+        {
+            my $ref = ReadONameType($cfg, \%func);
+            %func = %$ref;            
+        }
+	elsif ($line =~ m/^\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*$/)
+	{
+	    my($key, $val) = ($1, $2);
+	    $key =~ s/(.*)/\U$1/;
+	    if (!defined $keys{$key})
+	    {
+	    	FatalError("Unexpected key/value ($key = $val)");
+	    }
+	    elsif (defined $func{$key})
+	    {
+	    	FatalError("Repeated key $key (old = $func{$key}, new = $val)") if $key eq 'NAME';
+		$func{$key} .= ", $val";
+	    }
+	    else
+	    {
+	    	$func{$key} = $val;
+	    }
+	}
+	else
+	{
+	    my $msg = "Unexpected information (expected [END-FUNCTION]";
+	    $msg   .= " or KEY = value; got '$line')";
+	    FatalError("$msg");
+	}
+    }
+    FatalError("Unexpected EOF looking for [END-FUNCTION]");
+}
+
+# Was all the necessary information provided - [DIRECTORY]
+sub CheckDirectoryComplete
+{
+    my($rspec, $rdir) = @_;
+    FatalError("No directory name specified")  if (!defined $rdir->{NAME});
+    FatalError("No directory files specified") if (!defined $rdir->{FILE});
+    $rspec->{DIRECTORY} = [] if !defined $rspec->{DIRECTORY};
+    push @{$rspec->{DIRECTORY}}, $rdir;
+    dump_spec("CHECK-DIRECTORY-COMPLETE", $rspec) if debug;
+    return $rspec;
+}
+
+# Read [DIRECTORY] .. [END-DIRECTORY] (given that [DIRECTORY] was already read)
+sub ReadDirectory
+{
+    my($cfg, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%dir)  = ();
+    my(%keys) = ( "NAME"          => 1,
+                  "FILE"          => 1,
+		);
+
+    while (my $line = GetLine($cfg))
+    {
+	print "RD-LINE: $line\n" if debug;
+    	if ($line eq "[END-DIRECTORY]")
+	{
+	    return CheckDirectoryComplete(\%spec, \%dir);
+	}
+	elsif ($line =~ m/^\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*$/)
+	{
+	    my($key, $val) = ($1, $2);
+	    $key =~ s/(.*)/\U$1/;
+	    if (!defined $keys{$key})
+	    {
+	    	FatalError("Unexpected key/value ($key = $val)");
+	    }
+	    elsif (defined $dir{$key})
+	    {
+	    	FatalError("Repeated key $key (old = $dir{$key}, new = $val)") if $key eq "NAME";
+		$dir{$key} .= ", $val";
+	    }
+	    else
+	    {
+	    	$dir{$key} = $val;
+	    }
+	}
+	else
+	{
+	    my $msg = "Unexpected information (expected [END-DIRECTORY]";
+	    $msg   .= " or KEY = value; got '$line')";
+	    FatalError("$msg");
+	}
+    }
+    FatalError("Unexpected EOF looking for [END-DIRECTORY]");
+}
+
+# Was all the necessary information provided - [DIRECTORY]
+sub CheckWsdlInfoComplete
+{
+    my($rspec, $rwsdlinfo) = @_;
+    FatalError("No WSDL path specified")  if (!defined $rwsdlinfo ->{WSDL_PATH});
+    FatalError("No WSDL file specified")  if (!defined $rwsdlinfo->{WSDL_FILE});
+    FatalError("No WSDL name space specified")  if (!defined $rwsdlinfo->{WSDL_NAME_SPACE});
+    #FatalError("No service name space specified")  if (!defined $rwsdlinfo->{SERVICENAME});
+    #FatalError("No name specified")  if (!defined $rwsdlinfo->{NAME});
+    #FatalError("No input variables specified")  if (!defined $rwsdlinfo->{INPUT});
+    #FatalError("No output variables specified") if (!defined $rwsdlinfo->{OUTPUT});
+
+    $rspec->{WSDL_INFO} = $rwsdlinfo;
+    dump_spec("CHECK-WSDL_INFO-COMPLETE", $rspec) if debug;
+    return $rspec;
+}
+
+# Read [WSDL_INFO] .. [END-WSDL_INFO] (given that [WSDL_INFO] was already read)
+sub ReadWsdlInfo
+{
+    my($cfg, $type, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%wsdlinfo)  = ();
+    my(%keys) = ( "WSDL_PATH"      => 1,
+                  "WSDL_FILE"      => 1,
+                  "WSDL_NAME_SPACE"=> 1,
+                );
+
+    while (my $line = GetLine($cfg))
+    {
+        print "RD-LINE: $line\n" if debug;
+        if ($line eq "[END-WSDL_INFO]")
+        {
+            return CheckWsdlInfoComplete(\%spec, \%wsdlinfo);
+        }
+        elsif ($line eq "[FUNCTION]")
+        {
+            my $ref = ReadFunction($cfg, $type, \%wsdlinfo);
+            %wsdlinfo = %$ref;
+        }
+        elsif ($line =~ m/^\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*$/)
+        {
+            my($key, $val) = ($1, $2);
+            $key =~ s/(.*)/\U$1/;
+            if (!defined $keys{$key})
+            {
+                FatalError("Unexpected key/value ($key = $val)");
+            }
+            elsif (defined $wsdlinfo{$key})
+            {
+                #FatalError("Repeated key $key (old = $varnames{$key}, new = $val)") if $key eq "NAME";
+                $wsdlinfo{$key} .= ", $val";
+            }
+            else
+            {
+                $wsdlinfo{$key} = $val;
+            }
+        }
+        else
+        {
+            my $msg = "Unexpected information (expected [END-WSDL_INFO]";
+            $msg   .= " or KEY = value; got '$line')";
+            FatalError("$msg");
+        }
+    }
+    FatalError("Unexpected EOF looking for [END-WSDL_INFO]");
+}
+
+sub ReadINameType
+{
+    my($cfg, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%inametype) = ();
+    my($namekey, $nameval, $typekey, $typeval, $namevalstr, $typevalstr, $i, $pad);
+    my(%keys) = ( "NAME"   => 1,
+                  "TYPE"   => 1,
+                );
+
+    $i = 0; $pad = ""; $namevalstr = ""; $typevalstr=""; $namekey = ""; $nameval = ""; $typekey = "";  $typeval = "";
+    while (my $line = GetLine($cfg))
+    {
+        print "RF-LINE: $line\n" if debug;
+        if ($line eq "[END-INPUT]")
+        {
+            $inametype{$namekey} = $namevalstr;
+            $inametype{$typekey} = $typevalstr;
+            return CheckINameTypeComplete(\%spec, \%inametype);
+        }
+        elsif ($line =~ m/^\s*\[VARIABLE]\s*(\w+)\s*=\s*(\w+)\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*\[END-VARIABLE]\s*$/)
+        {
+            ($namekey, $nameval) = ($1, $2);
+            ($typekey, $typeval) = ($3, $4);
+            $namekey =~ s/(.*)/\U$1/;
+            #$typekey =~ s/(.*)/\U$3/;
+            $typekey = uc($typekey);
+            if ($namekey ne "NAME" || $typekey ne "TYPE")
+            {
+                my $msg = "Unexpected information (expected NAME = $nameval TYPE = $typeval)";
+            }
+            #if (!defined $keys{$key})
+            #{
+                #FatalError("Unexpected key/value ($key = $val)");
+            #}
+            #elsif (defined $func{$key})
+            #{
+                #FatalError("Repeated key $key (old = $func{$key}, new = $val)") if $key eq 'NAME';
+                #$func{$key} .= ", $val";
+            #}
+            else
+            {
+                $pad = ", " if ($i > 0);
+                $namevalstr = $namevalstr . $pad . $nameval;
+                $typevalstr = $typevalstr . $pad . $typeval;
+                $i++;
+            }
+        }
+        elsif ($line eq "[RECORD]")
+        {
+            #Not yet implemented
+        }
+        else
+        {
+            my $msg = "Unexpected information (expected [END-INPUT]";
+            $msg   .= " or NAME = value TYPE = value; got '$line')";
+            FatalError("$msg");
+        }
+    }
+    FatalError("Unexpected EOF looking for [END-INPUT]");
+}
+
+sub CheckINameTypeComplete
+{
+    my($rspec, $rinput) = @_;
+    FatalError("No input parameter types specified") if (!defined $rinput->{TYPE});
+    FatalError("No input parameter names specified") if (!defined $rinput->{NAME});
+
+    $rspec->{INPUT} = $rinput;
+    dump_spec("CHECK-INPUT-COMPLETE", $rspec) if debug;
+    return $rspec;
+}
+
+sub ReadONameType
+{
+    my($cfg, $rspec) = @_;
+    my(%spec) = %$rspec;
+    my(%onametype) = ();
+    my($namekey, $nameval, $typekey, $typeval, $namevalstr, $typevalstr, $i, $pad);
+    my(%keys) = ( "NAME"   => 1,
+                  "TYPE"   => 1,
+                );
+
+    $i = 0; $pad = ""; $namevalstr = ""; $typevalstr=""; $namekey = ""; $nameval = ""; $typekey = "";  $typeval = "";
+    while (my $line = GetLine($cfg))
+    {
+        print "RF-LINE: $line\n" if debug;
+        if ($line eq "[END-OUTPUT]")
+        {
+            $onametype{$namekey} = $namevalstr;
+            $onametype{$typekey} = $typevalstr;
+            return CheckONameTypeComplete(\%spec, \%onametype);
+        }
+        elsif ($line =~ m/^\s*\[VARIABLE]\s*(\w+)\s*=\s*(\w+)\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*\[END-VARIABLE]\s*$/)
+        {
+            ($namekey, $nameval) = ($1, $2);
+            ($typekey, $typeval) = ($3, $4);
+            $namekey =~ s/(.*)/\U$1/;
+            #$typekey =~ s/(.*)/\U$3/;
+            $typekey = uc($typekey);
+            if ($namekey ne "NAME" || $typekey ne "TYPE")
+            {
+                my $msg = "Unexpected information (expected NAME = $nameval TYPE = $typeval)";
+            }
+            #if (!defined $keys{$key})
+            #{
+                #FatalError("Unexpected key/value ($key = $val)");
+            #}
+            #elsif (defined $func{$key})
+            #{
+                #FatalError("Repeated key $key (old = $func{$key}, new = $val)") if $key eq 'NAME';
+                #$func{$key} .= ", $val";
+            #}
+            else
+            {
+                $pad = ", " if ($i > 0);
+                $namevalstr = $namevalstr . $pad . $nameval;
+                $typevalstr = $typevalstr . $pad . $typeval;
+                $i++;
+            }
+        }
+        elsif ($line eq "[RECORD]")
+        {
+            #Not yet implemented
+        }
+        else
+        {
+            my $msg = "Unexpected information (expected [END-OUTPUT]";
+            $msg   .= " or NAME = value TYPE = value; got '$line')";
+            FatalError("$msg");
+        }
+    }
+    FatalError("Unexpected EOF looking for [END-OUTPUT]");
+}
+
+sub CheckONameTypeComplete
+{
+    my($rspec, $routput) = @_;
+    FatalError("No output parameter names specified")  if (!defined $routput->{TYPE});
+    FatalError("No output parameter types specified") if (!defined $routput->{NAME});
+
+    $rspec->{OUTPUT} = $routput;
+    dump_spec("CHECK-OUTPUT-COMPLETE", $rspec) if debug;
+    return $rspec;
+}
+
+#####################################################
+# Process all the supplied command line 
+# arguments
+#
+# HELP should include all these options
+#####################################################
+sub ProcessCommandLineArguments
+{
+    my $ConfigFile = "";
+    foreach my $arg (@ARGV)
+    {
+	# Rewritten because of bug #37499 at rt.cpan.org
+	if ($arg eq "-help")
+	{
+	    print "$usestr\n";
+	    print "$useline1\n";
+	    print "$useline2\n";
+	    print "$useline3\n";
+	    print "$useline4\n";
+	    print "$useline5\n";
+	    print "$useline6\n";
+	    exit(0);
+	}
+	elsif ($arg eq "-version")
+	{
+	    print "$I4GLSOA_VERSION\n";
+	    exit(0);
+	}
+	elsif ($arg eq "-silent")
+	{
+	    print "option: SILENT\n" if debug;
+	    $SilentMode = 1;
+	}
+	elsif ($arg eq "-force")
+	{
+	    print "option: FORCE overwrite\n" if debug;
+	    $ForceMode = 1;
+	}
+	elsif ($arg eq "-keep")
+	{
+	    print "option: KEEP all intermediate files\n" if debug;
+	    $KeepMode = "-keep";
+	}
+	elsif ($arg eq "-check")
+	{
+	    print "option: CHECK contents of configuration file\n" if debug;
+	    $CheckPhase = "yes";
+	}
+	elsif ($arg eq "-generate")
+	{
+	    print "option: GENERATE source code\n" if debug;
+	    $GeneratePhase = "yes";
+	}
+	elsif ($arg eq "-compile")
+	{
+	    print "option: COMPILE source code\n" if debug;
+	    $CompilePhase = "yes";
+	}
+	elsif ($arg eq "-deploy")
+	{
+	    print "option: DEPLOY web service\n" if debug;
+	    $DeployPhase = "yes";
+	}
+        elsif ($arg eq "-package")
+        {
+           print "option: PACKAGE web service\n" if debug;
+           $PackagePhase = "yes";
+        }
+	elsif ($arg =~ m/^-/)
+	{
+            DisplayString("$usestr\n");
+	    FatalError("unrecognized option $arg");
+	}
+	else
+	{
+	    FatalError("cannot use two config files ($ConfigFile and $arg)") if ($ConfigFile);
+	    print "Config file = $arg\n" if debug;
+	    $ConfigFile = $arg;
+	}
+    }
+
+    # By default, do the whole lot
+    #
+    # With the existence of these, remove OPTYPE
+#    if ("$CheckPhase$GeneratePhase$CompilePhase$DeployPhase" eq "")
+#    {
+#	$CheckPhase    = "yes";
+#	$GeneratePhase = "yes";
+#	$CompilePhase  = "yes";
+#	$DeployPhase   = "yes";
+#    }
+
+    return $ConfigFile;
+}
+
+sub DisplayString
+{
+    my ($DispStr) = @_;
+    print $DispStr unless $SilentMode;
+
+    print ERRLOGFILE GetTime() . ": ";
+    print ERRLOGFILE "$DispStr\n";
+}
+
+sub ProvidedSource
+{
+    my(@dirs) = @_;
+    my(@files) = ();
+    foreach my $ref (@dirs)
+    {
+	printf "PS: %s\n", ref($ref) if debug;
+	my @items = @$ref;
+	for (my $i = 0; $i < @items; $i++)
+	{
+	    my $ref2 = $items[$i];
+	    my $dir = $ref2->{NAME};
+	    my $list = $ref2->{FILE};
+	    my @names = split /[,\s]+/, $list;
+	    push @files, map { "$dir/$_" } @names;
+	}
+    }
+    my $errors = 0;
+    foreach my $file (@files)
+    {
+    	if (! -f $file)
+	{
+	    printf "Missing source file: $file\n" unless $SilentMode;
+	    $errors++;
+	}
+    }
+    FatalError ("Unable to access some source files") if $errors > 0;
+    return(@files);
+}
+
+sub CheckEnvironment_Prov
+{
+    my ($tmpdir, @files) = @_;
+
+    #Environment Check
+
+    FatalError('error: environment variable $AXIS2C_HOME is not set')
+        unless $ENV{AXIS2C_HOME};
+    FatalError('error: environment variable $JAVA_HOME  is not set')
+        unless $ENV{JAVA_HOME};
+    FatalError('error: environment variable $CLASSPATH is not set')
+        unless $ENV{CLASSPATH};
+  
+    #Database server Check
+
+    if ($database ne "")
+    {
+        FatalError('error: environment variable $INFORMIXSERVER is not set')
+            unless $ENV{INFORMIXSERVER};
+        FatalError('error: environment variable $INFORMIXSQLHOSTS  is not set')
+            unless $ENV{INFORMIXSQLHOSTS};
+    }
+ 
+  
+    #Tmpdir Check
+
+    my $res = FileStatus ($tmpdir, "e");
+    if ( $res eq -1)
+    {
+        FatalError("error:TMPDIR specified in config file doesn't exist");
+    } 
+    else
+    {
+        my $resxml= `ls $tmpdir/services.xml 2> /dev/null`;
+        if ( $resxml ne "")
+        {
+            system ( "chmod 666 $tmpdir/services.xml 2>/dev/null");
+        }
+    }
+  
+    #4gl source files check
+    if ($SilentMode eq 0)
+    {
+        my @UIkey=( "DISPLAY","FORM","PROMPT","MENU","INPUT");
+ 
+        my $keyfound = 0;
+ 
+        for ( my $i=0 ; $i < @files ; $i++)
+        {    
+            for ( my $j=0 ; $j < @UIkey ; $j++)
+            {
+                if ( `grep $UIkey[$j] $files[$i] ` ne "")
+                { 
+                    DisplayString ("Warning (probably ok): $files[$i] : keyword $UIkey[$j] found\n");
+                    $keyfound = 1 ;
+                }   
+            }       
+        }
+       
+        if( $keyfound == 1 )
+        {
+            DisplayString ("Warning: Due to interactive functions as web-service, the service may not\n");
+            DisplayString ("         behave as expected\n\n");
+            DisplayString ("To avoid these warnings, please isolate interactive and non-interactive\n");
+            DisplayString ("functions into a seperate files\n");
+        }          
+    }
+}
+   
+sub CheckEnvironment_Cons
+{
+    my ($tgtdir) = @_;
+
+    #Environment Check
+    FatalError('error: environment variable $AXIS2C_HOME is not set') 
+        unless $ENV{AXIS2C_HOME};
+    my $res = FileStatus ($tgtdir, "e");
+    if ( $res eq -1)
+    {
+        FatalError("error:TARGET_DIR specified in config file doesn't exist");
+    }
+}
+
+sub ReadType
+{
+    # This function only retrieves the type (Provider/ Subscriber)
+    my($ConfigFile) = @_;
+    my $cfg = new IO::File "$ConfigFile", "r" or FatalError("Failed to open configuration file $ConfigFile ($!)");
+    
+    while (my $line = GetLine($cfg))
+    {
+        if ($line =~ m/^\s*(\w+)\s*=\s*(\S(?:.*\S)?)\s*$/)
+        {
+            my($key, $typeVal) = ($1, $2);
+            $key =~ s/(.*)/\U$1/;
+            if ($key =~ /TYPE/)
+            {
+                FatalError("Invalid TYPE value (expected publisher/ subscriber, got '$typeVal')") if (($typeVal !~ /publisher/) && ($typeVal !~ /subscriber/));
+                return $typeVal;
+            }
+        }
+    }
+}
+
+# MainFunction()
+{
+    my $ErrLogFile= "/tmp/w4glerr.log";
+    my $errors = 0;
+    open (ERRLOGFILE, ">> $ErrLogFile") || 
+                   die("Error $!: Cannot open output file $ErrLogFile");
+
+    my $ConfigFile = ProcessCommandLineArguments();
+
+    #FatalError("$usestr") unless $ConfigFile;
+
+    my $typeVal = ReadType($ConfigFile); #publisher or subscriber
+
+    # Read the elements in the passed config file
+    my %spec = ReadConfigFile($ConfigFile, $typeVal);
+    dump_spec('READ-CONFIG-FILE', \%spec) if debug;
+    if ($typeVal =~ m/publisher/i)
+    {
+        FatalError("$usestr") unless $ConfigFile;
+        my @files = ProvidedSource($spec{DIRECTORY});
+
+        # Default $tmpdir if not defined?  We insist that it is defined,
+        # but $ENV{TMPDIR} is a good default, and /tmp if that isn't set.
+        my $tmpdir    = $spec{TMPDIR};
+        my $funcname  = lc ($spec{FUNCTION}->{NAME});
+        my $database  = defined $spec{DATABASE} ? $spec{DATABASE} : "";
+
+        my @inparamnames  = split_var_list($spec{FUNCTION}->{INPUT}->{NAME});
+        my @inparamtypes  = split_type_list($spec{FUNCTION}->{INPUT}->{TYPE});
+        my @outparamnames  = split_var_list($spec{FUNCTION}->{OUTPUT}->{NAME});
+        my @outparamtypes  = split_type_list($spec{FUNCTION}->{OUTPUT}->{TYPE});
+        ### Confirm if input can be VOID type
+        foreach my $input (@inparamtypes)
+        {
+            FatalError ("Input parameters cannot be VOID type") if ($input =~ m/void/i);
+        }
+
+        foreach my $output (@outparamtypes)
+        {
+            FatalError ("Output parameters cannot be VOID type") if ($output =~ m/void/i);
+        }
+        
+        CheckParamNames($spec{FUNCTION}->{INPUT}->{NAME});
+        CheckParamNames($spec{FUNCTION}->{OUTPUT}->{NAME});
+
+        my $hostname = $spec{HOSTNAME};
+        my $portno = $spec{PORTNO};
+        my $srvcname  = $spec{SERVICENAME};
+        my $infx_svr = $spec{INFORMIXSERVER};
+        my $db_locale     = defined $spec{DB_LOCALE} ? $spec{DB_LOCALE} : "en_US.8859-1";
+        my $client_locale = defined $spec{CLIENT_LOCALE} ? $spec{CLIENT_LOCALE} : "en_US.8859-1";
+        my $db_date = $spec{DBDATE};
+
+        # Always check for the environment
+        DisplayString ("Begin environment check ...\n");
+
+        CheckEnvironment_Prov($tmpdir, @files);
+
+        DisplayString ("Environment check is completed.\n");
+
+        # If it is only meant for checking the environment exit at this point
+        if ($CheckPhase eq "yes")
+        {
+           die "";
+        }
+
+        #set PATH
+        $ENV{PATH}= "$ENV{JAVA_HOME}/bin:$ENV{JAVA_HOME}/jre:$ENV{AXIS2C_HOME}/bin:$ENV{PATH}";
+ 
+        if ($GeneratePhase eq "yes") 
+        {
+	    DisplayString("Generating code. Please wait ...\n");
+
+	    DisplayString("Generating Wrapper code ....\n");
+	    GenerateI4GLWrap_Prov($tmpdir, $funcname, $database, 
+                         $client_locale, $db_locale,
+                        \@inparamtypes, \@outparamtypes, $infx_svr, $db_date);
+
+	    DisplayString("Generating WSDL ....\n");
+	    GenerateWSDLFile_Prov($tmpdir, $funcname, $srvcname, 
+                        \@inparamtypes, \@inparamnames, \@outparamtypes, \@outparamnames, 
+                        $hostname, $portno);
+
+	    DisplayString("Generating skeleton headers ....\n");
+	    GenerateSkelHdrs_Prov($tmpdir, $funcname, $srvcname);
+
+	    DisplayString("Generating skeleton code ....\n");
+	    GenerateSkelImpl_Prov($tmpdir, $funcname, $srvcname, 
+                        \@inparamtypes, \@inparamnames, \@outparamtypes, \@outparamnames);
+
+	    DisplayString("Code generation completed.\n");
+        }
+
+        if ($CompilePhase eq "yes") 
+        {
+	    my $wrapfile = wrapfilename_prov($tmpdir, $funcname);
+	    my $DstHFile = skel_h_filename_prov($tmpdir, $srvcname);
+	    my $DstCFile = skel_c_filename_prov($tmpdir, $srvcname);
+	    my $SvcCFile = svc_skel_c_filename_prov($tmpdir, $srvcname);
+
+	    DisplayString("Generating shared object for service $srvcname ....\n");
+	    # Check existence of required files
+	    # XML files not needed here
+	    GenerateSharedObject_Prov($tmpdir, $funcname, $srvcname,
+                             $wrapfile, $DstCFile, $SvcCFile,
+                             \@inparamtypes, \@outparamtypes, @files);
+        }
+
+        if ($DeployPhase eq "yes")
+        {
+	    my $wsdlfile = wsdlfilename_prov($tmpdir, $funcname);
+	    my $dll_file = dll_filename_prov($tmpdir, $srvcname);
+
+	    DisplayString("Deploying service $srvcname ...\n");
+	    # Check existence of required files
+	    # XML files needed here - check them too
+	    DeployService_Prov($tmpdir, $srvcname, $wsdlfile, $dll_file);
+        }
+
+        if ($PackagePhase eq "yes")
+        {
+            chdir ("$ENV{AXIS2C_HOME}/services");
+            my $wsdlfile = wsdlfilename_prov("", $funcname);
+            my $dll_file = dll_filename_prov("", $srvcname);
+
+            FatalError("$ENV{AXIS2C_HOME}/services/$srvcname Does Not Exist") if ( ! -d "$srvcname" );
+            FatalError("$wsdlfile does not exist under $ENV{AXIS2C_HOME}/services/$srvcname") if ( ! -e "$srvcname/$wsdlfile" );
+            FatalError("$dll_file does not exist under $ENV{AXIS2C_HOME}/services/$srvcname") if ( ! -e "$srvcname/$dll_file" );
+            FatalError("services.xml does not exist under $ENV{AXIS2C_HOME}/services/$srvcname") if ( ! -e "$srvcname/services.xml" );
+
+            system("tar cf $tmpdir/$srvcname.tar $srvcname >> /tmp/w4glerr.log 2>&1");
+            if ($? == -1)
+            {
+                DisplayString("Packaging for web service $srvcname failed : $! \n");
+            } 
+            else
+            {
+                DisplayString("$srvcname.tar created under $tmpdir\n");
+            }
+        } 
+
+        if ($KeepMode ne "-keep")
+        {
+            CleanupTempFiles;
+        }
+    }
+    elsif ($typeVal =~ m/subscriber/i)
+    {
+       #Throw error messages
+       FatalError("No Target Directory specified in configuration file")  if (!defined $spec{TARGET_DIR});
+       FatalError("No I4GL Function specified in configuration file")  if (!defined $spec{I4GL_FUNCTION});
+       FatalError("No Target File specified in configuration file")  if (!defined $spec{TARGET_FILE});
+       FatalError("No Function Name specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{NAME});
+       FatalError("No Service Name specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{SERVICENAME});
+       FatalError("No WSDL PATH specified in configuration file")  if (!defined $spec{WSDL_INFO}->{WSDL_PATH});
+       FatalError("No WSDL File specified in configuration file")  if (!defined $spec{WSDL_INFO}->{WSDL_FILE});
+       FatalError("No WSDL Name Space specified in configuration file")  if (!defined $spec{WSDL_INFO}->{WSDL_NAME_SPACE});
+       FatalError("No Input Parameter Names specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{INPUT}->{NAME});
+       FatalError("No Output Parameter Names specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{OUTPUT}->{NAME});
+       FatalError("No Input Parameter Types specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{INPUT}->{TYPE});
+       FatalError("No Output Parameter Types specified in configuration file")  if (!defined $spec{WSDL_INFO}->{FUNCTION}->{OUTPUT}->{TYPE});
+
+
+        my $tgtdir    = $spec{TARGET_DIR};
+        my $i4glfunc = lc($spec{I4GL_FUNCTION});
+        my $revstr = reverse($i4glfunc);
+        my $str = substr $revstr, 0, 2;
+        FatalError("Invalid format for I4GL Function specified in configuration file") if ($str eq "c.");
+
+        my $tgtfile = lc($spec{TARGET_FILE});
+        my $funcname  = $spec{WSDL_INFO}->{FUNCTION}->{NAME};
+        my $srvcname  = $spec{WSDL_INFO}->{FUNCTION}->{SERVICENAME};
+        my $wsdlns = ""; my $wsdlfile = "";
+        $wsdlfile = $spec{WSDL_INFO}->{WSDL_PATH} . "/" . $spec{WSDL_INFO}->{WSDL_FILE};
+        $wsdlns = $spec{WSDL_INFO}->{WSDL_NAME_SPACE};
+        my @inparamnames  = split_var_list($spec{WSDL_INFO}->{FUNCTION}->{INPUT}->{NAME});
+        my @inparamtypes  = split_type_list($spec{WSDL_INFO}->{FUNCTION}->{INPUT}->{TYPE});
+        my @outparamnames  = split_var_list($spec{WSDL_INFO}->{FUNCTION}->{OUTPUT}->{NAME});
+        my @outparamtypes  = split_type_list($spec{WSDL_INFO}->{FUNCTION}->{OUTPUT}->{TYPE});
+        CheckEnvironment_Cons($tgtdir);
+
+        ### Confirm if input can be VOID type
+        foreach my $input (@inparamtypes)
+        {
+            FatalError ("Input parameters cannot be VOID type") if ($input =~ m/void/i);
+        }
+
+        foreach my $output (@outparamtypes)
+        {
+            FatalError ("Output parameters cannot be VOID type") if ($output =~ m/void/i);
+        }
+
+        CheckParamNames($spec{WSDL_INFO}->{FUNCTION}->{INPUT}->{NAME});
+        CheckParamNames($spec{WSDL_INFO}->{FUNCTION}->{OUTPUT}->{NAME});
+
+        FatalError ("Invalid options : Valid options are -silent, -generate and -compile") if (($DeployPhase eq "yes") || ($PackagePhase eq "yes") || ($ForceMode eq 1) || ($KeepMode eq "-keep"));
+
+        if ($GeneratePhase eq "yes")
+        {
+            DisplayString("Generating client code. Please wait ...\n");
+            GenerateI4GLWrap_Cons($funcname, $srvcname, $wsdlfile, $wsdlns,
+                                 $i4glfunc, $tgtfile, $tgtdir, 
+                                 \@inparamtypes, \@inparamnames, \@outparamtypes, \@outparamnames);
+            DisplayString("Code generation completed.\n");
+        }
+        if ($CompilePhase eq "yes")
+        {
+            DisplayString("Generating object. Please wait ...\n");
+            GenerateObject_Cons($srvcname, $i4glfunc, $tgtfile, $tgtdir);
+        }
+    }
+}
+
+__END__
+
+=head1 NAME
+
+w4glc - I4GL-SOA Web Service Compiler
+
+=head1 SYNOPSIS
+
+  w4glc [-help] [-version] [-silent] [-force] [-check] [-generate] [-compile] [-deploy] <cfgfile>
+
+=head1 DESCRIPTION
+
+The w4glc compiler does the non-interactive work required to prepare a
+web service provided by I4GL for consumption via a web server, or to
+provide access to a web service to an I4GL application.
+It is intended that a variety of front-end programs could collect
+information from the user and generate the configuration file before
+running w4glc to actually do the compilation.
+
+For example, the w4gl executable is an I4GL program that can be used to
+control such compilations.
+It is easy to envisage a set of PHP web pages that provide an
+browser-based interface that does a similar job.
+
+=head1 OPTIONS
+
+The w4glc script supports a number of options.
+
+=head2 help
+
+The help option prints out basic help (usage) information and exits.
+
+=head2 silent
+
+The silent option reduces the progress report outputs from the compiler.
+
+=head2 force
+
+This is primarily relevant during deployment phase. This option forces
+when there are any existing files or directorires that will be silently 
+reused
+
+=head2 version
+
+Print version information and exit.
+
+=head2 check
+
+Execute the check phase.
+This means read the configuration file and perform basic sanity checking
+on it, such as ensure that the identified source files exist.
+
+=head2 generate
+
+Execute the generate phase.
+Of necessity, this also means read and validate the configuration file.
+It creates the files needed to support the proposed web service.
+
+=head2 compile
+
+Execute the compile phase.
+Of necessity, this also means read and validate the configuration file.
+It checks that each of the necessary source files has already been
+created.
+It then runs the compilation phase to generate the materials ready for
+deployment.
+
+=head2 deploy
+
+Execute the deploy phase.
+Of necessity, this also means read and validate the configuration file.
+It checks that the files needed for deployment all exist.
+It then runs the deployment phase which copies the materials into a web
+server's web services directory on the local machine.
+
+=head2 package
+
+Execute the package phase.
+Of necessity, this also means read and validate the configuration file.
+It checks that the files needed for deployment (or packaging) all exist.
+This phase is hypothetical, but permits a developer to prepare materials
+on a development machine for later deployment on a production machine.
+The files are packaged into a compressed tar file (either gzip or bzip2)
+or into a zip file, so that the material can be copied to a new machine.
+
+=head1 CONFIGURATION FILE
+
+=head2 General Structure
+
+The w4glc configuration file contains a service description.
+The service is defined between section header and section end markers of
+the form:
+
+    [SERVICE]
+    ...service description...
+    [END-SERVICE].
+
+Within the service description, there are simple keyword entries of the
+form:
+
+    KEYWORD = value
+
+There may also be embedded sections, identified by
+
+    [KEYWORD]
+    ...section description...
+    [END-KEYWORD]
+
+Keywords and section names are case-insensitive, but are conventionally
+shown in upper-case and all examples will use this convention.
+Section header and section end markers must be on a line on their own.
+Keyword entries are limited to single lines.
+Where entries might need to spread over multiple lines, the keyword can
+be repeated, and the repeated entries cumulate in the order in which
+they appear in the section of the configuration file.
+
+Clearly, the service section is just a special case of other sections.
+Equally clearly, this notation is related to, but different from, XML.
+
+=head2 Future Direction
+
+At some time, the configuration file will support a list of services,
+wrapping individual [SERVICE] sections inside:
+
+    [SERVICE-LIST]
+    ...separate service descriptions...
+    [END-SERVICE-LIST].
+
+When this is implemented, some keyword values will be specified in the
+service list section, and will be common to all embedded service
+descriptions (unless over-ridden in a specific service description).
+
+=head2 [SERVICE]
+
+The SERVICE section describes key aspects of the environment under which
+a web service is to be deloyed, as well as the actual web service
+itself.
+Keywords that are candidates for use in the (as yet hypothetical)
+[SERVICE-LIST] section are marked with {S-L}.
+
+=head3 DATABASE {S-L}
+
+Most services provided by I4GL require access to a database.
+The DATABASE keyword identifies which database is opened automatically
+before the I4GL function is called.
+For consumer services, this is usually immaterial.
+
+    DATABASE = somedb
+
+=head3 INFORMIXDIR {S-L}
+
+Services provided by I4GL require an I4GL Run-Time environment.
+Compiling a service provided by I4GL requires an I4GL Development
+environment (plus the supporting C development environment).
+The INFORMIXDIR keyword in the configuration file specifies the value of
+INFORMIXDIR for the deployment environment; the value used during
+compilation is determined by the environment set in the process that
+runs w4glc.
+
+    INFORMIXDIR = /work1/4gldist
+
+=head3 INFORMIXSERVER
+
+The INFORMIXSERVER holds the logical name of the IDS server to which
+the web service function will be connected during run time.
+
+=head3 CLIENT_LOCALE {S-L}
+
+Informix programs must specify the client and database locales, and
+these must be compatible according to arcane rules documented in the
+Informix Guide to GLS manual (where GLS is Global Language Support).
+The CLIENT_LOCALE keyword specifies the value of CLIENT_LOCALE that must
+be set when the service is deployed.
+It applies to services where I4GL is providing the service.
+
+    CLIENT_LOCALE = en_US.utf8
+
+=head3 DB_LOCALE {S-L}
+
+The DB_LOCALE keyword specifies the value of DB_LOCALE that must
+be set when the service is deployed (see also CLIENT_LOCALE).
+It applies to services where I4GL is providing the service.
+
+    DB_LOCALE = en_US.utf8
+
+=head3 I4GLVERSION {S-L}
+
+The I4GLVERSION keyword is optional.
+It is the minimum required version of I4GL that is acceptable as the
+run-time environment for I4GL when it is deployed.
+
+    I4GLVERSION = 7.50.UC1
+
+=head3 WSHOME {S-L}
+
+The WSHOME keyword specifies the web server directory.
+It controls where the software will be deployed.
+
+    WSHOME = /work1/axis2c
+
+=head3 TMPDIR {S-L}
+
+The TMPDIR keyword specifies where w4glc should create the generated
+source code and the files needed to deploy the web service.
+When running, w4glc will create a sub-directory with the name of the
+service, and the files will all be created in that sub-directory.
+If omitted from the configuration file, the default value is $TMPDIR
+from the w4glc environment; if that is unset, the default is /tmp.
+
+    TMPDIR = /tmp
+
+=head3 WEVERSION {S-L}
+
+The WSVERSION keyword specifies the version of Axis that is in use.
+It is purely informational.
+
+    WSVERSION = AXIS 1.2
+
+=head3 TYPE
+
+The TYPE keyword indicates whether this service is a publisher (that is,
+an I4GL function that will be callable by other web-enabled programs) or
+a subscriber (that is, code that allows I4GL to call on a web service as
+if it was a regular I4GL function).
+Web service publishers are available to all SOA-enabled applications.
+Web service subscribers are I4GL-compatible functions that access an SOA
+resource.
+A web service publisher is linked into an I4GL application as an
+alternative way of obtaining information.
+
+    TYPE = publisher or subscriber
+
+=head3 SERVICENAME
+
+The SERVICENAME keyword specifies the service name that will be exposed
+by the web server.
+For a provider/ publisher service, it is the name that will be used by external
+programs to obtain the functionality from the I4GL function.
+For a consumer service, it is the name that a web server exposes that
+I4GL should be able to call.
+For a single web server, each service name must be unique.
+[Within a [SERVICE-LIST], each SERVICENAME must be unique.]
+
+    SERVICENAME = ws_curr2inr
+
+=head2 [FUNCTION]
+
+The FUNCTION section defines the name of the I4GL function.
+For a provided service, this is the name of the function written in I4GL
+that does the work.
+For a consumed service, this is the name of the function that will be
+created and that will access the externally provided web service.
+It also defines the input values passed to the function, and the values.
+
+=head3 NAME
+
+The NAME keyword may appear just once, and defines the name of the I4GL
+function.
+
+    NAME = ifx_curr2inr
+
+=head3 INPUT
+
+The INPUT keyword contains the name associated with input and datatype
+
+=head4 VARIABLE
+
+The VARIABLE keyword appears more than once if there is more than 1 input
+It defines the input name and input datatype
+
+NAME = in_1 TYPE = char(10)
+
+=head3 OUTPUT
+
+The OUTPUT keyword contains the name associated with input and datatype
+
+=head4 VARIABLE
+
+The VARIABLE keyword appears more than once if there is more than 1 input
+It defines the input name and input datatype
+
+NAME = out_1 TYPE = char(10)
+
+As with the INPUT keyword, the OUTPUT keyword accepts lists of 4GL supported
+data types and are assumed to be in the order in which they are listed.
+
+    OUTPUT = decimal(16), char(34)
+
+=head2 [DIRECTORY]
+
+The DIRECTORY section identifies I4GL and related source files that will
+be used to provide the service (primarily for provided services).
+There should be at least one DIRECTORY section; there could be several.
+Each DIRECTORY section can identify one or more files.
+
+=head3 NAME
+
+The NAME keyword identifies a directory by name.
+The directory must exist and be accessible (read-only).
+You can only list one NAME in a given DIRECTORY section.
+Directory names may not contain spaces.
+
+    NAME = /work1/4glappln
+
+=head3 FILE
+
+The FILE keyword identifies a source file in the named directory.
+The file must exist and be accessible (read-only).
+You may only list the basenames of the files.
+You can list multiple files in a single entry, separated by commas or
+spaces.
+You can use multiple FILE entries.
+
+    FILE = conversion.4gl
+
+=head3 HOSTNAME
+
+The HOSTNAME identifies the host where the service will be hosted
+
+   HOSTNAME = idcxs2.in.ibm.com
+
+=head3 PORTNO
+
+The PORTNO identifies the listener port on which the appserver listens 
+so that other applications can connect and get the required services.
+
+   PORTNO = 9090
+
+=head1 GENERATED FILES
+
+=head1 DEPLOYMENT
+
+=cut

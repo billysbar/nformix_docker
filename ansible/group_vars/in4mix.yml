@@ -1,0 +1,13 @@
+---
+
+env: "~~~PRODUCTION~~~"
+
+iown: informix
+igrp: informix
+
+root_dir: tmp/ROOT
+
+host_os: in4mix_host
+
+i4gl_src: /home/informix/tmp/
+INFORMIXDIR: /opt/ibm/informix

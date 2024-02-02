@@ -1,0 +1,2 @@
+[dev_server]
+10.111.42.52 ansible_user=adodson ansible_ssh_pass=payzone

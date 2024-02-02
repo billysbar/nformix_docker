@@ -1,0 +1,46 @@
+{####################################################################
+ # FORM: varc_bd.per                                                #
+ # PURPOSE: Manages display and editing of varchar                  #
+ # 4GL PROGRAM: blobdemo.4gl                                        #
+ #                                                                  #
+ # Last revised: May 28, 1991                                       #
+ ####################################################################}
+
+{ ///////////////////////////////////////////////////////////////////////////
+	This is the screen form for catlist varchar window.
+	That window is normally obscured by the main window, but is
+		brought to the front on request to edit the ad copy.
+	The database name "newdemo" is used; you must change it if you
+		call the enhanced stores database something else.
+//////////////////////////////////////////////////////////////////////// }
+
+DATABASE stores2
+SCREEN
+{
+ Ad copy for cat# [cnum ], [sdesc          ] from [man            ]
+
+ [copy                                                            ]
+ [copy                                                            ]
+ [copy                                                            ]
+ [copy                                                            ]
+
+            exit w/o changes [xn]  update database row [xu]
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num,			noentry;
+sdesc	= stock.description,			noentry;
+man	= manufact.manu_name,			noentry;
+copy	= catalog.cat_advert, wordwrap compress,
+	comments = "Press Return for next field; Control-B for edit key reminders" ;
+xn	= formonly.xn type char,
+	comments = "Press Control-E now to exit with no changes" ;
+xu	= formonly.xu type char,
+	comments = "Press Control-E now to update the ad copy data";
+
+END

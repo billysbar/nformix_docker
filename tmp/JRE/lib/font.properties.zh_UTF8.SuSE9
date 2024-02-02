@@ -1,0 +1,151 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.zh_UTF8.SuSE9, fontprop, ax142, 20060311 1.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2002, 2003. All Rights Reserved
+# ===========================================================================
+# Change activity:
+# 
+# Reason  Date   Origin    Description
+# ------  ----   ------    -------------------------------------------------- 
+# 76559  130804  smithwil  Enable os-specific font.properties, support SLES9
+#                          Create this file
+# 
+# ===========================================================================
+# File Information:
+#
+# DESCRIPTION:
+# Intended for Simplified Chinese with UTF-8 encoding on SLES9 Linux
+# The default locale for Simplified Chinese on SLES9 is zh_CN.UTF-8
+#
+# Font packages in SLES9:
+#
+# -founder-SongTi-* fonts come from
+# /usr/X11R6/lib/X11/fonts/truetype/FZSongTi.ttf,
+# installed by ttf-founder-*.rpm
+#
+# -Arphic-AR PL SuntiL GB-* fonts come from
+# /usr/X11R6/lib/X11/fonts/truetype/gbsn00lp.ttf,
+# installed by ttf-arphic-gbsn00lp-*.rpm
+#
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-founder-SongTi-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-founder-SongTi-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+serif.bold.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-founder-SongTi-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-founder-SongTi-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-founder-SongTi-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-founder-SongTi-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-founder-SongTi-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-founder-SongTi-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-founder-SongTi-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-founder-SongTi-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-founder-SongTi-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-founder-SongTi-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-founder-SongTi-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-founder-SongTi-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-founder-SongTi-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+dialog.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-founder-SongTi-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.2=-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+alias.dialoginput=monospaced
+
+# default char definition
+default.char=02ff
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+fontset.serif.plain=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.italic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bold=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bolditalic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.sansserif.plain=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.italic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bold=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bolditalic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.monospaced.plain=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.italic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bold=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bolditalic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialog.plain=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.italic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bold=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bolditalic=\
+-Arphic-AR PL SungtiL GB-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+

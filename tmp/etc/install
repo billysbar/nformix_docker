@@ -1,0 +1,661 @@
+: '
+: *************************************************************************
+: *  Licensed Materials - Property of IBM                                 *
+: *                                                                       *
+: *  "Restricted Materials of IBM"                                        *
+: *                                                                       *
+: *  IBM Informix 4GL                                                     *
+: *  Copyright IBM Corporation 2001, 2008. All rights reserved.           *
+: *                                                                       *
+: *************************************************************************
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+: 
+:			      PROPRIETARY DATA
+: 
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF 
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR 
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT 
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE. 
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:  Title:	install
+:  Description:	Installation Script
+:	usage: install files_list [ isql | i4gl ]
+:
+:  ignores blank lines and lines starting with #, DISK, 
+:  space, or tab
+:
+: **********************************************************************
+: '
+
+#
+# function: check_license()
+# Function to accept Software Licensing Terms
+#
+# check_license()
+# {
+#     # Check for previous product installation and License acceptance
+#     BNDL_LIC_PATH=master_license
+#     STATUS=0
+#     PREV_INSTALL_STATUS=0
+#
+#     if [ -f $INFORMIXDIR/$BNDL_LIC_PATH/$INSTALL_PRODUCT/license/status.dat ]
+#     then
+#         PREV_INSTALL_STATUS=1
+#         get_status
+#     fi
+#
+#     # No previous installation or status found. Proceed with License terms
+#     if [ $PREV_INSTALL_STATUS -eq 0 ]
+#     then
+#
+#         # Display License terms
+#         launch_lap
+#
+#         # Check acceptance status
+#         get_status
+#     fi
+#
+#     if [ $STATUS -eq 0 ] # license agreement accepted
+#     then
+#         echo 'License terms not accepted. Exiting'
+#         exit 1
+#     fi
+#
+#     # Accepted Licence Agreements for both i4gl & isql.
+#     # Remove LI, LAP, JRE directories
+#     if [ -d $INFORMIXDIR/LI  -a  -d $INFORMIXDIR/LAP -a \
+#          -d $INFORMIXDIR/JRE ]
+#     then
+#         if [ -f $INFORMIXDIR/$BNDL_LIC_PATH/i4gl/status.dat -a \
+#              -f $INFORMIXDIR/$BNDL_LIC_PATH/isql/status.dat ]
+#         then
+#              rm -rf $INFORMIXDIR/JRE $INFORMIXDIR/LI $INFORMIXDIR/LAP
+#         else
+#              echo ""
+#              echo ""
+#              echo "Note:"
+#              echo "The directories LI, LAP, JRE are no longer required "
+#              echo "for the $INSTALL_PRODUCT product and can be safely removed to"
+#              echo "free up some space"
+#              echo ""
+#              echo ""
+#           fi
+#      fi
+#
+# } # end of check_license()
+
+
+#
+# function: launch_lap()
+# Function to accept Software Licensing Terms
+#
+# launch_lap()
+# {
+#
+#    LAPFLAG=""
+#    TEMPLIB=$LIBPATH
+#    TEMPLDLIBPATH=${LD_LIBRARY_PATH}
+#
+#    # New installation
+#    LIBPATH=$MEDIADIR/JRE/bin/:$MEDIADIR/JRE/bin/classic:$MEDIADIR/JRE/lib
+#    export LIBPATH
+#
+#    JREPATH=${MEDIADIR}/JRE
+#    JREBINPATH=${MEDIADIR}/JRE/bin
+#
+#    # HP-IA32/64
+#    if [ -f ${MEDIADIR}/JRE/bin/IA64N/java ]
+#    then
+#       JREBINPATH=${MEDIADIR}/JRE/bin/IA64N
+#    # AIX
+#    elif [ -f ${MEDIADIR}/JRE/jre/bin/java ]
+#    then
+#       JREBINPATH=${MEDIADIR}/JRE/jre/bin
+#    # Generic path
+#    elif [ -f ${MEDIADIR}/JRE/bin/java ]
+#    then
+#       JREBINPATH=${MEDIADIR}/JRE/bin
+#    fi
+#
+# #   # Invoke the LAP command line
+# #   if [ "${SILENT}x" = "yesx" ]
+# #   then
+# #     LAPFLAG="-t 5"
+# #   fi
+#
+#    su informix -c "$JREBINPATH/java -classic -classpath $MEDIADIR/LAP/LAPApp.jar:$MEDIADIR/JRE/lib/i18n.jar:$MEDIADIR/JRE/lib/rt.jar com.ibm.lex.lapapp.LAP -l $MEDIADIR/LI/$INSTALL_PRODUCT -s $INFORMIXDIR/$BNDL_LIC_PATH/$INSTALL_PRODUCT -text_only ${LAPFLAG}"
+#
+#    LIBPATH=$TEMPLIB
+#    export LIBPATH
+#    LD_LIBRARY_PATH=${TEMPLDLIBPATH}
+#    export LD_LIBRARY_PATH
+#
+# } # end of lauch_lap()
+
+
+# function: get_status()
+# get the status of the LAP application approval
+# #
+# get_status()
+# {
+#
+#    STATUS=0
+#    if [ -f $INFORMIXDIR/$BNDL_LIC_PATH/$INSTALL_PRODUCT/license/status.dat ]
+#    then
+#        STATUSSTRING=`cat $INFORMIXDIR/$BNDL_LIC_PATH/$INSTALL_PRODUCT/license/status.dat | grep Status`
+#        if [ "$STATUSSTRING" = "Status=9" ]
+#        then
+#            STATUS=1
+#        else
+#            #License - Invalid status
+#            PREV_INSTALL_STATUS=0
+#        fi
+#    fi
+#
+#     return $STATUS
+# } # end of get_status().
+# #
+
+
+
+
+# For format of files_list files refer to bin/fileslist.doc
+
+if test "x$1" = "x"
+then
+     echo "Usage: install files_list [ i4gl | isql ]"
+     exit 1
+fi
+FILELIST=$1
+
+if test "x$2" = "x"
+then
+     echo "Usage: install files_list [ i4gl | isql ]"
+     exit 1
+fi
+INSTALL_PRODUCT=$2
+
+if [ -z "${MEDIADIR}" ]
+then
+    MEDIADIR=`pwd`
+    export MEDIADIR
+fi
+
+echo '
+
+Installation Script
+
+This installation procedure must be run by root (super-user).
+It will change the owner, group, and mode of all files of this
+package in this directory.  There must be a user "informix" and a
+group "informix" known to the system.
+'
+
+echo install > /tmp/__install__
+chown root /tmp/__install__ 2> /dev/null
+
+if test $? -ne 0
+    then
+    echo '
+Please rerun this installation procedure as super-user.
+'
+    rm /tmp/__install__
+    exit 1
+fi
+
+: 'Need another test for Sys 5 since chown is valid for files you own'
+#
+# The owner of /tmp/__install__ is root now. The chmod 4755 is used to
+# test whether the user is root.
+#
+chmod 4755 /tmp/__install__ 2> /dev/null
+
+if test $? -ne 0
+then
+    echo '
+Please rerun this installation procedure as super-user.
+'
+    rm -f /tmp/__install__
+    exit 1
+fi
+
+rm /tmp/__install__
+
+# echo '
+# Press RETURN to continue,
+# or the interrupt key (usually CTRL-C or DEL) to abort.
+# '
+#
+# read I
+
+# Check INFORMIXDIR is set, and we're in it
+
+if test "x$INFORMIXDIR" = "x"
+then
+    echo "INFORMIXDIR is not set."
+    exit 1
+fi
+if test $INFORMIXDIR != `pwd`
+then
+     echo "INFORMIXDIR and working directory do not match."
+     echo "INFORMIXDIR is set to	$INFORMIXDIR"
+     echo "Current working directory is	`pwd`"
+     exit 1
+fi
+
+# Get product name
+grep "^PRODUCT" $FILELIST > _product
+read keywd PRODUCT < _product
+rm -f _product
+
+# Get data for licensed feature
+FNAME=""; RELEASE=""
+grep "^NAME"  $FILELIST > _feature
+read keywd1 FNAME keywd2 RELEASE < _feature
+rm -f _feature
+
+SERNUM="RDS#N000000"
+KEY="SWHPKU"
+
+# check_license
+
+#
+# Determine if product has license enforcement
+#
+# SERFILE=.NOSUCH; rm -f $SERFILE # Initialise SERFILE to non-existent file
+# USERFILE=.NOSUCH; rm -f $USERFILE # Initialise USERFILE to a non-existent file
+# if test "x$FNAME" != "x"
+# then
+#     case $FNAME in
+#         ifmxse ) SERFILE=.seserial; USERFILE=.seuser;;
+#         ifmxon ) SERFILE=.onserial; USERFILE=.onuser;;
+# 	* ) EVAL=false;;
+#     esac
+# else
+    EVAL=false
+# fi
+
+
+#
+# Evaluation copies cannot be re-installed with the same serial number.
+# But to allow for errors in the initial installation, a grace period
+# is allowed, so that reinstallation within N days without a new serial
+# number is possible.
+grace=14			# number of grace days.
+reinstall=no
+
+# Get dates to compute if within grace period.
+tyr=`date +19%y`; iyr=$tyr	# This year
+tdy=`date +%j`; idy=$tdy	# Today in year
+
+# If today is less than grace period we're into a new year, recast today
+# in terms relative to last year
+if test $tdy -le $grace
+then tdy=`expr 365 + $tdy`
+     tyr=`expr $tyr - 1`
+fi
+
+if test "x$EVAL" = "xtrue"
+then
+    if test -s etc/$SERFILE
+    then
+        read yr dy sn < etc/$SERFILE
+	if test "$sn" = $SERNUM
+	then
+	    if test $tyr = "$yr" -a $tdy -le `expr "$dy" + $grace`
+	    then reinstall=yes
+	    else
+	        echo "Cannot re-install evaluation software with same serial number."
+	        echo "If you wish to extend the evaluation period, please contact"
+	        echo "Informix Software to obtain a new serial number."
+	        echo ""
+	        exit 1
+	    fi
+	fi
+    fi
+fi
+
+tdydate=`date +%y%m%d`   # date used to backup files when necessary.
+BRAND=etc/brand
+
+if test -s /bin/ranlib
+    then
+    RANLIB=/bin/ranlib
+elif test -s /usr/bin/ranlib
+    then
+    RANLIB=/usr/bin/ranlib
+else
+    RANLIB=
+fi
+
+while read NAM OWN GRP MOD FLG FLG2
+    do
+    case $NAM
+	in
+	\#* | "" | " "* | "	"* | DISK* )
+	    continue
+	    ;;
+	NAME* )
+	    continue
+	    ;;
+	PRODUCT* )
+	    continue
+	    ;;
+    esac
+    if test -d $NAM
+	then
+	echo "Installing directory $NAM"
+    fi
+    case $FLG
+	in
+
+#ifdef ASIAN
+
+        MKDIR )
+            if test ! -d $NAM
+            then
+                echo "Installing directory $NAM"
+                mkdir $NAM
+                if test $? -ne 0
+                then
+                    echo "Installation of $PRODUCT failed."
+                    exit 1
+                fi
+            fi
+            ;;
+
+#endif /* ASIAN */
+
+	BRAND )
+	    $BRAND -n -s $SERNUM $KEY $NAM
+	    if test $? -ne 0
+	    then
+		echo "Installation of $PRODUCT failed."
+		exit 1
+	    fi
+	    ;;
+	ELINK )
+	    if test -s $FLG2
+	    then
+		ln $FLG2  $NAM
+		if test $? -ne 0
+		then
+		    echo "Installation of $PRODUCT failed to link $NAM to $FLG2"
+		    exit 1
+		fi
+		echo "$NAM linked to exsting file $FLG2"
+	    else
+		NAM=""
+	    fi
+	    ;;
+	LINK )
+	    rm -f $NAM
+	    ln $FLG2 $NAM
+	    if test $? -ne 0
+	    then
+		echo "Installation of $PRODUCT failed."
+		exit 1
+	    fi
+	    ;;
+	REMOVE )
+	    rm -f $NAM
+	    if test $? -ne 0
+	    then
+		echo "Installation of $PRODUCT failed."
+		exit 1
+	    fi
+            NAM=""
+	    ;;
+	RENAME )
+	   if test ! -f $FLG2
+	   then
+	       mv $NAM $FLG2
+	       if test $? -ne 0
+	       then
+		    echo "Installation of $PRODUCT failed."
+		    exit 1
+	       fi
+	       NAM=$FLG2
+	   else
+		if test ! -f $NAM
+		then
+		    NAM=""
+		fi
+	   fi
+	   ;;
+	REPLACE )
+	    if test -f $NAM
+	    then
+	        if test -f $FLG2
+	        then # make sure we don't backup twice in the same day
+		     if test ! -f $FLG2.$tdydate
+		     then # file hasn't been backed up today, do it
+		          mv $FLG2 $FLG2.$tdydate
+		          echo "A new version of $FLG2 will be installed,"
+		          echo "Previous version of $FLG2 is saved as $FLG2.$tdydate"
+		     else # file already backed up today
+		          rm -f $FLG2
+		     fi
+	        fi
+	        mv $NAM $FLG2
+	        if test $? -ne 0
+	        then
+		    echo "Installation of $PRODUCT failed"
+		    exit 1
+	        fi
+	        NAM=$FLG2
+	    else
+		NAM=""
+	    fi
+	    ;;
+    esac
+    case $NAM
+	in
+	*.a )
+	    if (test "$RANLIB" != "")
+	    then
+		$RANLIB $NAM
+		if test $? -ne 0
+		then
+		    echo "Installation of $PRODUCT failed."
+		    exit 1
+		fi
+	    fi
+	    ;;
+    esac
+    if test "x$NAM" != "x"
+    then
+	chown $OWN $NAM
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+	chgrp $GRP $NAM
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+	chmod $MOD $NAM
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+    fi
+done < $FILELIST
+# Since above while loop is executed in subshell, need to exit script if
+# there were any errors.
+if test $? -ne 0
+then
+     exit 1
+fi
+
+#
+# See if there are any Shared Libraries to be installed in system dirs
+#
+if grep SHARELIB $FILELIST > /dev/null 2>&1
+then
+    echo ""
+    echo "Installing Shared Libraries in System Directories ...
+	 "
+    # See if machine supports symbolic links
+    echo symlink > _linkfile
+    ln -s _linkfile __linkfile
+    if test $? -eq 0
+    then SHCMD="ln -s"
+    else SHCMD="cp"
+    fi
+    rm -f _linkfile __linkfile
+    # Now link or copy each shared library
+    grep SHARELIB $FILELIST | while read NAM OWN GRP MOD FLG FLG2
+    do
+	if test "$FLG" = "SHARELIB"
+	then
+	     backup=no
+	     if test -f $FLG2
+	     then # make sure we don't backup twice in the same day
+		  if test ! -f $FLG2.$tdydate
+		  then # file hasn't been backed up today, do it
+		       mv $FLG2 $FLG2.$tdydate
+		       backup=yes
+		  fi
+	     fi
+	     # force removal of the file, which could be a link to a non-
+	     # existent file (e.g. if INFORMIXDIR has been renamed).
+	     rm -f $FLG2
+	     if test $? -ne 0
+	     then echo "Installation of $PRODUCT failed."
+		  exit 1
+	     fi
+	     if test "$SHCMD" = "cp"
+	     then echo "Copying $NAM to $FLG2"
+	     else echo "Linking $FLG2 from $NAM"
+	     fi
+	     $SHCMD $INFORMIXDIR/$NAM $FLG2
+	     if test $? -ne 0
+	     then echo "Installation of $PRODUCT failed."
+		  exit 1
+	     fi
+	     if test $backup = yes
+	     then echo "Previous version of $FLG2 saved as $FLG2.$tdydate"
+	     fi
+	     echo ""
+	fi
+    done
+    # Since above while loop is executed in subshell, need to exit script if
+    # there were any errors.
+    if test $? -ne 0
+    then
+         exit 1
+    fi
+fi
+
+#
+# record the product name and serial number in etc/.snfile
+# for all products except C-ISAM
+#
+case $PRODUCT
+    in
+    C-ISAM* )
+	;;
+    * )
+	echo $PRODUCT " Serial Number " $SERNUM >> etc/.snfile
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+	chgrp informix etc/.snfile
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+	chmod 600 etc/.snfile
+	if test $? -ne 0
+	then
+	    echo "Installation of $PRODUCT failed."
+	    exit 1
+	fi
+	# Create serial number files for evaluation copies.
+	if test "x$EVAL" = "xtrue"
+	then
+            if test $reinstall != yes
+	    then
+		rm -f etc/$SERFILE
+                echo "$iyr	$idy	$SERNUM" > etc/$SERFILE
+                chmod 444 etc/$SERFILE
+                chgrp informix etc/$SERFILE
+                chown informix etc/$SERFILE
+		if test $? -ne 0
+		then
+		     echo "Installation of $PRODUCT failed."
+		     rm -f etc/$SERFILE
+		     exit 1
+		fi
+
+	    fi
+	else
+	    rm -f etc/$SERFILE
+	fi
+	# Create lock files for single user enforcement
+	if test "x$SINGLUSR" = "xtrue"
+	then
+	    if test "x$FNAME" != "x"
+	    then
+		rm -f etc/$USERFILE
+		cat /dev/null > etc/$USERFILE
+		chmod 660 etc/$USERFILE
+		chown informix etc/$USERFILE
+		chgrp informix etc/$USERFILE
+		if test $? -ne 0
+		then
+		     echo "Installation of $PRODUCT failed."
+		     rm -f etc/$USERFILE
+		     exit 1
+		fi
+	    fi
+	else
+	    rm -f etc/$USERFILE
+	fi
+	;;
+esac
+
+# Create date file if product is DRDA-GW
+
+if test "x$FNAME" != "x"
+then
+     if test "$FNAME" = "ifmxgw"
+     then
+         if test ! -s etc/.gw
+         then
+              date > etc/.gw
+              chmod 440 etc/.gw
+              chown informix etc/.gw
+              chgrp informix etc/.gw
+              if test $? -ne 0
+              then
+	           echo "Cannot create etc/.gw file"
+	           rm -f etc/.gw
+	           exit 1
+              fi
+         fi
+     fi
+fi
+
+
+
+echo "
+Installation of $PRODUCT complete.
+"
+exit 0

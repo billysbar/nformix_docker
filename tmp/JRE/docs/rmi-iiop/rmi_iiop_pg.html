@@ -1,0 +1,802 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+<!-- - @(#)src/rmi-iiop/docs/sov/rmi_iiop_pg.html, orb, xs2142 1.9.2.2 - =========================================================================== - Licensed Materials - Property of IBM - "Restricted Materials of IBM" - - IBM SDK, Java(tm) 2 Technology Edition, v1.4.2 - (C) Copyright IBM Corp. 1998, 2004. All Rights Reserved - =========================================================================== -->
+  <meta name="GENERATOR"
+ content="Mozilla/4.5 [en] (X11; I; AIX 4.3) [Netscape]">
+  <title>RMI-IIOP Programmer's
+Guide</title>
+</head>
+<body style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);">
+&nbsp;
+<h1>RMI-IIOP Programmer's Guide</h1>
+<hr noshade="noshade" size="3">
+<h2>Copyright Information</h2>
+<p><b>Note</b>:
+Before using this information and the product it
+supports, be sure to read the general information under <a
+ href="#HDRNOTICES">Notices</a>.
+</p>
+<p>This edition of the User Guide
+applies to RMI-IIOP, as described below, and to all subsequent releases
+and modifications until otherwise
+indicated in new editions.
+</p>
+<p>(c) Copyright Sun Microsystems,
+Inc. 1995, 2002, 901 San Antonio
+Rd., Palo Alto, CA 94303 USA. All rights reserved.
+</p>
+<p>(c) Copyright International
+Business Machines Corporation, 1998,
+2004. All rights reserved.
+</p>
+<p>U.S. Government Users
+Restricted Rights - Use, duplication or
+disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+</p>
+<hr noshade="noshade" size="3">
+<h2>Table of Contents</h2>
+<ul>
+  <li>
+    <a href="#Intro">Introduction</a></li>
+  <ul>
+    <li>
+      <a href="#Resources">Background
+Reading</a></li>
+  </ul>
+  <li>
+    <a href="#WhatIs">What
+is RMI-IIOP?</a></li>
+  <li>
+    <a href="#rmic">The New
+rmic Compiler</a></li>
+  <li>
+    <a href="#idlj">The New
+idlj Compiler</a></li>
+  <li>
+    <a href="#Convert">How
+to Make RMI Programs Use IIOP</a></li>
+  <li>
+    <a href="#Restrictions">Restrictions
+When Running RMI Programs Over IIOP</a></li>
+  <li>
+    <a href="#OtherThings">Other
+Things You Should Know</a></li>
+  <li>
+    <a href="#HDRNOTICES">Notices</a></li>
+  <ul>
+    <li>
+      <a href="#tms">Trademarks</a></li>
+  </ul>
+</ul>
+<!-- RMI-IIOP INTRODUCTION -->
+<h2><a name="Intro"></a>Introduction</h2>
+<p>This document discusses how to
+write Java Remote Method Invocation
+(RMI) programs that can access remote objects by using the Internet
+Inter-ORB
+Protocol (IIOP). By making your RMI programs conform to a small set of
+<a href="#Restrictions">restrictions</a>,
+your RMI programs can access
+CORBA objects. RMI-IIOP gives you RMI ease-of-use coupled with
+CORBA/IIOP language interoperability.</p>
+<!-- BACKGROUND READING-->
+<h3><a name="Resources"></a>Background
+Reading</h3>
+<p>Here are some sites to get you
+up to speed with this technology:</p>
+<ul>
+  <li>
+The <a href="http://www.ibm.com/java/jdk/rmi-iiop/index.html">RMI-IIOP
+home page</a> contains links to
+RMI-IIOP documentation, sample code, specifications,
+news, other related web sites, and more. Check it out!</li>
+  <li>
+The <a href="http://www.ibm.com/developerworks/java/rmi-iiop/faq.html">RMI-IIOP
+FAQ page</a> answers many basic
+RMI-IIOP questions.</li>
+  <li>
+The <a href="http://java.sun.com/products/jdk/rmi/index.html">Java
+RMI</a>
+home page contains links to RMI documentation, examples, specification,
+and more. Make sure you read this.</li>
+  <li>
+The <a href="http://java.sun.com/docs/books/tutorial/rmi">RMI
+trail</a>
+in the Java Tutorial.</li>
+  <li>
+The <a
+ href="http://java.sun.com/j2se/1.4/docs/api/java/rmi/package-summary.html">RMI
+API</a> javadoc contains the most
+up-to-date RMI API documentation.</li>
+  <li>
+The <a href="http://java.sun.com/j2se/1.4/docs/guide/idl/index.html">Java
+IDL</a> web page will familiarize
+you with Sun's CORBA/IIOP implementation.</li>
+  <li>
+The <a href="http://java.sun.com/j2se/1.4/docs/guide/idl/GShome.html">Java
+IDL Trail</a> in the Java Tutorial.</li>
+</ul>
+<!-- WHAT IS RMI-IIOP? -->
+<h2><a name="WhatIs"></a>What
+is RMI-IIOP?</h2>
+<h3>
+RMI</h3>
+<p>With RMI you can write
+distributed programs in the Java programming
+language.
+RMI is easy to use, you don't need to learn a separate interface
+definition
+language (IDL), and you get Java's inherent "write once, run anywhere"
+benefit. Clients, remote interfaces, and servers are written entirely
+in
+Java. RMI uses the Java Remote Method Protocol (JRMP) for remote Java
+object
+comunication. To get a quick introduction to writing RMI programs, see
+the <a href="http://java.sun.com/docs/books/tutorial/rmi">RMI
+Tutorial</a> web page. That document
+describes writing a simple "Hello
+World" RMI program.
+</p>
+<p>RMI lacks interoperability with
+other languages, and, because it uses
+a non-standard communication protocol, cannot communicate with CORBA
+objects.
+</p>
+<h3>IIOP, CORBA, and Java IDL</h3>
+<p>IIOP is CORBA's communication
+protocol. It defines the way the bits are
+sent over a wire between CORBA clients and servers. CORBA is a standard
+distributed object architecture developed by the Object Management
+Group
+(OMG). Interfaces to remote objects are described in a platform-neutral
+interface definition language (IDL). Mappings from IDL to specific
+programming
+languages are implemented, binding the language to CORBA/IIOP.</p>
+<p>The Java(TM) 2 Platform,
+Standard Edition (J2SE) v1.4 CORBA/IIOP
+implementation is known as Java IDL. Along with
+the <tt>idlj</tt>
+compiler, Java IDL can be used to define, implement,
+and access CORBA objects from the Java programming language.
+</p>
+<p>The <a href="http://java.sun.com/j2se/1.4/docs/guide/idl/index.html">Java
+IDL</a> web page gives you a good,
+Java-centric view of CORBA/IIOP programming.
+To get a quick introduction to writing Java IDL programs, see the
+<a href="http://java.sun.com/j2se/1.4/docs/guide/idl/GShome.html">Getting
+Started: Hello World</a> web page.
+</p>
+<h3>RMI-IIOP</h3>
+<p>Previously Java programmers had
+to choose between RMI and CORBA/IIOP
+(Java
+IDL) for distributed programming solutions. Now, by adhering to a few
+<a href="#Restrictions">restrictions</a>,
+RMI server objects can use the
+IIOP protocol, and communicate with CORBA client objects written in any
+language. This solution is known as RMI-IIOP. RMI-IIOP combines
+RMI-style ease of use with CORBA cross-language interoperability.</p>
+<h2><a name="rmic"></a>The
+rmic Compiler</h2>
+<p>The RMI-IIOP software comes
+with an <tt>rmic</tt>
+compiler that can
+generate IIOP stubs and ties, and emit IDL, in accordance with the
+<a href="http://www.omg.org/cgi-bin/doc?formal/01-06-07"><i>Java
+Language
+to OMG IDL Language Mapping Specification</i></a>.</p>
+<p>Here are the <tt>rmic</tt>
+flags that provide support for RMI-IIOP:
+</p>
+<blockquote>
+  <dl>
+    <dt>
+      <b>-iiop</b></dt>
+    <dd>
+Generates IIOP stubs/ties</dd>
+    <dt>
+      <b>-iiop -poa</b></dt>
+    <dd>
+Generates IIOP stubs/ties that work with a Portable Object Adapter
+(POA).</dd>
+    <dt>
+      <b>-idl</b></dt>
+    <dd>
+Generates IDL</dd>
+    <dt>
+      <b>-always</b></dt>
+    <dd>
+Forces re-generation even when existing stubs/ties/idl are newer than
+the
+input class. Only valid when -iiop and/or -idl flags are present.</dd>
+  </dl>
+In addition the following options may be used along with the
+  <tt>-idl</tt>
+option:
+  <dl>
+    <dt>
+      <b>-noValueMethods</b></dt>
+    <dd>
+Stops generation of IDL for methods and constructors within IDL
+valuetypes</dd>
+    <dt>
+      <b>-idlModule </b>&lt;<b><i>fromJavaPackage</i></b>&lt;.<b><i>class</i></b>&gt;&gt;
+&lt;<b><i>toIDLModule</i></b>&gt;</dt>
+    <dd>
+Specifies IDLEntity package mapping.&nbsp; For example:</dd>
+    <br>
+-idlModule foo.bar my::real::idlmod
+    <dt><b>-idlFile
+      </b>&lt;<b>fromJavaPackage</b>&lt;.<b><i>class</i></b>&gt;&gt;
+&lt;<b><i>toIDLFile</i></b>&gt;</dt>
+    <dd>
+Specifies IDLEntity file mapping.&nbsp; For example:</dd>
+    <br>
+-idlFile test.pkg.X TEST16.idl
+  </dl>
+</blockquote>
+For more detailed information on the <tt>rmic</tt>
+compiler refer to the
+RMIC tool page
+(<a href="http://java.sun.com/j2se/1.4/docs/tooldocs/solaris/rmic.html">Solaris
+Version</a>/<a
+ href="http://java.sun.com/j2se/1.4/docs/tooldocs/win32/rmic.html">Windows
+version</a>).
+<h3>The -iiop Flag</h3>
+<p>Using <tt>rmic</tt>
+with the <tt>-iiop</tt>
+option generates stub and tie
+classes. A stub class is a local proxy for a remote object. Stub
+classes
+are used by clients to send calls to a server. Each remote interface
+requires
+a stub class, which implements that remote interface. The client's
+reference
+to a remote object is actually a reference to a stub. Tie classes are
+used
+on the server side to process incoming calls, and dispatch the calls to
+the proper implementation class. Each implementation class requires a
+tie
+class.</p>
+<p>Stub classes are also generated
+for abstract interfaces. An abstract
+interface is an interface that does not extend <tt>java.rmi.Remote</tt>,
+but whose methods all throw either <tt>java.rmi.RemoteException</tt>
+or
+a superclass of <tt>java.rmi.RemoteException</tt>.
+Interfaces that do not
+extend
+<tt>java.rmi.Remote</tt>
+and have no methods are also abstract interfaces.
+</p>
+<h3>The -iiop -poa Flag</h3>
+<p>New to this release of J2SE is
+the <tt>-iiop
+-poa</tt> option. Using
+the <tt>-iiop</tt>
+flag with the <tt>-poa</tt>
+option changes the
+inheritance from <tt>org.omg.CORBA_2_3.portable.ObjectImpl</tt>
+to
+<tt>org.omg.PortableServer.Servant</tt>.
+<strong>This type of mapping
+is nonstandard and is not specified by the
+<a href="http://www.omg.org/cgi-bin/doc?formal/01-06-07"><i>Java
+Language
+to IDL Mapping Specification</i></a>.</strong></p>
+<p>The <tt>PortableServer</tt>
+module for the
+<a href="http://java.sun.com/j2se/1.4/docs/guide/idl/POA.html">Portable
+Object Adapter</a> (POA) defines the
+native <tt>Servant</tt>
+type. In
+the Java programming language, the <tt>Servant</tt>
+type is mapped to
+the Java <tt>org.omg.PortableServer.Servant</tt>
+class. It serves as
+the base class for all POA servant implementations and provides a
+number
+of methods that may be invoked by the application programmer, as well
+as
+methods which are invoked by the POA itself and may be overridden by
+the
+user to control aspects of servant behavior.
+</p>
+<h3>The -idl Flag</h3>
+<p>Using <tt>rmic</tt>
+with the <tt>-idl</tt>
+option generates OMG IDL for
+the classes specified and any classes referenced. This option is only
+required if you have a CORBA client written in another language that
+needs to talk to a Java RMI-IIOP server.</p>
+<p><strong>Note:
+After the OMG IDL is generated using <tt>rmic
+-idl</tt>, use the generated IDL
+with an IDL-to-C++ or other language
+compiler, but not with the IDL-to-Java language compiler. "Round
+tripping" is not recommended and should not be necessary. The IDL
+generation facility is intended to be used with other languages such as
+C++. Java clients or servers can use the original RMI-IIOP
+types.</strong>
+</p>
+<p>IDL provides a purely
+declarative, programming language independent
+means for specifying the API for an object.
+The IDL is used as a specification for methods and data that can be
+written in and invoked from any language that provides CORBA bindings.
+This includes Java and C++ among others. See the
+<a href="http://www.omg.org/cgi-bin/doc?formal/01-06-07"><i>Java
+Language to IDL Mapping</i></a>
+(OMG) document for a complete description.
+</p>
+<p><b>Note:</b>
+The generated IDL can only be compiled using an IDL compiler
+that supports the CORBA 2.3 extensions to IDL.
+</p>
+<h3>The -noValueMethods Flag</h3>
+<p>The <tt>-noValueMethods</tt>
+option, when used with <tt>-idl</tt>,
+ensures
+that methods and initializers are <i>not</i>
+included in <tt>valuetype</tt>s
+emitted during IDL Generation. These are optional for <tt>valuetype</tt>s
+and are otherwise omitted.</p>
+<h2><a name="idlj"></a>The
+idlj Compiler</h2>
+<p>
+The RMI-IIOP software includes an IDL-to-Java compiler. This compiler
+supports the CORBA Objects By Value feature, which is required for
+interoperation with RMI-IIOP. It is written in Java, and so can run on
+any platform. See the
+<a
+ href="http://java.sun.com/j2se/1.4/docs/guide/rmi-iiop/toJavaPortableUG.html">IDL-to-Java
+Compiler User's Guide</a> for
+details of how to use this compiler.</p>
+<!-- The RMI/IIOP COOKBOOK -->
+<h2><a name="Convert"></a>How
+to Make RMI Programs Use IIOP</h2>
+<p>The following steps are a
+general guide to converting an RMI
+application
+to RMI-IIOP.</p>
+<ol>
+  <li>
+    <b>If you are using the RMI
+registry</b> for naming services,
+you need
+to switch to <tt>CosNaming</tt>.
+You need to do the following:</li>
+  <ol type="a">
+    <li>
+In both your client and server code, you need to create an <tt>InitialContext</tt>
+for JNDI using the following code:</li>
+    <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import javax.naming.*;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Context ic = new InitialContext();</pre>
+    <li>
+Modify all uses of RMI registry <tt>lookup()</tt>,
+      <tt>bind()</tt>,
+and
+      <tt>rebind()</tt>
+to use JNDI <tt>lookup()</tt>,
+      <tt>bind()</tt>,
+and <tt>rebind()</tt>
+instead.
+For example, instead of your RMI server using:</li>
+    <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import java.rmi.*;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Naming.rebind("MyObject", myObj);</pre>
+use:
+    <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import javax.naming.*;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ic.rebind("MyObject", myObj);</pre>
+    <li>
+If the client is an applet, the client applet needs to pass <tt>this</tt>
+to the JNDI <tt>CosNaming</tt>
+plugin. Replace the above code with the
+following:</li>
+    <pre>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import java.util.*;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; import javax.naming.*;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hashtable env = new Hashtable();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; env.put("java.naming.applet", this);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Context ic = new InitialContext(env);</pre>
+  </ol>
+  <li>
+    <b>If you are not using the
+RMI registry</b> for naming
+services, you have
+some other way of bootstrapping your initial remote object reference.
+For
+example, your server code may be using Java serialization to write an
+RMI
+object reference to an <tt>ObjectOutputStream</tt>
+and passing this to
+your client code for deserializing into an RMI stub. When doing this in
+RMI-IIOP, it is also necessary to ensure that object references are
+connected
+to an ORB before serialization and after deserialization. The following
+code example shows how to do this.<br>
+    <br>
+On the server side, use the <tt>PortableRemoteObject.toStub()</tt>
+call
+to obtain a stub, then use <tt>writeObject()</tt>
+to serialize this stub
+to an <tt>ObjectOutputStream</tt>.
+If necessary, use
+    <tt>Stub.connect()</tt>
+to connect the stub to an ORB before serializing it. The code to do
+this
+looks something like:</li>
+  <blockquote>
+    <pre>org.omg.CORBA.ORB myORB = org.omg.CORBA.ORB.init(new String[0], null);<br>Wombat myWombat = new WombatImpl();<br>javax.rmi.CORBA.Stub myStub = (javax.rmi.CORBA.Stub)PortableRemoteObject.toStub(myWombat);<br>myStub.connect(myORB);<br>// myWombat is now connected to myORB.&nbsp; To connect other objects to the<br>// same ORB, use PortableRemoteObject.connect(nextWombat, myWombat);<br>FileOutputStream myFile = new FileOutputStream("t.tmp");<br>ObjectOutputStream myStream = new ObjectOutputStream(myFile);<br>myStream.writeObject(myStub);</pre>
+  </blockquote>
+On the client side, use <tt>readObject()</tt>
+to deserialize a remote reference
+to the object from an <tt>ObjectInputStream</tt>.
+Before using the deserialized
+stub to call remote methods, it must be connected to an ORB. You could
+do this with code like:
+  <blockquote>
+    <pre>FileInputStream myFile = new FileInputStream("t.tmp");<br>ObjectInputStream myStream = new ObjectInputStream(myFile);<br>Wombat myWombat = (Wombat)myStream.readObject();<br>org.omg.CORBA.ORB myORB = org.omg.CORBA.ORB.init(new String[0], null);<br>((javax.rmi.CORBA.Stub)myWombat).connect(myORB);<br>// myWombat is now connected to myORB.&nbsp; To connect other objects to the<br>// same ORB, use PortableRemoteObject.connect(nextWombat, myWombat);</pre>
+  </blockquote>
+As you can see, the JNDI approach is much simpler, so use it whenever
+possible.
+  <br>
+&nbsp;
+  <li>Either change your remote
+implementation classes to inherit from
+    <tt>javax.rmi.PortableRemoteObject</tt>,
+or explicitly export
+implementation objects after creation by calling
+    <tt>PortableRemoteObject.exportObject()</tt>.
+For more discussion on
+this topic read <a href="#Connecting">Connecting
+IIOP stubs to the
+ORB</a>.</li>
+  <br>
+&nbsp;
+  <li>Change all the places in
+your code where there is a Java cast of a remote
+interface to use <tt>javax.rmi.PortableRemoteObject.narrow()</tt>.</li>
+  <br>
+&nbsp;
+  <li>Don't depend on distributed
+garbage collection (DGC) or use any of the
+RMI DGC facilities. Use <tt>PortableRemoteObject.unexportObject()</tt>
+to unexport objects that are no longer in use.</li>
+  <br>
+&nbsp;
+  <li>Regenerate the RMI stubs and
+ties using the <tt>rmic</tt>
+command with
+the <tt>-iiop</tt>
+option. This will produce stub and tie files with the
+following names:</li>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp; _&lt;implementationName&gt;_Tie.class<br>&nbsp;&nbsp;&nbsp;&nbsp; _&lt;interfaceName&gt;_Stub.class</pre>
+  <li>
+Before starting the server, start the <tt>CosNaming</tt>
+server (in its
+own process) using the following command:</li>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp; tnameserv</pre>
+This uses the default port number of 2809. If you want to use a
+different
+port number, use the following command:
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp; tnameserv -ORBInitialPort 1050</pre>
+  <li>
+When starting client and server applications, specify the following
+system
+properties:</li>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp; java -Djava.naming.factory.initial=com.sun.jndi.cosnaming.CNCtxFactory<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Djava.naming.provider.url=iiop://&lt;hostname&gt;:2809<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;appl_class&gt;</pre>
+This example uses the default name service port number of 2809. If you
+specified
+a different port in step 8, you need to use the same port number in the
+provider URL here. The &lt;hostname&gt; in the provider URL is
+the host name
+that was used to start the <tt>CosNaming</tt>
+server in step 7.
+  <br>
+&nbsp;
+  <li>If the client is an applet,
+specify the following properties in the applet
+tag:</li>
+  <pre>&nbsp;&nbsp;&nbsp;&nbsp; java.naming.factory.initial=com.sun.jndi.cosnaming.CNCtxFactory<br>&nbsp;&nbsp;&nbsp;&nbsp;java.naming.provider.url=iiop://&lt;hostname&gt;:2809</pre>
+This example uses the default name service port number of 2809. If you
+specified
+a different port in step 8, you need to use the same port number in the
+provider URL here. The &lt;hostname&gt; in the provider URL is
+the host name
+that was used to start the <tt>CosNaming</tt>
+server in step 7.
+</ol>
+<h3>
+<a name="Connecting"></a>Connecting
+IIOP stubs to the ORB</h3>
+<p>When your application uses IIOP
+stubs, as opposed to JRMP stubs, you
+need to properly connect the IIOP stubs with the ORB before invoking
+operations on the IIOP stubs (this is not necessary with JRMP stubs).
+This section discusses the extra 'connect' step required for the IIOP
+stub case.</p>
+<p><strong>The
+<tt>PortableRemoteObject.exportObject()</tt>
+call only creates a tie
+object and caches it for future usage. The created tie does not have a
+delegate or an ORB associated. This is known as explicit
+invocation.</strong>
+</p>
+<p>The <tt>PortableRemoteObject.exportObject()</tt>
+happens
+automatically when the servant instance is created. This happens when a
+<tt>PortableRemoteObject</tt>
+constructor is called as a base class.
+This is known as implicit invocation.
+</p>
+<p>Later, when <tt>PortableRemoteObject.toStub()</tt>
+is called by the
+application, it creates the corresponding Stub object and associates it
+with the cached Tie object. But since the Tie is not connected and does
+not have a delegate, the newly created stub also does not have a
+delegate or ORB.
+</p>
+<p>The delegate is set for the
+stub only when the application calls
+<tt>Stub.connect(orb)</tt>.
+Thus, any operations on the stub made before
+the ORB connection is made will fail.
+</p>
+<p>The <a href="http://www.omg.org/cgi-bin/doc?formal/01-06-07"><i>Java
+Language to IDL Mapping Specification</i></a>
+says the following about
+the <tt>Stub.connect()</tt>
+method:
+</p>
+<blockquote>The <tt>connect</tt>
+method makes the stub ready for remote
+communication using the specified ORB object <tt>orb</tt>.
+Connection
+normally happens implicitly when the stub is received or sent as an
+argument on a remote method call, but it is sometimes useful to do this
+by making an explicit call (e.g., following deserialization). If the
+stub is already connected to <tt>orb</tt>
+(i.e., has a delegate set for
+  <tt>orb</tt>),
+then connect takes no action. If the stub is connected to
+some other ORB, then a <tt>RemoteException</tt>
+is thrown. Otherwise, a
+delegate is created for this stub and the ORB object <tt>orb</tt>.
+</blockquote>
+<p>For servants that are not
+POA-activated, <tt>Stub.connect(orb)</tt>
+is necessary as a required setup.
+</p>
+<h2><a name="Restrictions"></a>Restrictions
+When Running RMI Programs Over
+IIOP</h2>
+<p>To make existing RMI programs
+run over IIOP, you need to observe the
+following
+restrictions.</p>
+<ol>
+  <li>
+Make sure all constant definitions in remote interfaces are of
+primitive
+types or String and evaluated at compile time.</li>
+  <li>
+Don't use Java names that conflict with IDL mangled names generated by
+the Java to IDL mapping rules. See section 28.3.2 of the
+    <a href="http://www.omg.org/cgi-bin/doc?formal/01-06-07"><i>Java
+Language to IDL Mapping</i></a>
+specification for the Java to IDL name
+mapping rules.</li>
+  <li>
+Don't inherit the same method name into a remote interface more than
+once
+from different base remote interfaces.</li>
+  <li>
+Be careful when using names that differ only in case. The use of a type
+name and a variable of that type whose name differs from the type name
+only in case is supported. Most other combinations of names that differ
+only in case are not supported.</li>
+  <li>
+Don't depend on runtime sharing of object references to be preserved
+exactly
+when transmitting object references across IIOP. Runtime sharing of
+other
+objects is preserved correctly.</li>
+  <li>
+Don't use the following features of RMI:</li>
+  <ul>
+    <li>
+      <tt>RMISocketFactory</tt></li>
+    <li>
+      <tt>UnicastRemoteObject</tt></li>
+    <li>
+      <tt>Unreferenced</tt></li>
+    <li>
+The Distributed Garbage Collector (DGC) interfaces</li>
+  </ul>
+</ol>
+<!-- OTHER THINGS YOU SHOULD KNOW -->
+<h2><a name="OtherThings"></a>Other
+Things You Should Know</h2>
+<h3>
+Servers Need to be Thread Safe
+</h3>
+<p>
+Since remote method invocations on the same remote object may execute
+concurrently, a remote object implementation must be thread-safe.
+</p>
+<h3>Interoperating with Other ORBs</h3>
+<p>RMI-IIOP should interoperate
+with other ORBS that support the CORBA 2.3
+specification. It will not interoperate with older ORBs, because these
+are unable to handle the IIOP encodings for Objects By Value. This
+support is needed to send RMI value classes (including strings) over
+IIOP.</p>
+<p><strong>NOTE:
+Although it is true that ORBs written in different
+languages should be able to talk to each other, we haven't tested the
+interoperability of the Java ORB with other vendor's ORBs.</strong>
+</p>
+<h3>When do I use
+UnicastRemoteObject vs PortableRemoteObject?</h3>
+<p><tt>UnicastRemoteObject</tt>
+should be used as the superclass for the
+object implementation in RMI programming. <tt>PortableRemoteObject</tt>
+should be used in RMI-IIOP programming. If <tt>PortableRemoteObject</tt>
+is used, you can switch the transport protocol to either JRMP or IIOP
+during runtime.
+</p>
+<h3>Known Problems</h3>
+<ul>
+  <li>
+JNDI 1.1 does not support
+    <tt>java.naming.factory.initial=com.sun.jndi.cosnaming.CNCtxFactory</tt>
+as an Applet parameter.&nbsp; Instead, it must be explicitly passed
+as a
+property to the <tt>InitialContext</tt>
+constructor. This capability is
+supported in JNDI 1.2.</li>
+  <li>
+When running the Naming Service on Unix based platforms, you must use a
+port number greater than 1024. The default port is 2809, so should
+cause no problems.</li>
+</ul>
+<h2><a name="HDRNOTICES"></a>Notices</h2>
+<p>This information was developed
+for products and services offered in the
+U.S.A. IBM may not offer the products, services, or
+features discussed in this document in other countries. Consult your
+local IBM representative for information on the products and services
+currently available in your area. Any reference to an IBM product,
+program, or service is not intended to state or imply that only that
+IBM
+product, program, or service may be used. Any functionally equivalent
+product, program, or service that does not infringe any IBM
+intellectual
+property right may be used instead. However, it is the user's
+responsibility to evaluate and verify the operation of any non-IBM
+product,
+program, or service.
+</p>
+<p>IBM may have patents or pending
+patent applications covering subject matter
+in this document. The furnishing of this document does not give you any
+license to these patents. You can send license inquiries, in writing,
+to:
+</p>
+<ul>
+  <li>IBM Director of Licensing <br>
+IBM Corporation <br>
+North Castle Drive, Armonk <br>
+NY 10504-1758 U.S.A. <br>
+    <p>
+    </p>
+  </li>
+</ul>
+<p>For license inquiries regarding
+double-byte (DBCS) information, contact the
+IBM Intellectual Property Department in your country or send inquiries,
+in
+writing, to:
+</p>
+<ul>
+  <li>IBM World Trade Asia
+Corporation Licensing <br>
+2-31 Roppongi 3-chome, Minato-ku <br>
+Tokyo 106-0032, Japan <br>
+    <p>
+    </p>
+  </li>
+</ul>
+<p>The following paragraph does
+not apply to the United Kingdom or any other
+country where such provisions are inconsistent with local law:
+</p>
+<p>INTERNATIONAL BUSINESS MACHINES
+CORPORATION PROVIDES THIS PUBLICATION "AS
+IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING,
+BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF NON-INFRINGEMENT,
+MERCHANTABILITY OR
+FITNESS FOR A PARTICULAR PURPOSE. Some states do not allow disclaimer
+of express or implied warranties in certain transactions, therefore,
+this
+statement may not apply to you.
+</p>
+<p>This information could include
+technical inaccuracies or typographical
+errors. Changes are periodically made to the information herein;
+these changes will be incorporated in new editions of the information.
+IBM may make improvements and/or changes in the product(s) and/or the
+program(s) described in this information at any time without notice.
+</p>
+<p>Any references in this
+information to non-IBM Web sites are provided for
+convenience only and do not in any manner serve as an endorsement of
+those Web
+sites. The materials at those Web sites are not part of the materials
+for this IBM product and use of those Web sites is at your own risk.
+</p>
+<p>IBM may use or distribute any
+of the information you supply in any way it
+believes appropriate without incurring any obligation to you.
+</p>
+<p>Licensees of this program who
+wish to have information about it for the
+purpose of enabling (i) the exchange of information between
+independently
+created programs and other programs (including this one) and (ii) the
+mutual
+use of the information which has been exchanged, should contact:
+</p>
+<ul>
+  <li>JIMMAIL@uk.ibm.com <br>
+[Hursley Java Technology Center (JTC) contact]
+  </li>
+</ul>
+<p>Such information may be
+available, subject to appropriate terms and
+conditions, including in some cases, payment of a fee.
+</p>
+<p>The licensed program described
+in this document and all licensed material
+available for it are provided by IBM under terms of the IBM Customer
+Agreement, IBM International Program License Agreement or any
+equivalent
+agreement between us.
+</p>
+<p>Any performance data contained
+herein was determined in a controlled
+environment. Therefore, the results obtained in other operating
+environments may vary significantly. Some measurements may have been
+made on development-level systems and there is no guarantee that these
+measurements will be the same on generally available systems.
+Furthermore, some measurement may have been estimated through
+extrapolation. Actual results may vary. Users of this document
+should verify the applicable data for their specific environment.
+</p>
+<p>Information concerning non-IBM
+products was obtained from the suppliers of
+those products, their published announcements or other publicly
+available
+sources. IBM has not tested those products and cannot confirm the
+accuracy of performance, compatibility or any other claims related to
+non-IBM
+products. Questions on the capabilities of non-IBM products should be
+addressed to the suppliers of those products.
+</p>
+<h3><a name="tms"></a>Trademarks</h3>
+<p>IBM is a trademark of
+International Business Machines Corporation in the
+United States, or other countries, or both.
+</p>
+<p>Microsoft, Windows, Windows NT,
+and the Windows logo are trademarks of
+Microsoft Corporation in the United States, other countries, or both.
+</p>
+<p>Java and all Java-based
+trademarks and logos are trademarks or registered
+trademarks of Sun Microsystems, Inc. in the United States, other
+countries, or both. The Java technology is owned and exclusively
+licensed by Sun Microsystems, Inc.
+</p>
+<p>Other company, product, or
+service names may be trademarks or service marks
+of others.
+</p>
+</body>
+</html>

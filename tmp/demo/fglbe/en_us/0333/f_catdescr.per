@@ -1,0 +1,44 @@
+{####################################################################
+ # FORM: f_catdescr                                                 #
+ # PURPOSE: Displays description for a catalog item. Description is #
+ #	    a TEXT field in the catalog table.                      #
+ # NOTE: The "catalog" table is ONLY available in the newdemo       #
+ #       database.  This table uses data types available only with  #
+ #       the OnLine engine.                                         #
+ #                                                                  #
+ # 4GL PROGRAM: ex18.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+ Description for cat# [cnum ], [sdesc          ] from [man            ]
+
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+
+       Exit w/o changes [xn]        Update catalog description [xu]
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num, NOENTRY;
+sdesc	= stock.description, NOENTRY;
+man	= manufact.manu_name, NOENTRY;
+copy	= catalog.cat_descr, WORDWRAP, PROGRAM="vi",
+	COMMENTS = "Press ! to invoke an editor, RETURN for next field";
+xn	= formonly.xn TYPE CHAR,
+	COMMENTS = "Press CONTROL-E now to exit with no changes." ;
+xu	= formonly.xu TYPE CHAR,
+	comments = "Press CONTROL-E now to update the catalog description.";
+END

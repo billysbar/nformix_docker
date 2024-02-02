@@ -1,0 +1,138 @@
+: '
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+: 
+:			      PROPRIETARY DATA
+: 
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF 
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR 
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT 
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE. 
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:  Title:	fglexcopy
+:  Sccsid:	@(#)fglexcopy	10.1	1/16/94	22:49:00
+:  ALSsid:	@(#)fglexcopy	1.1.1.2 5/24/94 19:10:00
+:  Description:	Copies 4GL By Example application files
+:               Last modified June, 1999.
+:
+: **********************************************************************
+: '
+
+IDIR=${INFORMIXDIR-/usr/informix}
+
+INFENV=${IDIR}/bin/infenv
+DEFLOCALE=en_US.8859-1
+CONVLOC=${IDIR}/bin/convloc
+
+if [ "x${LOCALE}" = "x" ]; then            # LOCALE is not set -- unlikely!
+    LOCALE=`$INFENV DBLANG`                # try get from DBLANG instead
+    if [ "x${LOCALE}" = "x" ]; then     # oops, US hardcoded DBLANG default
+        LOCALE=`$INFENV CLIENT_LOCALE`     # try to default to CLIENT_LOCALE
+        if [ "x${LOCALE}" = "x" ]; then
+            LOCALE=`$INFENV DB_LOCALE`     # finally default to DB_LOCALE
+        fi
+    fi
+fi
+
+DEMOPATH=`$CONVLOC $LOCALE`
+
+db=stores7
+
+FORMS="f_answer f_catadv f_catalog f_catdescr f_custcall f_custkey f_customer \
+	f_custsel f_custsum f_date f_edit f_logo f_manuf f_manufsel f_menu \
+	f_menu2 f_name f_orders f_ordersel f_payord f_ship f_statesel f_stock \
+	f_stocksel"
+
+FGLS="ex1 ex2 ex3 ex4 ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex13a ex14 \
+	ex15 ex16a ex16b ex17 ex18 ex19 ex20 ex21 ex22 ex23 ex24 ex25 ex26 \
+	ex27 ex28 ex29 ex30" 
+
+MSGS="hlpmsgs"
+
+MISCS="ex13i.sh ex13r.sh ex24.unl ex28pa.unl ex28pt.unl \
+	fgiusr.c fglgets.c"
+
+if (test $# -ge 1)
+then
+        db=$1
+fi
+
+echo "
+
+4GL By Example Demonstration Application Code Installation Script
+
+"
+
+echo "
+
+Now copying 4GL By Example Demonstration Programs ...
+"
+
+for i in $FORMS
+    do
+    cp $IDIR/demo/fglbe/${DEMOPATH}/$i.per .
+    done
+
+for i in $FGLS
+    do
+    cp $IDIR/demo/fglbe/${DEMOPATH}/$i.4gl .
+    done
+
+for i in $MSGS
+    do
+    cp $IDIR/demo/fglbe/${DEMOPATH}/$i.src .
+    done
+
+for i in $MISCS
+    do
+    cp $IDIR/demo/fglbe/${DEMOPATH}/$i .
+    done
+
+echo "
+
+Now customizing 4GL By Example Demonstration Code for Database $db ...
+"
+
+for i in $FORMS 
+do
+    sed s/stores2/$db/g $i.per >.custom
+    mv .custom $i.per
+done
+
+for i in $FGLS 
+do
+    sed s/stores2/$db/g $i.4gl >.custom
+    mv .custom $i.4gl
+done
+
+echo "
+
+Now building 4GL By Example Demonstration Forms and Messages ...
+"
+
+for i in $FORMS
+    do
+    $IDIR/bin/form4gl $i
+    done
+
+for i in $MSGS
+    do
+    $IDIR/bin/mkmessage $i.src $i
+    done
+
+echo "
+
+All 4GL and C source files should be individually compiled as you encounter 
+the corresponding example in the book.  
+
+End of 4GL By Example Demonstration Application Code Installation Script.
+
+
+"

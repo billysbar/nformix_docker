@@ -1,0 +1,182 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.ja_UTF8.SuSE9, fontprop, ax142, 20060311 1.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2002, 2003. All Rights Reserved
+# ===========================================================================
+# Change activity:
+#
+# Reason  Date   Origin    Description
+# ------  ----   ------    -------------------------------------------------- 
+# 76559  130804  smithwil  Enable os-specific font.properties, support SLES9
+#                          Create this file
+#
+# ===========================================================================
+# File Information:
+#
+# DESCRIPTION:
+# Intended for Japanese with UTF-8 encoding on SLES9 Linux
+# The default locale for Japanese on SLES9 is ja_JP.UTF-8
+#
+#
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bold.0=-jdk-lucidabright-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.2=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.2=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.2=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.2=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.2=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+alias.dialoginput=monospaced
+
+# font filenames
+
+#filename.4550_symon_olj_h_medium_r=4550SYMONOLJH.ttf
+#filename.Kochi_Gothic_medium_r=kochi-gothic.ttf
+#filename.Kochi_Mincho_medium_r=kochi-mincho.ttf
+#filename.gothic_medium_r=kochi-gothic.ttf
+#filename.mincho_medium_r=kochi-mincho.ttf
+#filename.pgothic_medium_r=tlgothic.ttc
+#filename.lucida_bold_i=LucidaSansDemiOblique.ttf
+#filename.lucida_bold_r=LucidaSansDemiBold.ttf
+#filename.lucida_medium_i=LucidaSansOblique.ttf
+#filename.lucida_medium_r=LucidaSansRegular.ttf
+#filename.lucidabright_bold_i=LucidaBrightDemiItalic.ttf
+#filename.lucidabright_bold_r=LucidaBrightDemiBold.ttf
+#filename.lucidabright_medium_i=LucidaBrightItalic.ttf
+#filename.lucidabright_medium_r=LucidaBrightRegular.ttf
+#filename.lucidatypewriter_bold_i=LucidaTypewriterBoldOblique.ttf
+#filename.lucidatypewriter_bold_r=LucidaTypewriterBold.ttf
+#filename.lucidatypewriter_medium_i=LucidaTypewriterOblique.ttf
+#filename.lucidatypewriter_medium_r=LucidaTypewriterRegular.ttf
+#filename.sansmonowt_medium_r=mtsansdj.ttf
+#filename.timesnewromanmt30_medium_r=tnrmt30.ttf
+#filename.timesnewromanwt_medium_r=tnrwt_j.ttf
+
+# default char definition
+default.char=02ff
+
+
+# exclusion info
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+
+fontset.serif.plain=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.italic=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bold=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.serif.bolditalic=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.sansserif.plain=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.italic=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bold=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.sansserif.bolditalic=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.monospaced.plain=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.italic=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bold=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.monospaced.bolditalic=\
+-*-gothic-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+fontset.dialog.plain=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.italic=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bold=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+fontset.dialog.bolditalic=\
+-*-mincho-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+
+# font substitution
+#substitute.0=-gothic=Kochi Gothic
+#substitute.1=-mincho=minchol
+#substitute.2=-mincho=Kochi Mincho
+#substitute.3=-Kochi Gothic=gothicb
+#substitute.4=-gothic=logix-4550 symon olj h
+#substitute.5=Monotype Sans Duospace WT=Times New Roman WT J
+#substitute.6=Times New Roman WT=Monotype Sans Duopace WT
+#substitute.7=-sansmonowt=timesnewromanwtj
+#substitute.8=-timesnewromanwt=sansmonowtj
+#register.0=-*-pgothic-medium-r-normal--*-%d-75-75-*-*-jisx0208.1983-0
+

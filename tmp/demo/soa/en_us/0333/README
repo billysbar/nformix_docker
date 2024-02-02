@@ -1,0 +1,170 @@
+#************************************************************************** 
+#*  Licensed Materials - Property of IBM                                  * 
+#*                                                                        * 
+#*  "Restricted Materials of IBM"                                         * 
+#*                                                                        * 
+#*  IBM Informix 4GL                                                      * 
+#*  Copyright IBM Corporation 2009. All rights reserved.                  * 
+#*                                                                        * 
+#************************************************************************** 
+
+                      =================================
+                                  README
+                                    FOR
+                       IBM INFORMIX 4GL 7.50.xC3 RELEASE
+                       i4glsoademo Demonstration Program   
+                                  May 2009
+                      =================================
+
+The i4glsoademo demonstration program covers how to:
+
+* publish an I4GL Web Service
+* subscribe to an I4GL Web Service
+
+I. Prerequisites:
+=================
+A. The following environment variables must be set:
+
+   AXIS2C_HOME
+   CLASS_PATH
+   INFORMIXDIR
+   INFORMIXSERVER
+   INFORMIXSQLHOSTS
+   LD_LIBRARY_PATH
+   PATH
+
+B. A new directory for the demonstration files must be created:   
+
+   1. To create a new directory:
+
+      mkdir /work/zipcodedemo
+
+   2. To access the new directory:
+
+      cd /work/zipcodedemo
+
+
+II. Running the demonstration program:
+======================================
+
+A. Locate and run the demonstration executable:
+
+   $INFORMIXDIR/bin/i4glsoademo
+
+B. The following files are copied into the /work/zipcodedemo directory:
+
+   mki4glsoa.4gl     - Creates the database and table for the demo
+   soa_load.4gl      - Loads the data into the table
+   statedetails.unl  - Data file used by soa_load.4gl
+   soademo.4cf       - Configuration file used to deploy the 4GL function
+                       as a Web service.
+   soademo.4gl       - 4GL function deployed as an I4GL Web Service
+   clientsoademo.4cf - Configuration file used to consume the 4GL function
+                       as a Web service
+   clsoademo.4gl     - 4GL function consuming an I4GL Web Service
+
+C. The following executables are created:
+
+   soa_load          - To load the table
+   zipcode_client    - client executable
+
+
+D. The following flowchart shows how the client invokes the 4GL function through  Apache 
+AXIS2/C (AXIS2/C):
+
+   +-----[ 1 ]------+       +-----[ 2 ]----+
+   |                |       |  Apache's    |
+   |                |       |  AXIS2C App  |
+   |./zipcode_client|<----->|  Server      |
+   |                |       |              |
+   |                |       |  Port: 9876  |
+   +----------------+       +--------------+
+                                ^
+                                |
+                                |
+                                |
+                                V
+                          +----[ 3 ]------+        +-----[ 4 ]-----+
+                          |   Invokes     |        |  IDS Server   |
+                          | 4GL Function  |        |               |
+                          |               |        |  Access table |
+                          |zipcode_details||<----->|  statedetails |
+                          |               |        |               |
+                          |               |        | Return record |
+                          +---------------+        +---------------+
+
+  1. The "ws_zipcode" Web Service is deployed.
+
+  2. The client executable makes the call to invoke the Web Service.
+
+  3. The AXIS2/C server listening at port number 9876 (for example) receives the requests. 
+  4. The AXIS2/C server invokes the Web Service "ws_zipcode", which then  invokes the 4GL function "zipcode_details" and contacts the IDS server to get the corresponding CITY name and STATE name for the zip code.
+
+  5. The return values are communicated back to the client executable.
+
+ E. Alternatively, the process can be run manually with the following steps:  
+
+    1. cd $INFORMIXDIR/AXIS2C/bin
+
+    2. ./axis2_http_server -p 9876 &
+
+    3. cd /work/zipcodedemo  //From which i4glsoademo was run
+
+    4. ./zip_codeclient  //Displays the output
+
+------------------------- 
+
+SUPPLIED ZIP CODE: 97006 
+
+ ------------------------- 
+
+RESPONSE FROM WEB SERVICE 
+
+ ------------------------- 
+
+ CITY:Beaverton                                                                 
+                          
+
+ STATE:OR                                                                       
+                           
+
+ ======================== 
+
+
+ ------------------------- 
+
+SUPPLIED ZIP CODE: 89101 
+
+ ------------------------- 
+
+RESPONSE FROM WEB SERVICE 
+
+ ------------------------- 
+
+ CITY:Las Vegas                                                                 
+                          
+
+ STATE:NV                                                                       
+                           
+
+ ======================== 
+
+
+ ------------------------- 
+
+SUPPLIED ZIP CODE: 66219 
+
+ ------------------------- 
+
+RESPONSE FROM WEB SERVICE 
+
+ ------------------------- 
+
+ CITY:Lenexa                                                                    
+                          
+
+ STATE:KS                                                                       
+                           
+
+ ========================
+

@@ -1,0 +1,41 @@
+---
+
+- debug: msg="Install Node.JS"
+
+- set_fact: install_node_if_missing=false
+
+- name: Ensuring NodeJS Is Installed
+  stat:
+    path: "/usr/local/bin/node"
+  register: "node_check"
+  delegate_to: localhost
+
+- name: Fail If NodeJS Is Not Installed and install_node_if_missing Is False
+  fail:
+    msg: "NodeJS is missing...Install from https://nodejs.org/en/download/"
+  when: >
+    not node_check.stat.exists and
+    not install_node_if_missing
+
+- name: NodeJS Installer check
+  stat:
+    path: "/tmp/node-v10.16.3.pkg"
+  register: "installer_check"
+  delegate_to: localhost
+
+- name: Download NodeJS Installer to /tmp
+  command: "curl -o /tmp/node-v10.16.3.pkg https://nodejs.org/dist/v10.16.3/node-v10.16.3.pkg"
+  when: >
+    not installer_check.stat.exists and
+    install_node_if_missing
+  delegate_to: localhost
+
+# TODO use become not SUDO
+- name: Mount NodeJS Installer
+#  become: yes
+#  become_user: sudo
+  command: "sudo installer -pkg /tmp/node-v10.16.3.pkg -target 'Macintosh HD'"
+  when: >
+    installer_check.stat.exists and
+    install_node_if_missing
+  delegate_to: localhost

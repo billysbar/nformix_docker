@@ -1,0 +1,16 @@
+---
+
+#run all
+#  ansible-playbook -i hosts site.yml
+
+#run specific
+#  ansible-playbook -i hosts site.yml --tags="aland_test" -v
+
+- include: aland_test.yml
+  tags: aland_test
+
+- include: i4gl_setup.yml
+  tags: i4gl_setup
+
+- include: create_dir_structure.yml
+  tags: create_dir_structure

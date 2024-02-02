@@ -1,0 +1,27 @@
+{####################################################################
+ # FORM: f_edit                                                     #
+ # PURPOSE: Edits a 240 character description field (as found in    #
+ #	    the "call_descript" and "res_descript" fields of the    #
+ #	    "cust_calls" table). Uses WORDWRAP to scroll chars thru #
+ #	    multiple lines.                                         #
+ # 4GL PROGRAM: ex17.4gl                                            #
+ ####################################################################}
+
+DATABASE formonly
+
+SCREEN
+{
+         
+  Description :[f000                                    ]
+               [f000                                    ]
+               [f000                                    ]
+               [f000                                    ]
+               [f000                                    ]
+               [f000                                    ]
+
+}
+
+
+ATTRIBUTES
+f000 = formonly.edit_str TYPE CHAR, WORDWRAP COMPRESS;
+

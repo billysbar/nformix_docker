@@ -1,0 +1,32 @@
+
+                      =================================
+                           MACHINE SPECIFIC NOTES
+                                    FOR
+                       IBM INFORMIX 4GL 7.50.FC3 RELEASE
+                               ON  Linux Intel/AMD 64-bit
+                                  May 2009
+                      =================================
+
+
+IRIS NUMBER       : 48054
+OS Information    : Built on Red Hat Enterprise Linux AS release 4.
+                    * Certified on RHEL 5, SUSE SLES 10
+COMPILER VERSION  : gcc and c++ compiler 3.4.5
+CLIENT SDK        : 4GL 7.50.FC3 built using CSDK 3.50.xC4
+
+* Known certifications at the time of release
+
+Special Instructions:
+---------------------
+
+Set the LD_LIBRARY_PATH environment variable to
+      $INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools.
+
+       This product was built on Red Hat Enterprise Linux release 4.0 (Kernel 2.6.9)
+       for x86_64 compatible processors and using the following compilers:
+
+      gcc and c++ compiler 3.4.5 
+
+
+(c) Copyright IBM Corp. 1994, 2009
+

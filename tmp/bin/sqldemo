@@ -1,0 +1,57 @@
+: '
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+: 
+:			      PROPRIETARY DATA
+: 
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF 
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR 
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT 
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE. 
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:  Title:	sqldemo
+:  Sccsid:	
+:  Description:	Despatcher of Product Demonstration file
+: '
+
+PRODUCT=sql
+DEMOFILE=sqldemo
+DEFLANG=en_US.8859-1
+
+INFORMIXDIR=${INFORMIXDIR:=/usr/informix}
+INFENV=$INFORMIXDIR/bin/infenv
+CONVLOC=$INFORMIXDIR/bin/convloc
+
+if [ $# -gt 0 -a "X$1" = "X-e" ] ; then
+    LOCALE=$DEFLANG                           # -e means en_US.8859-1 required
+    shift
+else
+    LOCALE=`$INFENV DBLANG`                   # get DBLANG value
+    if [ "x${LOCALE}" = "x" ]; then        
+	LOCALE=`$INFENV CLIENT_LOCALE`        # try CLIENT_LOCALE instead
+	if [ "x${LOCALE}" = "x" ]; then
+	    LOCALE=`$INFENV DB_LOCALE`        # finally default to DB_LOCALE
+	fi
+    fi
+fi
+
+if [ "x${LOCALE}" = "x" ]; then
+    LOCALE=$DEFLANG       # finally default to DB_LOCALE
+fi
+
+export LOCALE
+
+if [ "x${DEMOPATH}" = "x" ]; then
+    echo "Invalid Locales set !!"
+else
+    exec $INFORMIXDIR/demo/$PRODUCT/$DEMOPATH/$DEMOFILE $*
+fi
+
+exit $?

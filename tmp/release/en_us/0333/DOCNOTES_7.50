@@ -1,0 +1,1912 @@
+
+               ====================================
+                      Documentation Notes for
+                     IBM Informix 4GL 7.50.xC3
+                           May 2009
+               ====================================
+
+Table of Contents
+=================
+
+I.    Overview of Documentation Notes for IBM Informix 4GL 7.50
+
+II.   4GL Documentation Included with This Release
+
+III.  Notes on IBM Informix 4GL Installation Guide
+
+IV.   Notes on IBM Informix 4GL Web Services Administration Guide
+
+V.    Notes on IBM Informix 4GL Concepts and Use
+
+VI.   Notes on IBM Informix 4GL Reference Manual
+
+VII.  Notes on IBM Informix 4GL By Example
+
+VIII. Notes on Guide to the IBM Informix 4GL Interactive Debugger
+_________________________________________________________________
+
+I. Overview of Documentation Notes for IBM Informix 4GL 7.50
+
+This file lists known errata, and some feature and performance 
+topics that are not covered in the manuals, or for which the 
+behavior of 4GL differs from the description in the manuals. 
+Please examine this file, because it contains vital information 
+on 4GL application and performance issues.
+
+See also the Release Notes that are provided with 4GL 7.50.
+
+Changes to Product Names
+------------------------
+These manuals may refer to IBM Informix database servers by 
+names that became obsolete in the third quarter of 1999.
+In addition, the names of the products formerly known as
+"INFORMIX-4GL C Compiler" and "INFORMIX-4GL Rapid Development 
+System" (RDS) have been changed to "IBM Informix 4GL C
+Compiler" and "IBM Informix 4GL Rapid Development System" 
+respectively, but the manuals and message files for these 
+client products generally do not use the new names. The term 
+"4GL" is used in most contexts by the user manuals (and by 
+these documentation notes) to abbreviate both of these 
+client product names.
+
+Products and documentation that include the word "Informix" 
+are now "IBM Informix." Except for pathnames, configuration 
+parameters, environment variables, and user "informix," the 
+word "IBM" should be prefixed to any reference to "Informix" 
+in any context of the products, documentation, or other 
+instances of the string "Informix."
+
+
+II. 4GL Documentation Included with This Release
+
+The following English language documentation is available
+for IBM Informix 4GL 7.50, depending on the packaging option:
+
+   TITLE
+   =====================================
+   IBM Informix 4GL Quick Start Guide 7.50
+   IBM Informix 4GL Installation Guide 7.50
+   IBM Informix 4GL Web Services Administration Guide 7.50
+   IBM Informix 4GL Concepts and Use 7.31
+   IBM Informix 4GL Reference Manual 7.32
+   IBM Informix 4GL By Example 7.3
+   Guide to the IBM Informix 4GL Interactive Debugger 7.3
+
+These documents are available in .pdf format at: 
+http://www.ibm.com/software/data/informix/pubs/library/
+
+===============================
+
+III. Notes on IBM Informix 4GL Installation Guide
+
+No problems are known to exist with this manual.
+
+===============================
+
+IV. Notes on IBM Informix 4GL Web Services Administration Guide
+
+No problems are known to exist with this manual.
+
+===============================
+
+V. Notes on IBM Informix 4GL Concepts and Use
+
+This manual does not demonstrate features that were added
+in Version 7.31 or later, including dynamic arrays, SQL 
+blocks, dynamic configuration of reports, the CENTURY 
+attribute for abbreviated years, conditional comments, 
+new features for screen-array management, and support 
+for editing multi-byte characters in screen forms. 
+All of these features, however, are described in the 
+IBM Informix 4GL Reference Manual.
+
+Dynamic Arrays
+--------------
+IBM Informix 4GL 7.32 introduces the use of the dynamic array 
+structured data type.
+
+The following changes should be made to Chapter 5:
+
+Page 3, Declaration of Variables section,
+the sentence that reads "Data can be structured as records or 
+arrays and can be allocated statically or dynamically." should read
+"Data can be structured as records, arrays, or dynamic arrays."  
+
+Page 4, first bullet point, the sentence that reads "Every 
+data type of 4GL except ARRAY, BYTE, TEXT, and RECORD is a simple 
+data type." should read "Every data type of 4GL except ARRAY, 
+DYNAMIC ARRAY, BYTE, TEXT, and RECORD is a simple data type." 
+
+Page 4, second bullet point, the sentence that reads "Structured 
+data types (ARRAY and RECORD) can store ordered sets of values." 
+should read  "Structured data types (ARRAY, DYNAMIC ARRAY, and 
+RECORD) can store ordered sets of values."
+
+Page 5, Data Structures section, the first two paragraphs should read:
+"The structured data types enable you to organize program data 
+into records, arrays, and dynamic arrays, which are sometimes 
+called data structures. 
+The ARRAY, DYNAMIC ARRAYS, and RECORD data types can store 
+ordered sets of values of other 4GL data types. You can also 
+declare an ARRAY variable whose elements are RECORD variables, 
+or a RECORD variable that has ARRAY or RECORD members, but you 
+cannot declare an ARRAY of ARRAY variables."
+
+For information about the DYNAMIC ARRAY data type, refer to 
+Chapter 3 of the IBM Informix 4GL Reference Book.
+
+The following changes should be made to Chapter 8:
+
+Page 12, Creating Structured Data Types section, the sentence
+that reads "You specify the structure of a variable by stating 
+that it is an ARRAY or a RECORD in the DEFINE statement." should
+read "You specify the structure of a variable by stating 
+that it is an ARRAY, DYNAMIC ARRAY, or a RECORD in the DEFINE 
+statement."
+
+For information on declaring a DYNAMIC ARRAY, see the DEFINE 
+Statement in Chapter 4 of the IBM Informix 4GL Reference Manual.
+
+
+SQL Syntax Later than Version 4.10
+----------------------------------
+Page 8, bullet point three of the Introduction asserts that 
+"For any SQL statement that your database server supports, 
+you can use the SQL ... END SQL delimiters." This is an 
+exaggeration: the SQL statement must be preparable. Because 
+an SQL block can include host variables, however, SQL statements 
+that can appear in SQL blocks are a superset of SQL statements 
+that can be prepared, because PREPARE cannot include host 
+variables in its text.
+
+Pages 6-4 and 9-3 say that post-4.10 SQL syntax must be
+prepared. Another (and usually more convenient) option is
+to put the post-4.10 SQL statement within SQL ... END SQL
+delimiters, which the "SQL" section of Chapter 4 describes
+in the "IBM Informix 4GL Reference Manual."
+
+Compiling 4GL to C
+------------------
+The description on page 4-13 of 3-stage compilation to C
+code is simplified and obsolete. See "The Five-Phase I4GL
+Compilation Process" in Chapter 1 of the "IBM Informix 4GL
+Reference Manual" for a more accurate description.
+
+Non-ASCII Characters in 4GL Programs
+------------------------------------
+The assertion on page 4-6 that 4GL form specifications are
+"ASCII files" describes releases earlier than Version 7.2.
+The GLS features of 4GL allow forms to include non-ASCII
+characters from the code set of the locale. (Besides this
+section, the 4GL documentation set often uses the terms
+"ASCII file" and "ASCII character" in contexts where in
+fact locale-dependent non-ASCII characters are also valid.)
+
+Scope of Reference
+------------------
+The assertion on page 4-10 that global variables must be
+declared and imported with the GLOBALS statement refers
+only to variables that the 4GL programmer declares.
+Built-in global variables (like the SQLCA record, status,
+int_flag, and quit_flag) are known to the compiler and
+runtime without any action of the 4GL programmer, and the
+same is true of the built-in global constants TRUE, FALSE,
+and NOTFOUND, as page 5-9 correctly indicates.
+
+Page 8-14 defines a local variable as one that the DEFINE
+statement declares within a "function." More generally,
+a local variable is one that you declare within a "program
+block," which can be a FUNCTION, MAIN, or REPORT statement.
+
+Fatal Errors
+------------
+Page 5-14 asserts that "fatal" or untrappable errors exist
+that WHENEVER cannot trap. Releases of 4GL earlier than
+Version 6.0 could produce such errors, but not this release.
+Some other books in this documentation set also include
+obsolete references to fatal errors.
+
+Line Mode and Formatted Mode
+----------------------------
+The Chapter 7 discussion of Line mode and Formatted mode
+does not mention that OPTIONS, RUN, START REPORT ... TO
+PIPE, and REPORT ... OUTPUT TO PIPE can explicitly specify
+IN LINE MODE or IN FORM MODE interaction. The "IBM Informix 4GL
+Reference Manual" describes these 4GL syntax features.
+
+Imprecise Language
+------------------
+Page 5-3 characterizes 4GL as a "strongly typed" language.
+Some would disagree with this assertion, because 4GL does
+not require explicit casts for most data-type conversion.
+
+On pages 8-9 and 8-10, the term "blob" refers to TEXT or
+BYTE variables or to TEXT or BYTE database columns. "Blob"
+was introduced in the Version 4.0 database server and 4GL
+releases, but is now obsolete. As the text indicates,
+TEXT and BYTE are called "large" data types in current
+IBM Informix documentation. (The term "blob" also appears
+in Chapter 5 and in the Index.)
+
+On page 8-12, the "dot notation" is less colloquially
+referred to as the "membership operator" (for example,
+in Chapter 5 of "IBM Informix 4GL Reference Manual").
+
+Page 8-25 defines the first index of a substring as "the
+position of the first character to extract." This is true
+in single-byte locales, but what it really specifies is the
+first "byte" to extract. In some East-Asian locales, a
+single logical "character" can require more than one byte.
+Similarly, the expressions delConfirm[4.4] and delConfirm[4]
+are "single-byte values," not "single-space characters,"
+and companies[61][1.7] on the same page returns seven bytes,
+which are not necessarily "seven letters." (See Chapter 5 of
+the "IBM Informix 4GL Reference Manual" for details of using
+the substring operator of 4GL in multibyte locales.)
+
+The term "subroutine" on page 11-17 means "function."
+
+Errors of Fact
+--------------
+On page 8-26, the last sentence of the first paragraph
+should say that 4GL substitutes a single blank character
+(rather than "blank characters") for a NULL value.
+
+The assertion on page 8-32 that the example includes only
+one executable statement is false. Besides the RETURN
+statement, the LET statement is also executable.
+
+On page 9-8, the code example ignores the issue of cursor
+name mangling. See the description of CURSOR_NAME() in
+Chapter 5 of the "IBM Informix 4GL Reference Manual" for
+more information about cursor name mangling. (But if
+you are using Dynamic 4GL, this code example is valid.)
+
+Reserved Lines
+--------------
+On page 11-33, the section "Getting the Most on the Screen"
+neglects to mention that the OPEN WINDOW statement can hide
+the COMMENT line, as Chapter 4 of the "IBM Informix 4GL
+Reference Manual" describes.
+
+Control Keys as Activation Keys
+-------------------------------
+Asterisk (*) symbols in the table on pages 11-36 and 11-37
+are described as indicating that those control keys cannot
+be used in an ON KEY clause. In fact, 4GL does not prevent
+you from defining these keys as activation keys, but doing
+so prevents the user from using them as editing keys. For
+example, "Guide to the IBM Informix 4GL Interactive Debugger"
+shows code to redefine the CONTROL-I key on page 2-4.
+
+No other problems are known to exist with this manual.
+
+==============================
+
+VI. Notes on IBM Informix 4GL Reference Manual
+
+The fgltypes.h file does not exist
+----------------------------------
+
+Appendix C contains multiple references to a non-existent file 
+named fgltypes.h.
+
+Users should ignore every reference to the non-existent file 
+named fgltypes.h.
+
+Name Conflicts in DEFINE Statements 
+-----------------------------------
+
+Variables that you declare in the DEFINE statement of 4GL must 
+not have the same identifier as any user type.  For example, 
+the following statement declares variables called int2, 
+int4, and myvar:
+
+DEFINE  int2,int4 SMALLINT,  myVar2 INT;
+
+With the Rapid Development System, this statement produces 
+valid p-code. If you use c4gl to produce a compiled C 
+language version, however, the same statement causes a 
+compilation error, because in the C language, variables 
+and data types share the same namespace.   For the example 
+above, the equivalent C code is this:
+
+short int2,int4;
+int4 myVar2;
+
+Most C compilers (such as gcc and the AIX compiler, for 
+example) issue no warning that you are about to define a 
+variable with the same name as a user type.  Some earlier 
+versions of IBM Informix 4GL could compile declarations
+of variables with names that match user types, but this version 
+does not support variables whose names are defined in files 
+such as ifxtypes.h, or that your C compiler recognizes as 
+the name of a C type.
+
+
+FGL_SETCURRLINE( ) Function Takes Two Arguments
+-----------------------------------------------
+
+In Chapter 4, Built-In Functions and Operators, the description 
+of FGL_SETCURRLINE( ) omits one of the two arguments to this
+function and incorrectly describes some details of its usage:
+
+During the INPUT ARRAY or DISPLAY ARRAY statement, the
+FGL_SETCURRLINE( ) function positions the database cursor at a
+specified program record of the current program array, and 
+displays that record (and the screen cursor) on a specified 
+line of the current screen array.
+
+The FGL_SETCURRLINE( ) function has this calling syntax:
+
+       FGL_SETCURRLINE (  line_scr , num_record  )
+
+The Version 7.32 syntax diagram refers to the second argument 
+as  num , but omits the first argument.)
+
+Here line_scr  is a literal integer, specifying the ordinal 
+position of a line in the screen array that the current 
+INPUT ARRAY or DISPLAY ARRAY statement specifies.   
+(The SCR_LINE( ) function returns this value when the screen 
+cursor is in the same line of this screen array.)
+
+The num_rec  is a literal integer, specifying the ordinal number 
+of a record in the program array that  INPUT ARRAY or 
+DISPLAY ARRAY specifies. (The ARR_CURR( ) function returns this 
+value when the current line of a screen array displays this 
+record from the same program array.) 
+
+In summary,  FGL_SETCURRLINE( ) requires two ( 2 ) arguments, one 
+of which references a screen array, and the other a program array:
+
+The first integer argument specifies the line of the current 
+screen array in which to position the screen cursor and to 
+display the record in the current program array that the second 
+argument to this function specifies. 
+
+The second integer argument specifies the ordinal position 
+in the active set of database cursor of a program record that 
+this function displays in the screen array line that the first 
+argument to this function specifies.
+
+
+The c4gl Command 
+----------------
+In Chapter 1, the syntax diagram and description of c4gl
+does not make clear that if the -c option is used, then
+no library options should also be included.
+
+The same diagram also shows that -ansi (if it is included)
+must be the first command-line flag.  This is incorrect.
+The -phase 12345 flags and several other flags can precede
+the -ansi flag.  See the following BNF command-line syntax:
+
+ c4gl [-Vaeqcz] [-phase 12345] [-ansi] [-anyerr] 
+      [-globcurs | -localcurs] [-nokeep | -keep] 
+      [-static | -shared]  [-otherargs]
+       source.4gl ... [othersrc.c ...] [otheresql.ec ...]
+      [otherobj.o ...] [yourlib.a ...] [-o outfile]
+
+     -V            Display version number of 4gl (and then exit)
+     -a            Do array bounds checking
+     -e            Preprocess only, no compilation nor linking
+     -q            Quiet mode for i4glc1 [phase 1]
+     -c            Preprocess & compile only, no linking
+     -z            Allow variable number of arguments to functions
+     -phase 12345  Process only the phase that indicated
+     -ansi         Check SQL statements for ANSI compliance
+     -anyerr       Set status variable after expressions
+     -globcurs     Make cursor declarations global to program
+     -localcurs    Make scope of cursor declarations the module
+     -nokeep       Delete the intermediate .4ec, .ec, and .c files
+     -keep         Keep the intermediate .4ec, .ec, and .c files
+     -static       Use static libraries
+     -shared       Use shared libraries
+     -otherargs    Other arguments are passed to the C compiler
+     -o            Next argument is the name of the executable
+
+Not all platforms support the -shared option.  The 
+next two notes describe some "otherargs" options.
+
+Position-Independent Code
+-------------------------
+The c4gl compiler also supports some additional flags
+that produce position-independent code:
+
+FLAG      EFFECT
+------    ------------------------------------------
+-K PIC    position-independent code with Solaris
+-K pic    position-independent code with Solaris
++z        position-independent code with H-P
++Z        position-independent code with H-P
+
+These position-independent-code options were formerly
+in effect by default. In Version 7.3x, however, you
+must set the flag explicitly if you want this feature
+(which can increase file size by 50% to 200%). The
+PIC feature is not needed for executable programs,
+but you must use it when you create shared libraries,
+
+In Version 7.2 and earlier releases, "-static" was a
+default c4gl option, but now "-shared" is the default
+(specifying shared libraries).
+
+If you use shared libraries, then LD_LIBRARY_PATH must
+specify the order in which 4GL searches for the shared
+libraries. (The name LD_LIBRARY_PATH is recognized by
+Solaris systems, but see also the note about names
+for LD_LIBRARY_PATH on other platforms in Section III,
+"Notes on IBM Informix 4GL Installation Guide.")
+
+Creating Shared 4GL Objects               
+---------------------------
+IBM Informix 4GL (Compiled) supports the creation of 
+shared library executable objects.  Use of shared 
+library executable objects provides reduced memory 
+consumption, faster program start-up, and reduced 
+program file sizes (thereby saving file system space). 
+This feature is available only on platforms that can
+support shared libraries.
+
+For more technical information about shared library 
+concepts, please refer to your operating system 
+documentation.  If your system has "man pages" 
+(on-line manuals), the man page for "ld" may direct 
+you to the appropriate system documentation.
+
+Usage:         
+
+To compile a 4GL program into a shared object,
+use the following command:
+
+c4gl -o libname.so -G -K pic libprog.4gl
+
+Here libprog.4gl is the file containing the 4GL 
+functions that will go into the shared library.
+ 
+To compile a 4GL application using the shared 
+object, use the following command:
+ 
+c4gl -o prog prog.4gl -L<pathname> -llibname.so
+
+Here <pathname> is the path of the shared library.
+
+Suppressing Line Numbering with c4gl
+------------------------------------
+Unless you use the -nolinenos flag, a warning is
+issued if your C compiler attempts to reference a
+line number greater than 32,767 in a generated .ec
+file. (Alternatively, you can avoid this warning
+by using smaller .4gl source code modules, so each
+generated .ec file has fewer than 32,767 lines.)
+
+Linking Object Files with cfglgo
+--------------------------------
+When you create a customized runner with cfglgo, you
+cannot include among the "cfile.o" object files any
+file that was compiled from a 4GL program. (The
+cfglgo script has no syntax for linking the 4GL
+libraries that would be required in this context.)
+
+The -api Option of cfglgo
+-------------------------
+The syntax diagram for cfglgo omits the -api option.
+This is required for C programs that call a compiled
+p-code function of RDS. See the section "Compiling a
+C Program That Calls 4GL RDS Functions" in Appendix
+C for an example of this command-line option.
+
+Positioning the Comment Line
+----------------------------
+The description on page 2-27, and the subsequent
+descriptions in Chapter 4 of how OPEN WINDOW and
+OPTIONS statements can reposition reserved lines,
+neglect to mention that the Error line and Comment
+line should not be assigned the same position.
+Otherwise, if an error message appears in a field
+that has the COMMENTS attribute, comment text will
+overwrite the error message. (In Version 6.x and
+earlier, comments did not overwrite error messages.)
+
+The SQLCODE Member of SQLCA
+---------------------------
+In Chapter 2, the description of the SQLCA
+record states that the finderr utility can provide
+explanations of the SQL and 4GL error codes.
+
+This is not false, but when 4GL is used with DRDA
+to access a non-IBM-Informix database, the SQLCODE can
+contain an error code from that database. This code
+is generally unrelated to any IBM Informix error code of
+the same value. The 4GL error log (and finderr) can
+show only the IBM Informix error message, if SQLCODE
+receives a value that matches an IBM Informix error code.
+If the value does not match any IBM Informix error code,
+then "Unknown error message" is reported. You should
+refer to the documentation of the non-IBM-Informix
+database for the actual meaning of such error codes.
+
+The SQLERRD Member of SQLCA
+---------------------------
+In Chapter 2, the description of the SQLCA record
+states that SQLERRD[6] "is the row ID of the last
+row that was processed." This is often true, but
+some SQL operations (such as SELECT ... FOR UPDATE)
+set SQLERRD[6] to zero. 4GL can also access the
+XPS database server, which does not support row IDs.
+
+Note also that "the last row that was processed"
+is not necessarily the last row that was inserted.
+
+The SQLERRM Member of SQLCA
+---------------------------
+In Chapter 2, the description of the SQLCA record
+states that "SQLERRM is not used at this time."
+This is false. Whatever the database server stores
+in SQLCA.SQLERRM (typically the first 70 bytes of
+any SQL identifiers in the current error or warning
+message from an SQL or SPL operation) is available
+to 4GL programmers. See the "IBM Informix Guide to
+SQL:Reference" for a description of SQLCA.SQLERRM.
+
+Passing CHAR Values
+-------------------
+Page 3-16 asserts that
+
+   "When a value is passed between a CHAR variable
+    and a CHAR database column, or between two
+    CHAR values, exactly <size> bytes of data are
+    transferred, where <size> is the declared
+    length of the 4GL variable or the database
+    column that receives the string."
+
+This is not intended to obscure the fact that the 
+ASCII 0 terminator of a string stored in a CHAR
+variable of 4GL (or in a C language string, or in 
+a char variable of the C language) is not stored 
+in a CHAR column of the database.
+
+Precision of SMALLFLOAT Values
+------------------------------
+Chapter 2 asserts that SMALLFLOAT data types can
+have up to 8 significant digits. On most platforms,
+however, most SMALLFLOAT values have a precision
+of only 6 digits.
+
+TEXT Values in Non-WORDWRAP Fields of Screen Forms
+--------------------------------------------------
+If a 4GL form field that has no WORDWRAP attribute
+displays a TEXT value whose display length is not
+long enough to fill the field, the symbol "?"
+(ASCII 63) is displayed after the last character
+of the TEXT value. The "?" symbol also replaces
+any unprintable character within the TEXT value.
+
+If "?" in this context might confuse your users,
+you can specify the WORDWRAP attribute in the
+form specification to suppress this use of "?"
+(which here represents a Linefeed character).
+Whether or not you use WORDWRAP, however, these
+"?" characters are screen display features only,
+and are not saved as part of the TEXT data.
+
+INVISIBLE Attribute on Systems that Use terminfo
+------------------------------------------------
+The last page of Chapter 3 asserts that terminfo
+systems support only the REVERSE and UNDERLINE
+display attributes. In fact, INVISIBLE is also
+supported on some systems that use terminfo.
+(Appendix F repeats this false assertion that no
+terminfo systems support the INVISIBLE attribute.)
+
+UNIX systems that provide terminfo services but
+do not fully support the System V terminfo library
+will not recognize the INFORMIXTERM environment
+variable (which Appendix D describes). The terminfo
+library must include the following functions:
+
+     setupterm()
+     tigetstr()
+     tigetflag()
+     tigetnum()
+
+The ACCEPT Keyword in the ON KEY Clause
+---------------------------------------
+In the ON KEY clause of CONSTRUCT, DISPLAY ARRAY,
+INPUT, and INPUT ARRAY statements, IBM Informix 
+does not recommend that you specify ACCEPT as the
+activation key. The Accept key is the usual means
+by which the user terminates these statements,
+so specifying ON KEY (ACCEPT) can prevent the
+user from continuing to the next statement,
+unless you provide some other EXIT path.
+
+ACCEPT generally does not pose this "endless
+loop" problem as an activation key in the ON KEY
+clause of the PROMPT statement, or in the COMMAND
+KEY clause of the MENU statement.
+
+CONSTRUCT with FORMONLY Fields
+------------------------------
+The description of CONSTRUCT in Chapter 4 implies
+that only fields linked to database columns can
+be referenced in the CONSTRUCT statement. This
+is the usual way to perform query-by-example,
+but CONSTRUCT can also use FORMONLY fields, as
+in the following example:
+
+   CONSTRUCT where_clause
+      ON A.Col01, A.Col02, B.Col03, C.Col04
+      FROM FORMONLY.Fld01, FORMONLY.Fld02,
+            FORMONLY.Fld03, FORMONLY.Fld04
+
+The names embedded in the where_clause are those
+in the ON list; the fields used are those in the
+FROM list.
+
+Search Criteria for Query by Example
+------------------------------------
+To search for a literal asterisk (*) or
+question (?) mark, a double (\\) backslash
+must precede the * or ? symbol, to escape the
+special significance of these wildcards.
+
+For fields linked to columns of character data
+types, however, you cannot use wildcards after
+the != or <> relational operators. In this
+context, the * and ? wildcard characters are
+interpreted as literal symbols.
+
+The CONSTRUCT Input Control Blocks
+----------------------------------
+The syntax diagram indicates that the NEXT FIELD
+keywords of the CONSTRUCT statement can be followed
+by the Field Clause syntax segment. In fact, only
+a subset that segment is valid in this context. You
+cannot reference a specific record in a screen array by
+qualifying a field name with "<screen array>[<line>]."
+after the NEXT FIELD keywords. The "[<line>]" term is
+not valid in this context, because CONSTRUCT can
+reference only the first line of a screen array.
+
+Variables in Declarations of Variables
+--------------------------------------
+When the DEFINE statement declares a 4GL variable
+that supports a parameter, such as the size of an
+ARRAY, CHAR, or VARCHAR variable, or the precision
+of a DECIMAL, FLOAT, or MONEY variable, you must
+use literal integers, rather than variables, to
+specify these values in the DEFINE declaration.
+(Because 4GL variables take values only at runtime,
+the compiler cannot evaluate variables that appear
+within the declaration of another variable.)
+
+Executable 4GL statements can use properly declared
+and defined INT or SMALLINT variables as ARRAY
+indexes to reference array elements within 4GL
+expressions; but DEFINE is not executable.
+
+Data Entry in 4GL Forms
+-----------------------
+The following is true for statements of 4GL that
+can support input control blocks, such as CONSTRUCT,
+DISPLAY ARRAY, INPUT, and INPUT ARRAY. During input,
+when the user enters a keystroke in a field of a 4GL
+form, 4GL takes these actions:
+
+   o It tests to see if the character that was typed
+     is valid for the field.
+
+   o It tests to see if the character corresponds
+     to the activation key of an ON KEY clause.
+
+If neither of these conditions is true, then the bell
+of the terminal rings, the field is cleared, and the
+cursor is redisplayed at the beginning of the field,
+without any entered characters. (In this case, the
+field is regarded as "touched," in the sense that a
+subsequent FIELD_TOUCHED() call will return TRUE.)
+
+Specifying the Name of a Cursor as a Variable
+---------------------------------------------
+The DECLARE, OPEN, CLOSE, FETCH, and FREE statements of
+SQL can reference the identifier of a cursor directly,
+or can use a character variable containing the identifier
+of the cursor. The CLOSE diagram on page I-4, the DECLARE
+diagram on page I-10, the FETCH diagram on page I-12, the
+FREE diagram on page I-14, and the OPEN diagram on page
+I-18 all neglect to show that a variable is also valid.
+
+Limit on Nested Cursors
+-----------------------
+You can nest cursors within FOR, FOREACH, or WHILE
+loops, so that a new cursor is declared for each
+iteration on the previously declared cursor:
+
+   DECLARE name1 CURSOR FOR SELECT ...
+      FOREACH name1
+      DECLARE name2 CURSOR FOR SELECT ...
+         FOREACH name2
+         DECLARE name3 CURSOR FOR SELECT ...
+
+No more than 16 levels of nesting are supported.
+
+Executing FINISH REPORT Before ROLLBACK
+---------------------------------------
+4GL reports internally use an INSERT cursor to create
+their output. If you execute ROLLBACK WORK while the
+report is executing, the last page of the report might
+be empty, because ROLLBACK frees the buffer that holds
+the input records. If you wish to avoid discarding data
+in this way, execute FINISH REPORT before rolling back
+any transaction while a 4GL report is executing.
+
+Returning Values to the Calling Routine
+---------------------------------------
+The description of the FUNCTION statement in Chapter 4
+asserts that no more than 5 kilobytes of string values,
+and no more than 10 values, can be returned as CHAR
+data types by a 4GL function. This restriction affected
+releases of 4GL earlier than 4.12, but is obsolete. In
+this release, a 4GL function can return an indefinite
+number of strings, with 32,767 bytes the maximum size of
+an individual returned CHAR value. (TEXT values that a
+4GL function returns can be longer.) Error messages
+-4517 and -4518 are now obsolete.
+
+The INPUT Control Block
+-----------------------
+The syntax diagram indicates that the NEXT FIELD
+keywords of the INPUT statement can be followed by the
+name of a field. Text that follows, however, is not
+correct when it asserts that you can reference a field
+in a specific record of a screen array by qualifying
+the field name with "<screen array>[<line>]." after
+the NEXT FIELD keywords. The "[<line>]" term is not
+valid in this context.
+
+The INPUT ARRAY Input Control Blocks
+------------------------------------
+The description of statement blocks in this section
+references the NEXT ROW clause. In fact, INPUT ARRAY
+supports no NEXT ROW clause.
+
+Several syntax diagrams in this section show that the
+NEXT FIELD keywords of the INPUT ARRAY statement can be
+followed by the Field Clause syntax segment. In fact,
+only a subset that segment is valid in this context. You
+cannot reference a specific record in a screen array by
+qualifying a field name with "<screen array>[<line>]."
+after the NEXT FIELD keywords. The "[<line>]" term is
+not valid in this context.
+
+Similarly, the BEFORE FIELD and AFTER FIELD control
+blocks of INPUT ARRAY cannot reference a specific
+screen record within the screen array. If present,
+these clauses apply to every record of the array.
+
+The section "The AFTER ROW Block" neglects to say that
+control passes to the AFTER ROW statement block (if one
+exists) after the user presses the Delete key. If both
+the BEFORE ROW and AFTER ROW blocks are specified, then
+deleting a row passes control to the AFTER ROW statement
+block before the BEFORE ROW block is executed, contrary
+to the default order of precedence that is listed in
+the section "The Precedence of Input Control Blocks."
+
+Assigning NULL Values with the LET Statement
+--------------------------------------------
+The description of LET on page 4-231 says that if you
+use LET to assign to a variable a comma-separated list
+of expressions, each of which evaluates as NULL, then
+the variable is assigned a NULL value. If the variable
+is of the CHAR or VARCHAR data type, however, then the
+assigned value is ASCII 32 (a single blank space),
+which 4GL uses in this context to represent NULL.
+
+You cannot, however, assign a NULL value to a character
+variable by executing a LET statement of the form:
+
+      LET x = " "
+
+4GL interprets the resulting value of x as not NULL.
+(This is in contrast with the PROMPT statement or a
+screen forms, where a single blank space that the user
+enters is stored as a NULL value, rather than as
+a non-NULL string containing the ASCII 32 character.)
+
+If x is declared as a CHAR or VARCHAR variable, then
+the following LET statement assigns to x a NULL value:
+
+      LET x = ""
+
+This is equivalent to the following statement:
+
+      LET x = NULL
+
+To create an empty string (that is, a string of length
+zero) that is not NULL, execute a LET statement like
+the following example:
+
+      LET x = " " CLIPPED
+
+The LOCATE IN FILE Statement
+----------------------------
+If the IN FILE option of LOCATE references an existing
+file, then 4GL attempts to use the contents of the file
+to initialize the BYTE or TEXT variable. An error is
+issued if the specified file is not writeable.
+
+The Width of a Window Containing a Menu
+---------------------------------------
+The description of the MENU statement states that:
+
+  "Unless the title and at least one option can
+   fit on the screen or in the current 4GL window,
+   a runtime error occurs."
+
+This is not accurate. A runtime error can occur if the
+current window is not wide enough to include the larger
+of these two values;
+
+   (1) the width of the menu title, plus eight spaces,
+       plus the width of the longest option;
+
+   (2) the width of the longest Menu Help line message.
+
+(This somewhat simplifies the actual rule.) IBM Informix
+recommends that you verify by testing that your 4GL
+menus can fit in the windows where they are displayed.
+
+The COMMAND Clause of the MENU Statement
+----------------------------------------
+If a COMMAND clause specifies a HELP message, then
+the user can display this message by pressing the
+Help key when the menu option is the current option.
+The documentation neglects to indicate that pressing
+the question ( ? ) mark key has the same effect.
+
+In the section "The NEXT OPTION Clause," delete the
+last sentence, which says:
+
+  "4GL does not execute any of the statements that
+   follow a NEXT OPTION clause within a MENU control
+   block."
+
+That sentence is false. The NEXT OPTION keywords do
+not cause control of execution to jump to the COMAND
+clause that they reference.
+
+Specifying a Compiled Form Specification File as a Variable
+-----------------------------------------------------------
+The OPEN FORM statement of 4GL can reference a compiled form
+specification file directly, or can use a character variable
+containing the filename (with or without the ".frm" extension).
+The OPEN FORM syntax diagram in Chapter 4 includes "filename" as
+a quoted string, but neglects to show that a character variable
+containing the filename of the compiled form specification
+is also valid in this context.
+ 
+This feature enables your program to use conditional logic to
+specify a screen form at runtime, by assigning to the variable
+the filename of an appropriate compiled form specification.
+
+SQL Statements that Cannot Be Prepared
+--------------------------------------
+In the table on page 4-319 of unpreparable statements,
+the "x" symbol is progressively misaligned towards
+the bottom of the table. It always to the statement
+immediately to the right. (This defect is repeated
+on page 4-353, which also neglects to explain what the
+"x" symbol signifies. Page 4-354 defines the symbol.)
+
+The PROMPT Statement
+--------------------
+If the user enters an empty string (or a single blank
+space, or only presses RETURN) as the response, this
+is stored as a NULL value.
+
+If you specify PROMPT FOR CHAR, the user cannot
+type a CONTROL sequence as the response. If the user
+presses the Interrupt (or Quit) key, the effect depends
+on whether DEFER INTERRUPT (or DEFER QUIT) appears in
+the MAIN program block. If DEFER INTERRUPT or DEFER
+QUIT was not specified, Interrupt or Quit terminates
+the program. Otherwise, control of execution passes
+to the statement that follows the PROMPT statement,
+with NULL stored as the response value.)
+
+Contrary to the list in "The ON KEY Blocks," the
+RETURN key is not supported in the ON KEY block of
+the PROMPT statement. (But RETURN is valid in the
+ON KEY blocks of other 4GL statements.)
+
+See also the note "Exclusion of the Current Date
+by P and F Options" elsewhere in this document.
+This is relevant if the response variable has a
+DATE or DATETIME data type, and you specify the
+CENTURY attribute in the ATTRIBUTE clause.
+
+Two-Pass Reports
+----------------
+The description of which REPORT definitions require
+two passes to produce their output is imprecise,
+although the first condition that is sufficient to
+require a two-pass report is correctly stated:
+
+  "An ORDER BY section without the EXTERNAL keyword."
+
+The second sufficient condition is identified as:
+
+  "The GROUP PERCENT(*) aggregate function anywhere
+   in the report."
+
+But GROUP PERCENT(*) is valid only in AFTER GROUP OF
+control blocks, so "anywhere" is potentially misleading.
+
+The third sufficient condition is identified as:
+
+  "Any aggregate function outside the AFTER GROUP OF
+   control block."
+
+But a more accurate (and more restrictive) replacement
+for that condition is this:
+
+  "Any aggregate function that has no GROUP keyword in
+   any control block other than ON LAST ROW."
+
+A report that does not satisfy at least one of these
+three conditions produces its output in a single pass.
+
+Aggregate Functions in Two-Pass Reports
+---------------------------------------
+Conditional aggregates are calculated on the first pass,
+when the input records are read, and are printed on the
+second pass. Aggregates are not valid in a loop, such as
+FOR, FOREACH, or WHILE, where the WHERE clause changes
+dynamically. If you attempt to calculate an aggregate
+function in this context, no value is returned.
+
+The RUN ... RETURNING Clause
+----------------------------
+The description of the RUN statement asserts that the
+variable that follows the RETURNING keyword can be of
+the INT or SMALLINT data type. This is not false,
+but if you use an INT variable to store the 2-byte
+value that is returned, some operating systems extend
+the sign-bit, and others simply pad the high-order 2
+bytes of the variable with 0. Consequently, if the
+program returns -1, some systems will extend the sign
+and return -1, and some will pad with 0 and return
+255. The same inconsistency can happen if the program
+returns 255.
+
+For consistent results across different platforms,
+use a SMALLINT variable in this context.
+
+The same description of the RETURNING clause in the
+RUN statement includes the following assertion:
+
+  If a Quit signal causes the termination, the integer
+  value is (3*256), or 758.
+
+This is incorrect; the product of 3 and 256 is 768.
+
+Variables in ON EVERY ROW Control Blocks
+----------------------------------------
+The description of ON EVERY ROW in Chapter 7 correctly
+asserts that:
+
+  "4GL delays processing the PAGE HEADER control block
+   (or FIRST PAGE HEADER control block, if it exists)
+   until it encounters the first PRINT, SKIP, or NEED
+   statement in the ON EVERY ROW control block."
+
+This means that when output is first produced by the
+PRINT statement in the ON EVERY ROW control block of
+a 4GL report, any value that was assigned to a program
+variable in the [FIRST] PAGE HEADER control block is
+the value that appears in the output from the report,
+rather than whatever value the ON EVERY ROW control
+block may have assigned to the same variable.
+
+This is illustrated in the following example:
+
+   MAIN
+      DEFINE c1 integer
+      DEFINE i SMALLINT
+
+      WHENEVER ERROR CONTINUE
+      DROP DATABASE "tc18909"
+
+      WHENEVER ERROR STOP
+      CREATE DATABASE "tc18909"
+      CREATE TABLE tab1 (c1 serial)
+
+      FOR i = 1 TO 25               
+         INSERT INTO tab1 VALUES (0)
+      END FOR
+
+      DECLARE cs CURSOR FOR SELECT * 
+         FROM tab1 ORDER BY c1
+      START REPORT listrep to "out"
+      FOREACH cs INTO c1
+         OUTPUT TO REPORT listrep (c1)
+      END FOREACH
+      FINISH REPORT listrep
+
+   END MAIN                      
+
+   REPORT listrep (c1)
+      DEFINE c1 integer
+      DEFINE str1, str CHAR(40)
+
+      OUTPUT                    
+         PAGE LENGTH 10
+         LEFT MARGIN 0
+         RIGHT MARGIN 80
+         TOP MARGIN 0
+         BOTTOM MARGIN 0
+
+      FORMAT                  
+         PAGE HEADER
+            LET str = "+++++PAGE HEADER+++++"
+            PRINT str
+
+        ON EVERY ROW
+            LET str = c1
+            PRINT str
+   END REPORT
+
+Here the PRINT statement in ON EVERY ROW prints
+
+            +++++PAGE HEADER+++++
+
+rather than an input record from the database.
+
+To modify this report so that ON EVERY ROW prints
+an input record, replace the original PAGE HEADER 
+control block with the following code:
+
+         PAGE HEADER
+            LET str1 = "+++++PAGE HEADER+++++"
+            PRINT str1
+
+Variables in the START REPORT Statement
+---------------------------------------
+The description of START REPORT in Chapter 4 neglects to
+specify that the value specified for the TOP OF PAGE eject
+character can also be a character variable. A quoted
+string is also valid, as the manual correctly states.
+
+For the various LENGTH and MARGIN page dimensions, you
+can specify an integer expression. This implies that
+(among other expressions) a literal number or a variable
+of data type INTEGER or SMALLINT is valid.
+
+Locks Released by START REPORT
+------------------------------
+In an unlogged database that uses an update cursor,
+the START REPORT statement releases the lock on the
+current row. This can lead to concurrency problems,
+if another user manipulates that row. Similarly,
+any SQL Data Definition Statement (as listed near the
+beginning of Chapter 4) within the control blocks of a
+report can have this effect on an unlogged database.
+
+The ARR_COUNT() Function
+------------------------
+Page 5-27 makes the following assertion:
+
+  "If SET_COUNT() was explicitly called, ARR_COUNT()
+   returns the greater of these two values: the
+   argument of SET_COUNT(), or the highest value
+   attained by the array index."
+
+This is true if the most recent call to SET_COUNT()
+specified an argument no larger than the physical
+size of the program array, but 4GL does not require
+that SET_COUNT() take an argument that is logically
+consistent with the declared size of the array.
+
+Before the INPUT ARRAY statement begins execution,
+if you call SET_COUNT() with an argument larger
+than the array size, then calling ARG_COUNT() in
+an INPUT ARRAY control block returns the maximum
+value of the array index, even if this value is
+smaller than the argument of SET_COUNT().
+
+The CLIPPED Operator with a Blank Operand
+-----------------------------------------
+If its operand is a string containing only whitespace,
+then the CLIPPED operator returns a single blank space
+(rather than an empty string or NULL).
+
+The CURRENT Operator and the Current Database
+---------------------------------------------
+When the CURRENT operator appears in a 4GL statement
+that is not an SQL statement, the returned DATETIME
+value is calculated from the calendar-clock of the
+client system that is running the 4GL application,
+rather than from the system that supports the current
+database, if that is a different system. (In an SQL
+statement, CURRENT is evaluated from the calendar-clock
+of the system that supports the current database, even
+if the SQL expression that includes the CURRENT operator
+references a table in another database. To obtain the
+CURRENT time from a remote database server, first make
+it the current database with the DATABASE statement.)
+
+The CURSOR_NAME() Function
+--------------------------
+In a database that does not use implicit transactions,
+but where transaction logging is in effect, error -255
+is issued if you attempt to open a cursor FOR UPDATE
+outside a transaction. The BEGIN WORK statement is
+required in this context before opening the cursor.
+
+The FGL_GETKEY() Function
+-------------------------
+The Chapter 5 description of FGL_GETKEY() is defective
+where PROMPT appears in the code example. The logic
+requires the MESSAGE statement, rather than PROMPT:
+
+Also, the value that FGL_KEYVAL("RETURN") returns is not
+what FGL_GETKEY returns after the RETURN key is pressed.
+
+Alternatively, here is another code example:
+
+   DEFINE key INT
+   MESSAGE "Press 'y' to continue. Any other key to abort. "
+   LET key = FGL_GETKEY()
+   IF key = FGL_KEYVAL("y") OR key = FGL_KEYVAL("Y")
+      THEN
+         CALL continue()
+      ELSE
+         CALL quit()
+   END IF
+
+The LENGTH() Function
+---------------------
+Because LENGTH() disregards trailing whitespace, any
+character string argument that contains only whitespace
+characters returns zero. If LENGTH() is called with a
+NULL argument, the returned value is also zero. You
+cannot use LENGTH() to distinguish between strings of
+(any number of) whitespace characters and NULL strings.
+
+SMALLINT Values for mkmessage
+-----------------------------
+As the description of the SHOWHELP() function implies in
+Chapter 5, the integer values of help message numbers must
+be in the SMALLINT range. Appendix B neglects to specify
+this restriction (to values no greater than 32,767).
+
+DATETIME Values with INCLUDE
+----------------------------
+To specify a DATETIME or INTERVAL value for the INCLUDE
+attribute, use the numeric DATETIME format (without any
+qualifiers) or the numeric INTERVAL format (without any
+qualifiers), and enclose the value between quotation
+marks. For example, the following FORM4GL code
+
+   f000 = testtb.c1, include=("10:10:10");
+
+specifies a valid DATETIME or INTERVAL value to include.
+(4GL determines the data type of the f000 field from the
+data type of the testtb.c1 column in the database.)
+
+CHAR Values with INCLUDE
+------------------------
+The last code example in the description of the INCLUDE
+attribute in Chapter 6 is not valid. The "(*)" symbols
+that follow the CHAR keyword must be deleted, because
+they elicit error -2018. Do not specify "(*)" (nor any
+other length) for FORTMONLY fields. FORM4GL does not
+recognize the default length of CHAR(1) for CHAR fields,
+but infers the length of CHAR fields from their physical
+size within the SCREEN section of the form specification.
+
+Compiling a Form in Quiet Mode
+------------------------------
+The syntax description of FORM4GL does not identify
+the effect of the "-q" option. If you specify "-q" (or
+equivalently, if you specify "-s" as the first option),
+then FORM4GL compiles the specified form "silently,"
+suppressing any prompts or other screen messages.
+
+Comment Option of VALIDATE Menu
+-------------------------------
+Page B-7 implies that what you enter can include as many
+as 80 characters ("it must fit on a single screen line"),
+but in fact, the text cannot be longer than 64 characters.
+The Comment line might not display all of the text if you
+include TAB, NEWLINE, or CONTROL-N characters. (The
+description of the COMMENTS attribute in Chapter 6 also
+omits these restrictions on the number of characters.)
+
+Handling Interrupts in C Programs that Call 4GL Functions
+---------------------------------------------------------
+Because the DEFER INTERRUPT statement is not valid outside
+the MAIN program block, handling Interrupt signals is not
+trivial in C programs that call 4GL functions (but have no
+MAIN statement of 4GL). A method that is not supported
+(but that is usually reliable) for handling Interrupts is
+to call the _efidefer() function after your program calls
+fgl_start(). The _efideref() function sets the Interrupt
+handler to one that correctly sets the INT_FLAG variable,
+and is included in the standard 4GL libraries. See also
+the fglsys.h header file.
+
+The FGL_CALL() Macro
+--------------------
+In the example on C-22, the call is:
+
+    fgl_call(get_customer, 1);
+
+There are at least three problems with this section.
+
+(1) The parameter type for funcname should be:
+
+    int (*funcname)();          /* K&R */
+    int (*funcname)(int);       /* ANSI */
+
+    The programmer cannot, for example, specify:
+
+    fgl_call("get_customer", 1);
+
+(2) There is no mention that the function needs
+    to be declared (though not necessarily defined) 
+    before it can be used an argument to FGL_CALL().
+
+(3) The examples do not show that you should check
+    that the correct number of values are returned 
+    from the 4GL function that was invoked.
+
+    A better example would be something like this:
+
+    n = fgl_call(get_customer, 1);
+    if (n != 1)
+        fatal("incorrect number of return values from get_customer");
+
+In addition, on page C-20, ARG_VAL() and NUM_ARGS()
+should not be in boldface, and the phrase "MAIN
+function block" should be "MAIN program block,"
+because the MAIN statement is not a 4GL "function."
+(For example, unlike a 4GL function, you cannot 
+use the FUNCTION statement to define the MAIN 
+program block it, nor CALL to invoke it; it is 
+not reentrant; and it cannot return a value to 
+its calling routine.)
+
+The fglrt.h Header File
+-----------------------
+The reference to the fglrt.h file is incorrect, and should
+be ignored. That file is not used by 4GL.
+
+4GL Function Names in C Programs  
+--------------------------------
+As page 2-3 indicates, uppercase letters in any 4GL 
+identifier are automatically shifted to lowercase during 
+compilation. In a C programs that calls an 4GL function, 
+do not use uppercase characters to specify the name of 
+the 4GL function in the call.  Otherwise, an "unresolved 
+symbol" error is issued, because any uppercase characters 
+in the C code cannot match the corresponding lowercase 
+characters in the name of the compiled 4GL function.
+
+The -api Option of c4gl
+-----------------------
+The section "Compiling and Executing the C Program" in
+Appendix C says that the -api option is required with
+c4gl. In fact, -api is only required with RDS, and is
+not recognized as a command-line option of c4gl.
+
+Starting Up the Database Server
+-------------------------------
+Appendix D neglects to say that if environment variables
+are set on the IDS server before the IDS server starts up,
+those settings also take effect for client systems that
+do not explicitly set the same environment variable.
+
+Date-Related Environment Variables
+----------------------------------
+The descriptions of DBCENTURY and DBDATE in Appendix D,
+and the references to GL_DATE and GL_DATETIME in Appendix E
+are generally correct, but they neglect to discuss the
+possible consequences of using abbreviated years in DATE or
+DATETIME literals in some contexts if DBCENTURY is reset.
+Problems can occur if the database uses a different rule
+for expanding abbreviated years (or if DBDATE, GL_DATE,
+or GL_DATETIME is reset to change the order of time units
+within literal DATE or DATETIME values) after an IBM
+Informix database object whose behavior is sensitive to 
+literal DATE or DATETIME values has been defined.
+
+IBM Informix databases use DBCENTURY to expand 1-digit 
+and 2-digit year values, and use DBDATE, GL_DATE, and 
+GL_DATETIME to specify the order of time units within 
+literal DATE or DATETIME expressions in SQL statements 
+and in various database objects, including these:
+
+   - check constraint expressions
+   - fragmentation expressions
+   - stored procedures
+   - triggers
+   - user-defined routines (UDRs)
+
+Unintended behavior can result if one or more environment
+variables are subsequently reset, if the new settings change
+the way in which DATE or DATETIME literals are evaluated by
+the database object.
+
+In earlier releases, the server interpreted the DATE or
+DATETIME literal using the date environment settings in
+effect at execution time. Here "date environment settings"
+include the following:
+
+   - the explicit or default date format setting (such as
+     what DBDATE, GL_DATE, or GL_DATETIME specify).
+
+   - the creation date of the database object that is
+     associated with the DATE or DATETIME literal.
+
+   - the explicit or default DBCENTURY setting.
+
+Now, however, a literal date is always interpreted using
+the date environment settings prevailing at the creation
+time of the object with which the DATE or DATETIME literal
+is associated.
+
+IMPORTANT: The following example (of the legacy behavior)
+           assumes that DBDATE is set to "MDY2-" and that
+           the time of execution is within the interval
+           between 31 December, 1899, and 30 June, 1994.
+
+Here is an example:
+
+     Unset DBCENTURY
+     create table t (d date)
+        fragment by expression
+           d < '07-01-94' in dbs1,
+           d >= '07-01-94' and d <= '12-30-94' in dbs2,
+                 remainder in dbs3;
+     Set DBCENTURY = P
+     insert into t values ('04-15-1980');
+
+Old behavior: The row goes into dbs3, because the
+fragmentation expression is interpreted at insert time
+and is treated as
+
+     d < '07-01-1894' in dbs1,
+     d >= '07-01-1894' and d <= '12-30-1894' in dbs2,
+           remainder in dbs3
+
+New behavior: The row goes into dbs1, because the
+fragmentation expression is interpreted based on the
+DBCENTURY value at the time of creation, and is treated
+as
+     d < '07-01-1994' in dbs1,
+     d >= '07-01-1994' and d <= '12-30-1994' in dbs2,
+           remainder in dbs3
+
+The next example is based on changes to another
+date-related environment variable, DBDATE:
+
+     Unset DBDATE
+     create table t (d date check (d <= '12-31-1995'));
+     Set DBDATE = y4md
+     insert into t values ('1995-10-31');
+
+Old behavior: Error 1218 (string to date conversion). This
+is because the date in the check constraint (12-31-1995)
+is being interpreted by the environment at the time of
+insert, but because DBDATE is y4md, it gives an error.
+
+New behavior: insert succeeds. The 12-31-1995 has been
+interpreted according to the environment at the time of
+object creation, and is successfully converted into a
+valid date, so there is no error. The environment
+settings at runtime are ignored.
+
+Note, however, that in this example, the DATE value in
+the INSERT statement is evaluated according to the date
+environment at runtime, using only the current settings
+of environment variables. Only database objects, not SQL
+statements (nor other 4GL statements), make any
+distinction between the date environment at the
+time-of-object-creation and the runtime environment
+in interpreting literal date values.
+
+Note also that this new behavior only takes effect for
+database objects that are created with a version of the
+database server that supports this feature. Previously
+created objects will not change in behavior. For this
+reason, if the new behavior is more desirable, you must
+drop and then recreate the existing database objects.
+
+For example, if constraints use a DATE or DATETIME
+literal, the constraints can be dropped and recreated
+by using ALTER TABLE or ALTER FRAGMENT.
+
+The new behavior is not backward-compatible to all
+IBM Informix database server releases, but these
+Version 5.x, 7.x, and 9.x releases (and some '
+subsequent releases) support the new behavior:
+
+  5.10.UC8 (UNIX & NT)
+  7.23.TC16 (NT)
+  7.24.UC9 (UNIX)
+  7.30.UC9 (UNIX and NT)
+  7.31.UC3 (UNIX & NT)
+  9.14.UC7 (UNIX & NT)
+  9.20.UC1 (UNIX & NT)
+  9.21.UC1 (UNIX & NT)
+  9.30.UC1 (UNIX & NT)
+
+For releases earlier than those listed here, if the
+new behavior is desired, you must drop and recreate
+any existing time-expression-dependent objects. In '
+the case of check constraints (for example), you can
+use ALTER TABLE, and then recreate the fragmented
+tables, either by dropping and recreating them, or
+by running ALTER FRAGMENT on the tables.
+
+This is a feature of the database server, rather 
+than a feature of IBM Informix 4GL, but this
+feature takes effect in database objects that are
+referenced within 4GL programs when the current
+database is of a release version in the list above.
+4GL makes no distinction between time-of-creation
+and time-of-execution for any environment variable.
+The new behavior of the database server eliminates
+the possibility of discrepancies in certain SQL
+operations involving database objects, but it does
+not prevent changes to settings of DBDATE (or of
+DBCENTURY, or of GL_DATE, or of GL_DATETIME) from
+affecting actions of the 4GL client program (for
+example, based on the INCLUDE field attribute)
+that are independent of the database server.
+
+Exclusion of the Current Date by P and F Options
+------------------------------------------------
+For the DBCENTURY environment variable and the
+CENTURY field attribute, the P and F settings
+exclude the current date, which is not yet in the
+past nor in the future. For example, if today is
+July 4, 1999 and DBCENTURY = P, then 4GL interprets
+"07/04/99" is interpreted as "07/04/1899", not as
+"07/04/1999". Similarly, if today is July 4, 1999
+and DBCENTURY = F, then "07/04/99" is interpreted
+as "07/04/2099", rather than as "07/04/1999".
+(See also the next note.)
+
+Requiring 4-Digit Years in Data Entry
+-------------------------------------
+The CENTURY field attribute and the DBCENTURY
+environment variable specify ways of automatically
+expanding 2-digit years. Some problems can be
+avoided if the user always enters a 4-digit year,
+but this is not an easy requirement to enforce
+within 4GL. In theory, you can use the PICTURE
+and REQUIRED attributes with a DATE or DATETIME
+format in which the YEAR value precedes the DAY
+or MONTH value. But except within organizations
+for which the YYYY-MM-DD or YYYY-DD-MM formats are
+familiar to users, it is often not acceptable to
+require YEAR as the first value in a date. Thus,
+for the 4GL code to require 4-digit years might
+not be a practical option for most developers.
+
+The DBFORMAT Environment Variable
+---------------------------------
+If DBFORMAT is set, it overrides the currency
+formatting specifications of the DBMONEY
+environment variable or of the locale files.
+
+The DBMONEY Environment Variable
+--------------------------------
+If DBMONEY is set, it overrides the currency
+formatting specifications of the locale files.
+If DBFORMAT is also set, then the DBFORMAT
+settings override the DBMONEY settings.
+
+Default Search Path for IBM Informix SE
+---------------------------------------
+The description of the default search path when DBPATH 
+is not set for an IBM Informix SE database is incomplete. 
+For 5.0 and earlier IBM Informix SE database servers, 
+the default path for databases (if DBPATH is not set) 
+is the user's home directory on the database server 
+that holds the current database. Version 6.0 of IBM
+Informix SE has no default, however, so DBPATH must 
+always be set in any 4GL applications that access an 
+IBM Informix SE Version 6.0 database. (In general, 
+however, it is better to upgrade to a more recent 
+database server version.)
+
+Printing the Screen
+-------------------
+Appendix D neglects to describe the DBSCREENOUT and
+DBSCREENDUMP environment variables that support saving
+the current 4GL screen display as a file. If you specify
+a pathname as the setting of DBSCREENOUT or DBSCREENDUMP
+(or if you specify a different pathname for each of them),
+then the user can press CONTROL-P to print the screen at
+any time.
+
+Reserved Words
+--------------
+The names of the 25 pop and return library functions for
+manipulating the 4GL argument stack, as listed on pages
+C-5 through C-8, cannot be used as 4GL identifiers, but
+are omitted from Appendix G, "Reserved Words":
+
+     retint                  popint
+     retshort                popshort
+     retlong                 poplong
+     retflo                  popflo
+     retdub                  popdub
+     retdec                  popdec
+     retquote                popquote
+     retstring               popstring 
+     retvchar                popvchar
+     retdate                 popdate
+     retdtime                popdtime
+     retinv                  popinv
+                             poplocator
+
+These functions are renamed in Version 7.31; see
+Appendix C for the new names and for descriptions
+of these functions. C code for use with releases
+of 4GL earlier than Version 7.31 that calls any
+of the pop, push, or return functions must be 
+recompiled with fglsys.h header file to map the
+pre-Version 7.31 names onto the new function names.
+
+(These names are reserved words that can cause
+unexpected behavior if you declare any of these 
+names as the identifier of a 4GL function or report, 
+or as an argument to a 4GL function or report.)
+
+User Names in an ANSI-Compliant Database
+----------------------------------------
+Appendix I shows the "user" name in some SQL statements
+(such as GRANT on page I-15) without enclosing quotation
+marks. In an ANSI-compliant database, however, any user
+name that is not enclosed between quotation marks has
+its letters automatically upshifted to uppercase. This
+can result in an error, if the actual user name that is
+not enclosed between quotes includes lowercase letters.
+The REVOKE diagram on page I-19 repeats this error.
+
+Error Message -4339
+-------------------
+The description of Error Message -4339 that "finderr"
+can display is incomplete. The following description
+is more accurate:
+
+  -4339 4GL has run out of data space memory.
+
+Your 4GL program requires more memory than is available.
+If your program was executing successfully prior to this
+message, examine your code to see if FREE, CLOSE FORM,
+CLOSE WINDOW, or other 4GL statements can release memory
+used by 4GL program objects that are no longer needed.
+
+If your program was using a shared memory connection, try
+setting INFORMIXSHMBASE to a larger value. Alternatively,
+use a streams (olipcstr) or network (oltlitcp) connection.
+
+If you receive this message during compilation, a .4gl
+source module might be too large to compile. Divide it
+into smaller modules, and compile them separately. If the
+error persists, divide the 4GL program into smaller programs.
+
+No other problems are known to exist with this manual.
+
+===============================
+
+VII. Notes on IBM Informix 4GL By Example
+
+Obsolete or Missing Features
+-----------------------------
+This book was written in 1991. It does not follow the
+typographic convention of other 4GL manuals in displaying
+programmer-defined 4GL and SQL identifiers in boldface.
+Similarly, this book does not illustrate features that
+have been added to 4GL (or to the IBM Informix 
+implementation of SQL) after Version 4.10. It offers 
+an abundance of code examples for typical RDBMS 
+programming tasks, and it shows how to use the essential 
+features of 4GL.
+
+Chapter 14 pre-dates the (Version 6.0) TERMINATE REPORT
+statement, as well as the features of START REPORT that
+support program variables for dynamically specifying at
+runtime the page dimensions for output from 4GL reports.
+
+Page 339 uses a CASE statement to chose among three
+different START REPORT statements, according to a user-
+supplied destination for the report output. Version 7.31
+of 4GL can equivalently support a single START REPORT
+statement with a variable to specify the destination.
+
+For various reasons, using row IDs (as in Chapters 10,
+18 or 27) is no longer recommended by IBM Informix as 
+an access method.  Instead, use primary keys. The 
+row ID examples still work, but IBM Informix might 
+discontinue support for row IDs in some future release. 
+(The IBM Informix Extended Parallel Server (XPS) database 
+server does not support row IDs, and the term "row pointer" 
+will in the future replace "row ID" as a construct for 
+referencing a specific row in the database.)
+
+References in Chapter 22 to Informix STAR and Informix NET
+are obsolete when 4GL is used with current IBM Informix 
+database servers, which incorporate equivalent functionality 
+for connectivity.  The same chapter omits CONNECT (which 4GL 
+can directly embed) as another SQL statement that can open 
+a database.
+
+Non-Standard 4GL Terminology
+----------------------------
+Page 32 refers to "the MAIN function." Reader are reminded,
+however, that although MAIN, REPORT, and FUNCTION are program
+blocks, the MAIN and REPORT statements of 4GL differ in many
+significant ways from the FUNCTION statement. They cannot,
+for example, be declared by the FUNCTION statement, nor can
+they be invoked by the syntax for calling a 4GL function.
+In addition, they are not re-entrant, they do not use the
+4GL function stack for their arguments, and they cannot
+return values to a 4GL calling context.
+
+Several other chapters repeat this imprecise terminology, or
+refer to REPORT definitions as "Report Functions." Unlike
+4GL functions, 4GL reports are not reentrant, cannot appear
+in an expression, cannot be invoked by CALL, cannot return
+a value to the calling context, cannot terminate with RETURN,
+and typically require an active connection to a database.
+
+The reference in Chapter 22 to the IBM Informix SE database
+server as "the standard engine" is non-standard terminology
+(and here "SE" is not an abbreviation for "Standard Engine").
+As noted elsewhere in these notes, "Informix OnLine" is no
+longer the name of "IBM Informix Dynamic Server," but in 
+this book "OnLine" means an IBM Informix database server that
+uses raw devices, rather than C-ISAM and UNIX system calls,
+to store the database tables and other schema elements.
+
+Chapter 30 refers to "the system catalogs" of a database,
+but in current terminology, all the tables that a database
+maintains to describe its own schema are collectively known
+as "the system catalog" (singular). IBM Informix Version 7.3
+and later databases include more system catalog tables than
+this chapter (which was written for Version 4.10) describes.
+
+Page 156 refers to INFIELD() as a "built-in function."
+In fact, INFIELD() is an operator, rather than a function.
+Page 326 refers to the COLUMN, PAGENO, TODAY, and USING
+keywords of 4GL as "functions" or "clauses." All these
+are actually operators of 4GL. (Thus, an error results
+if the CALL statement attempts to invoke any of them.)
+4GL manuals did not distinguish systematically between
+functions and operators before Version 6. Some manuals
+are not yet consistent on this topic. but Chapter 5
+of the "IBM Informix 4GL Reference Manual" is accurate.
+
+Page 293 describes the fglgets() function. Because the
+characters "fgl" begin the names of some internal functions
+that 4GL uses, IBM Informix recommends that you avoid these
+characters as the first characters of a programmer-defined
+identifier, rather than risk name conflicts. The same
+applies to the function called fglgetret() on page 312.
+See Appendix G of the "IBM Informix 4GL Reference Manual" 
+for more information about potential name-space problems 
+in 4GL identifiers.
+
+On page 320, what the diagram calls a "row producer" is
+called a "report driver" elsewhere in the 4GL documentation
+set. Similarly, what the diagram calls a "report generator"
+is now called a "report" or "report definition"; and what
+the diagram calls a "report" is now "output from a report."
+In the description of the to_hex() function in Chapter 30,
+the terms "power characters" and "power digits" are both
+usually called "digits in the exponent."
+
+Example 18 Compilation
+----------------------
+Because Example 18 illustrates the use of BYTE, TEXT,
+and VARCHAR data types, compilation errors will occur
+if you compile the file ex18.4gl (or its screen form
+specification files f_catadv.per, f_catalog.per, and
+f_catdescr.per) directly or by the fglexcopy script
+if your current database is IBM Informix SE. These data
+types are all supported by the IDS database server.
+(The 4GL code includes a runtime test for your type of
+database server, but this cannot prevent compilation
+errors when IBM Informix SE is the compile-time server.)
+
+The SQLAWARN Array
+------------------
+Chapter 22 notes that SQLAWARN is automatically reset
+to describe any new database that the CREATE DATABASE
+or DATABASE statement opens. It should also have added
+CONNECT to this list of statements. (The "4GL Reference
+Manual" repeats the same omission on page 2-45.)
+
+Typographic and Factual Errors
+------------------------------
+On page 371, the ERROR statement uses "left" and "right"
+double quotation (") marks to delimit a string. These two
+symbols should be "straight" quotation marks, as in the
+enclosing IF statement and elsewhere in code examples.
+
+The qual_fld() function description in Chapter 30 asserts
+that "6 = 4 - 0" when in fact 6 is greater than (4 - 0).
+The arithmetic should instead be "6 = (4 - 0 + 2)" here.
+
+A note on the convert_type() function in Chapter 30
+says that DECIMAL(p) data types (with no declared scale)
+are floating-point numbers. This is true in databases
+that are not ANSI-compliant. In an ANSI-compliant
+database, however, DECIMAL(p) implies a scale of zero,
+meaning that only integer data values can be stored.
+
+The Function Index neglects to indicate that it lists
+(in uppercase) some 4GL operators. Some listed functions
+like retshort() and popquote() are C library functions
+(which Appendix C of the "IBM Informix 4GL Reference Manual"
+describes).
+
+No other problems are known to exist with this manual.
+
+===============================
+
+VIII. Notes on Guide to the IBM Informix 4GL Interactive Debugger
+
+ASCII Characters Only
+---------------------
+Page 6 of the Introduction implies that the Debugger is
+GLS-enabled. This is false. Use instead the Dynamic 4GL
+product if you wish to debug a 4GL program that displays
+non-ASCII characters. In addition, the non-ASCII characters
+that appear on page 6 are not supported in some versions of
+the codeset of the 8859-1 locale.
+
+Post-4.10 SQL Syntax
+--------------------
+Page 8 of the Introduction incorrectly states that
+
+  "no SQL statements and syntax extensions introduced by
+   Informix servers of version 5.0 and later are recognized"
+
+by the Debugger. SQL statements later than Version 4.10
+that can be directly embedded in this version of 4GL are:
+
+   CONNECT
+   CREATE PROCEDURE FROM
+   DISCONNECT
+   EXECUTE IMMEDIATE
+   FOREACH ... WITH REOPTIMIZATION
+   OPEN ... WITH REOPTIMIZATION
+   SET CONNECTION
+
+Deviations from Conventions in This Manual
+------------------------------------------
+Page 10 of the Introduction shown an icon for features
+that comply with the X/Open Portability Guide. The
+Interactive Debugger has no features, however, that
+can be characterized in this way.
+
+Page 14 of the Introduction shows an example that is
+not a Debugger command. This will fail if the 4GL
+application uses cursor-mangling. (This example is
+valid, however, for Dynamic 4GL.)
+
+Page 16 of the Introduction describes a manual
+called the "Informix 4GL Quick Syntax." A manual
+of this name was provided with Version 7.2 and
+earlier 4GL releases, but not with this release.
+
+Appendix I of the "IBM Informix 4GL Reference Manual,"
+however, is the "Quick Syntax" section describing
+SQL syntax that can be directly embedded in 4GL code.
+
+On page 1-20, the illustration incorrectly shows no
+Debugger command highlighted in the initial display
+of the HELP command. When you issue the HELP command
+with no other argument, the _escape command name is
+highlighted (because it is appears at the top left
+of the list of Debugger commands). Arrow keys can
+move the highlight to the desired Debugger command.
+
+On page 2-3, the reference to "page 7" should be
+to page 7 of the Introduction.
+
+On page 2-7, the gap between lines 188 and 189 is
+without significance, and the lowercase characters
+for CLIPPED in line 190 are valid (but deviate from
+the documentation convention of uppercase keywords).
+Many code examples in this manual also use lowercase
+letters for Debugger keywords.
+
+The gap between lines 239 and 240 on page 2-8 (and
+similar gaps elsewhere in code listings of this
+manual) are also without significance.
+
+As page 2-9 reveals, the first seven chapters of
+this manual does not follow the convention of the
+other 4GL manuals, which append trailing
+parentheses to all function names.
+
+Messages from RDS
+-----------------
+On page 2-10, the message
+
+  "Form compilation in progress...please wait while
+   the form compiles"
+
+is incorrect. What is displayed is this:
+
+  "Form compilation in progress...please wait"
+
+but with no quotation marks. (This error is repeated
+on the same page for program compilation.)
+
+On page 3-25, the "Variable" segment in the syntax
+diagram should include a reference to page 9-16.
+
+Abbreviated Commands
+--------------------
+On page 9-26, the shortest form of the GROW
+COMMAND command is "g c" (rather than "c").
+
+On page 9-27, the shortest form of the HELP
+WHERE command is "h wh" (rather than "h wr").
+
+On page 9-27, the shortest form of the HELP
+WRITE command is "h wr"; no form is shown.
+
+Incorrect Syntax
+----------------
+Page 12 of the Introduction references the 
+syntax segments of the "IBM Informix Guide to 
+SQL: Reference." In this release, however, the 
+database server manual that provides this 
+information has "IBM Informix Guide to SQL:
+Syntax" as its title.
+
+Beginning on page 9-29, disregard the section
+"Conventions for Command Syntax Notation,"
+which was erroneously included in this book.
+See "Syntax Conventions" on page 11 of the
+Introduction for the notation used in this book.
+
+In the last paragraph of page 9-98, "reca.b"
+should be in boldface in the first line, because
+it is a 4GL identifier.
+
+On page 9-99, the reference to "Informix Guide to
+SQL:Reference" is obsolete. Refer instead to
+Chapter 3, "Data Types and Expressions," in the
+"IBM Informix 4GL Reference Manual." The assertion
+is false, that the data types which a 4GL program
+can support are dependent on the database server.
+
+On page 9-107, the syntax diagram requires the
+term "function" in place of "variable." The VIEW
+command cannot specify the name of a variable.
+
+Example Programs
+----------------
+Page 5 of the Introduction and Appendix C refer to
+"Sample Programs," but the examples in Appendix C
+are neither the result of sampling nor capable of
+sampling in the usual statistical sense of "sample."
+(Appendix B lists a 4GL program that can produce
+pseudo-random samples of natural numbers.)
+
+No other problems are known to exist with this manual.
+
+B) Copyright IBM Corp. 1994, 2009

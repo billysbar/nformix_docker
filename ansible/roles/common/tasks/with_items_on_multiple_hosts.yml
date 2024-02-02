@@ -1,0 +1,80 @@
+---
+
+# ------------------------
+# Create_Tracking_and_Imaging_dirs.sh
+# ----------------------
+
+### RUN this playbook the following way...
+#
+# ansible-playbook -i hosts roles/common/tasks/create_tracking_and_imaging_dirs.yml -v
+#
+### not. ansible-playbook -i hosts site.yml --tags="create_tracking_and_imaging_dirs" -v
+
+- hosts: TrackingServers
+  tasks:  
+
+  - name: Create_Tracking_and_Imaging_dirs {{ clients_root }} for {{ clientid }}
+    become: yes
+    become_user: shani
+    file: path=/{{ clients_root }}/{{ clientid }} state=directory mode=0777 owner=shani group=shani
+  
+  - name: Create directories within {{ clientid }} (Mode mixed)
+    become: yes
+    become_user: shani
+    file: path=/{{ clients_root }}/{{ clientid }}/{{ item.name }} state=directory mode={{ item.mode }} owner=shani group=shani
+    with_items:
+      - { name: 'msite_logs', mode: '0777' }
+      - { name: 'www', mode: '0777' }
+
+  - name: Create directories within ClientID/www (Mode 0777)
+    become: yes
+    become_user: shani
+    file: path=/{{ clients_root }}/{{ clientid }}/www/{{ item }}  state=directory mode=0777 owner=shani group=shani
+    with_items:
+      - email 
+      - liveads
+  
+  - name: Create directories within ClientID/www (Mode 0775)
+    become: yes
+    become_user: shani
+    file: path=/{{ clients_root }}/{{ clientid }}/www/{{ item }}  state=directory mode=0775 owner=shani group=shani
+    with_items:
+      - css
+      - pages
+      - templates
+      - w3c
+  
+  - name: create Symlinks
+    become: yes
+    become_user: shani  
+    file:
+      src: /clients/{{ item.src }}
+      dest: /{{ clients_root }}/{{ clientid }}/{{ item.dest }}
+      state: link
+      #force: yes - DONT FORCE
+      owner: shani
+      group: shani  
+    with_items:
+      - { src: 'cgi/jump.pl', dest: 'www/cgi/jump' }
+      - { src: 'cgi/msite.pl', dest: 'www/cgi/msite' }
+      - { src: 'js/jquery.js', dest: 'www/js/jquery.js' }
+
+  ##carries out the process completely on the remote host
+  - name: Deploy (copy) standard files from /test/
+    become: yes
+    become_user: shani   
+    synchronize:
+      src: /test/{{ item.src }}
+      dest: /{{ clients_root }}/{{ clientid }}/www/{{ item.dest }}
+    with_items:
+      - { src: 'blank.gif', dest: 'blank.gif' }
+      - { src: 'blank.gif', dest: 'images/blank.gif' }
+    delegate_to: "{{inventory_hostname}}"
+
+# TODO maybe just use copy with remote_src
+#- name: copy file ON {{inventory_hostname}}
+#  copy:
+#    remote_src: True
+#    src: /tmp/get_params.pl
+#    dest: /{{ apache_root }}/cgi-bin/logcheck/{{ clientid }}/get_params.pl
+  

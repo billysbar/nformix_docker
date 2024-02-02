@@ -1,0 +1,54 @@
+: '
+: ************************************************************************** 
+: *  Licensed Materials - Property of IBM                                  * 
+: *                                                                        * 
+: *  "Restricted Materials of IBM"                                         * 
+: *                                                                        * 
+: *  IBM Informix 4GL                                                      * 
+: *  Copyright IBM Corporation 2001, 2008. All rights reserved.            * 
+: *                                                                        * 
+: ************************************************************************** 
+: *************************************************************************
+:
+:  Title      : i4glsoademo
+:  Description: Despatcher of Product Demonstration file
+:
+: *************************************************************************
+: '
+
+PRODUCT=soa
+DEMOFILE=i4glsoademo.sh
+DEFLANG=en_US.8859-1
+
+INFORMIXDIR=${INFORMIXDIR:=/usr/informix}
+INFENV=${INFORMIXDIR}/bin/infenv
+CONVLOC=${INFORMIXDIR}/bin/convloc
+
+if [ $# -gt 0 -a "X$1" = "X-e" ] ; then
+    LOCALE=$DEFLANG                          # -e means en_US.8859-1 required
+    shift
+else
+    LOCALE=`$INFENV DBLANG`                  # get DBLANG value
+    if [ "x${LOCALE}" = "x" ]; then       
+        LOCALE=`$INFENV CLIENT_LOCALE`       # try CLIENT_LOCALE instead
+        if [ "x${LOCALE}" = "x" ]; then
+            LOCALE=`$INFENV DB_LOCALE`       # finally default to DB_LOCALE
+        fi
+    fi
+fi
+
+if [ "x${LOCALE}" = "x" ]; then
+    LOCALE=$DEFLANG       # finally default to DB_LOCALE
+fi
+
+export LOCALE
+ 
+DEMOPATH=`$CONVLOC $LOCALE`
+ 
+if [ "x${DEMOPATH}" = "x" ]; then
+        echo "Invalid Locales set !!"
+else
+   exec $INFORMIXDIR/demo/$PRODUCT/$DEMOPATH/$DEMOFILE $*
+fi
+
+exit $?

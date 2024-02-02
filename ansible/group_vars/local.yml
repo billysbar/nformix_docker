@@ -1,0 +1,19 @@
+---
+
+env: "*** LOCAL ***"
+
+shani: local shani
+
+iown: adodson
+igrp: staff
+
+wgrp: wheel
+
+root_dir: tmp/ROOT
+
+hosts: tmp/hosts
+
+i4gl_src: tmp/
+INFORMIXDIR: /tmp/opt/ibm/informix
+
+directories: ../directories/

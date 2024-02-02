@@ -1,0 +1,22 @@
+{####################################################################
+ # FORM: f_date                                                     #
+ # PURPOSE: Accepts a single date. This date is not connected to a  #
+ #	    particular field in the database so that the form can   #
+ #	    be used throughout the application. The form has an     #
+ #	    extra blank line at the top to allow the calling program#
+ #	    to provide its own descriptive heading.                 #
+ # 4GL PROGRAM: ex21.4gl                                            #
+ ####################################################################}
+
+DATABASE formonly
+
+SCREEN
+{
+
+
+                      Date:[f000      ]                         
+
+}
+
+ATTRIBUTES
+f000 = formonly.a_date TYPE DATE;

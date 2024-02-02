@@ -1,0 +1,46 @@
+---
+
+  #  ansible-playbook -i production site.yml --tags="i4gl_setup"
+
+- debug:
+    var: env
+
+- set_fact: i4gl_exists=false
+
+- name: test for i4gl
+  shell: i4gl -V
+  register: i4gl_test
+  ignore_errors: true
+
+- debug: msg={{ i4gl_test.stdout_lines }}
+
+- set_fact: i4gl_exists=true
+  when: i4gl_test.rc==0
+
+- debug: msg="i4gl already installed"
+  when: i4gl_exists
+
+- debug: msg="i4gl NOT installed"
+  when: i4gl_exists==false
+
+- name: prepare i4gl
+  synchronize:
+    src: "{{ i4gl_src }}"
+    dest: "{{ INFORMIXDIR }}"
+  when: i4gl_exists==false
+
+- name:  install i4gl
+  become: true
+  become_user: root
+  shell: cd {{ INFORMIXDIR }}; INFORMIXDIR={{ INFORMIXDIR }} {{ INFORMIXDIR }}/install4gl
+  register: i4gl_install
+  when: i4gl_exists==false
+
+- name: copy lib4gsh.so
+  synchronize:
+    src: /opt/ibm/informix/lib/tools/lib4gsh.so
+    dest: /opt/ibm/informix/lib
+
+- name:  test install
+  shell: cd /tmp; c4gl hello.4gl -o hello.4ge; ./hello.4ge
+  register: test_4ge

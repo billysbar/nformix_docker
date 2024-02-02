@@ -1,0 +1,22 @@
+{####################################################################
+ # FORM: f_custkey                                                  #
+ # PURPOSE: Accepts customer number and company name to enable a    #
+ #	    program to access a customer row by key value.          #
+ # 4GL PROGRAM: ex4.4gl, ex21.4gl, ex23.4gl                         #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+ Customer Number:[f001       ]   Company Name:[f002                ]   
+
+}
+
+TABLES
+customer 
+
+ATTRIBUTES
+f001 = formonly.customer_num; 
+f002 = customer.company;
+

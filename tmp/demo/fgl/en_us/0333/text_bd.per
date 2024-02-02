@@ -1,0 +1,57 @@
+{####################################################################
+ # FORM: text_bd.per                                                #
+ # PURPOSE: Manages display and editing of text blob               #
+ # 4GL PROGRAM: blobdemo.4gl                                        #
+ #                                                                  #
+ # Last revised: May  '91                                           #
+ ####################################################################}
+ 
+{ ///////////////////////////////////////////////////////////////////////////
+	This is the screen form for the catlist text window.
+	That window is normally obscured by the main window, but is
+		brought to the front on request to edit the cat_descr.
+	The database name "newdemo" is used; you must change it if you
+		call the enhanced stores database something else.
+//////////////////////////////////////////////////////////////////////// }
+
+DATABASE stores2
+SCREEN
+{
+ Catalog copy for cat# [cnum ], [sdesc          ] from [man            ]
+
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+ [copy                                                                 ]
+
+            exit w/o changes [xn]  update database row [xu]
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num,			noentry;
+sdesc	= stock.description,			noentry;
+man	= manufact.manu_name,			noentry;
+copy	= catalog.cat_descr, wordwrap compress,
+	comments = "Press ! to invoke an editor, Return for next field";
+xn	= formonly.xn type char,
+	comments = "Press control-E now to exit with no changes" ;
+xu	= formonly.xu type char,
+	comments = "Press control-E now to update the catalog text";
+END

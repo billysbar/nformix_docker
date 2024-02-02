@@ -1,0 +1,335 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.ko, fontprop, ax142, 20060311 1.29.2.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2000, 2004. All Rights Reserved
+# ===========================================================================
+#
+
+# font.properties.ko
+#
+# Intended for Korean
+# Intended for Linux
+# Note: modification of this file is risky and not supported
+#    see http://java.sun.com/products/jdk/1.2/docs/guide/internat/fontprop.html
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bold.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+serif.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+sansserif.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.italic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.bold.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+monospaced.bolditalic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.italic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.bold.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialog.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialog.bolditalic.3=-monotype-timesnewromanwtk-medium-r-normal--*-%d-75-75-p-*-microsoft-symbol
+
+dialoginput.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.italic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.italic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.italic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.bold.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.bold.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.bold.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+dialoginput.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+dialoginput.bolditalic.1=-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.bolditalic.2=-*-gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+dialoginput.bolditalic.3=-monotype-sansmonowtk-medium-r-normal--*-%d-75-75-m-*-microsoft-symbol
+
+
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+
+# font filenames
+
+filename.lucida_bold_i=LucidaSansDemiOblique.ttf
+filename.lucida_bold_r=LucidaSansDemiBold.ttf
+filename.lucida_medium_i=LucidaSansOblique.ttf
+filename.lucida_medium_r=LucidaSansRegular.ttf
+filename.lucidabright_bold_i=LucidaBrightDemiItalic.ttf
+filename.lucidabright_bold_r=LucidaBrightDemiBold.ttf
+filename.lucidabright_medium_i=LucidaBrightItalic.ttf
+filename.lucidabright_medium_r=LucidaBrightRegular.ttf
+filename.lucidatypewriter_bold_i=LucidaTypewriterBoldOblique.ttf
+filename.lucidatypewriter_bold_r=LucidaTypewriterBold.ttf
+filename.lucidatypewriter_medium_i=LucidaTypewriterOblique.ttf
+filename.lucidatypewriter_medium_r=LucidaTypewriterRegular.ttf
+filename.sansmonowtk_medium_r=mtsansdk.ttf
+filename.timesnewromanmt30_medium_r=tnrmt30.ttf
+filename.timesnewromanwtk_medium_r=tnrwt_k.ttf
+
+# default char definition
+default.char=02ff
+
+
+fontcharset.serif.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.3=sun.awt.CharToByteSymbol
+
+fontcharset.serif.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.italic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.italic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.italic.3=sun.awt.CharToByteSymbol
+
+fontcharset.serif.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.bold.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.bold.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.bold.3=sun.awt.CharToByteSymbol
+
+fontcharset.serif.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.bolditalic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.bolditalic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.serif.bolditalic.3=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.3=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.italic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.italic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.italic.3=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.bold.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.bold.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.bold.3=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.bolditalic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.bolditalic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.sansserif.bolditalic.3=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.3=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.italic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.italic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.italic.3=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.bold.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.bold.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.bold.3=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.bolditalic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.bolditalic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.monospaced.bolditalic.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.italic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.italic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.italic.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.bold.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.bold.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.bold.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.bolditalic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.bolditalic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialog.bolditalic.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialoginput.0=sun.io.CharToByteISO8859_1
+fontcharset.dialoginput.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialoginput.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialoginput.italic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.italic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.italic.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialoginput.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.dialoginput.bold.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.bold.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.bold.3=sun.awt.CharToByteSymbol
+
+fontcharset.dialoginput.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialoginput.bolditalic.1=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.bolditalic.2=sun.awt.motif.CharToByteX11KSC5601
+fontcharset.dialoginput.bolditalic.3=sun.awt.CharToByteSymbol
+
+# exclusion info
+
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+
+fontset.serif.plain=\
+-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.serif.italic=\
+-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.serif.bold=\
+-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.serif.bolditalic=\
+-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+
+fontset.sansserif.plain=\
+-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.sansserif.italic=\
+-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.sansserif.bold=\
+-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.sansserif.bolditalic=\
+-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+
+fontset.monospaced.plain=\
+-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.monospaced.italic=\
+-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.monospaced.bold=\
+-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.monospaced.bolditalic=\
+-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+
+fontset.dialog.plain=\
+-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialog.italic=\
+-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialog.bold=\
+-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialog.bolditalic=\
+-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+
+fontset.dialoginput.plain=\
+-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialoginput.italic=\
+-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialoginput.bold=\
+-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+fontset.dialoginput.bolditalic=\
+-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1,\
+-*-Baekmuk Gulim-medium-r-normal--*-%d-75-75-*-*-ksc5601.1987-0
+
+# ibm text performance feature
+ibm.java2d.useawtfonts=0
+
+# font substitution
+substitute.0=Gulim=Monotype Sans Duospace WT K
+substitute.1=Gulim=Times New Roman WT K
+substitute.2=Times New Roman WT=Monotype Sans Duospace WT K
+substitute.3=Monotype Sans Duospace WT=Times New Roman WT K
+substitute.4=-Baekmuk Gulim=sansmonowtk
+substitute.5=-Baekmuk Gulim=timesnewromanwtk
+substitute.6=Baekmuk Gulim=gulim
+substitute.7=-Baekmuk Gulim=gulim
+

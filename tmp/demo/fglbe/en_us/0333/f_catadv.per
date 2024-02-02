@@ -1,0 +1,43 @@
+{####################################################################
+ # FORM: f_catadv                                                   #
+ # PURPOSE: Displays advertising information about a catalog item.  #
+ #	    Advertising info is a VARCHAR field in the catalog      #
+ #	    table.                                                  #
+ # NOTE: The "catalog" table is ONLY available in the newdemo       #
+ #       database.  This table uses data types available only with  #
+ #       the OnLine engine.                                         #
+ #                                                                  #
+ # 4GL PROGRAM: ex18.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+ Ad copy for cat# [cnum ], [sdesc          ] from [man            ]
+
+ [copy                                                            ]
+ [copy                                                            ]
+ [copy                                                            ]
+ [copy                                                            ]
+
+       Exit w/o changes [xn]        Update current ad copy [xu]
+}
+END
+
+TABLES
+  catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num, NOENTRY;
+sdesc	= stock.description, NOENTRY;
+man	= manufact.manu_name, NOENTRY;
+copy	= catalog.cat_advert, WORDWRAP COMPRESS,
+	COMMENTS = "Press RETURN for next field.";
+xn	= FORMONLY.xn TYPE CHAR,
+	COMMENTS = "Press CONTROL-E now to exit with no changes." ;
+xu	= FORMONLY.xu TYPE CHAR,
+	COMMENTS = "Press CONTROL-E now to update the ad copy.";
+
+END

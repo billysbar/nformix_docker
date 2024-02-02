@@ -1,0 +1,32 @@
+{####################################################################
+ # FORM: f_manuf                                                    #
+ # PURPOSE: Displays manufacturer information for adding, updating, #
+ #	    or deleting a manufacturer in the database.             #
+ # 4GL PROGRAM: ex10.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+
+ Manufacturer   Manufacturer    Lead Time
+     Code          Name         (in days)
+    [f00]    [f01            ]   [ f02]
+    [f00]    [f01            ]   [ f02]
+    [f00]    [f01            ]   [ f02]
+    [f00]    [f01            ]   [ f02]
+    [f00]    [f01            ]   [ f02]
+}
+
+TABLES
+manufact
+
+ATTRIBUTES
+f00 = manufact.manu_code, UPSHIFT;
+f01 = manufact.manu_name;
+f02 = manufact.lead_time;
+
+INSTRUCTIONS
+  SCREEN RECORD sa_manuf[5] (manu_code THRU lead_time)
+

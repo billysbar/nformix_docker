@@ -1,0 +1,478 @@
+#######################################################################
+# APPLICATION: Help Message File - 4GL Examples Manual                # 
+#                                                                     # 
+# FILE: hlpmsgs.src                                                   # 
+#                                                                     # 
+# PURPOSE: This file contains the help messages for the example       #
+#          programs of the 4GL By Examples manual. To create a        #
+#          runtime version of this file, use the mkmessage utility.   #
+#                                                                     # 
+# MESSAGES:                                                           #
+#    1-4: Example 3                                                   #
+#    10-11: CUSTOMER menu (Examples 9, 17, 25)                        #
+#    20-24: CUSTOMER MODIFICATION menu (Examples 6, 9, 17, 25)        #
+#    30: Customer Query-By-Example (Examples 6, 9, 17, 19, 20)        #
+#    40: Customer Update (Example 6, 23)                              #
+#    50-56: Customer Add/Update (Examples 9, 17, 25)                  #
+#    60-62: Add Order (Example 11, 15)                                #
+#    63: Shipping Information (Example 11, 12, 15)                    #
+#    70-72: CUSTOMER CALL menu (Example 17)                           #
+#    80-85: Customer Call Add/Update (Example 17)                     #
+#    90-92: CUSTOMER CALL MODIFICATION menu (Example 17)              #
+#    100: Generic Exit message (Examples 3, 9, 17, 25)                #
+#    110: Order Search (Example 12)                                   #
+#    120-121: Vertical Menus (Examples 16a, 16b)                      #
+#    130-138: Customer Scroll Menu (Examples 19, 20, 27)              #
+#    140-143: Locking Test (Example 23)                               #
+#    150-153: Variable Menu Titles (Example 26)                       #
+#                                                                     #
+# MODIFICATION HISTORY:                                               #
+#  date        programmer      change                                 #
+#  --------    ----------      -------------------------------------- #
+#  05/03/91    dam             Updated header                         #
+#  12/27/90    dam             Created file hlpmsgs.src               #
+#######################################################################
+.1
+This is the first option of the sample menu: DEMO MENU. It can be
+selected by:
+	1. typing the letter "f" followed by the letter "i". The
+	   second letter is required to distinguish between the "First" 
+	   and the "Fourth" option (also selected with the letter "f").
+	2. moving the cursor to the "First" option and pressing RETURN
+
+.2
+This is the second option of the sample menu: DEMO MENU. It can be
+selected by:
+	1. typing the letter "s" 
+	2. moving the cursor to the "Second" option and pressing RETURN
+
+.3
+This is the third option of the sample menu: DEMO MENU. It can be
+selected by:
+	1. typing the letter "t" 
+	2. moving the cursor to the "Third" option and pressing RETURN
+
+.4
+This is the fourth option of the sample menu: DEMO MENU. It can be
+selected by:
+	1. typing the letter "f" followed by the letter "o". The
+	   second letter is required to distinguish between the "Fourth" 
+	   and the "First" option (also selected with the letter "f").
+	2. moving the cursor to the "Fourth" option and pressing RETURN
+
+.10
+The "Add" option allows you to add a new customer to the database.
+The cursor moves into the Customer form where you can enter the data
+for the new customer. To save the customer data, press the Accept key.
+To leave the form at any time, without saving the data, press Cancel.
+Either key returns you to the CUSTOMER menu.
+.11
+The "Query" option allows you to query the database for existing
+customers. The cursor moves into the Customer form where you can enter
+search criteria to define the customer(s) you want to see (Refer to
+Chapter xx of the xxxx for a description of valid search criteria.).
+To initiate the database search, press the Accept key. To leave the
+form at any time without searching, press Cancel. Either key returns
+you to the CUSTOMER menu.
+.20
+The "Next" option allows you to see the next customer that has been 
+selected. The program prints a message if no next customer exists.
+.21
+The "Update" option allows you to UPDATE the data for the customer 
+currently displaying on the Customer form. The cursor moves into 
+the Customer form, stopping at the "Company Name" field. To save the
+modified customer data, press the Accept key. To leave the form at any
+time without saving the data, press Cancel. Either key returns you to
+the CUSTOMER MODIFICATION menu.
+.22
+The "Delete" option allows you to DELETE the customer currently
+displaying on the Customer form. The program provides a confirmation 
+screen to ensure that you actually want to delete the customer. To
+delete the current customer, answer "Y" (yes). To cancel the delete
+request, answer "N" (no). The program returns you to the CUSTOMER
+MODIFICATION menu only if more selected customers exist. 
+.23
+The "Calls" option allows you to access calls made by the current
+customer (the one displaying on the Customer form). The cursor moves
+to the CUSTOMER CALLS menu for you to choose to add a new call or view
+existing calls.
+.24
+The "Exit" option leaves the CUSTOMER MODIFICATION menu and returns
+you to the CUSTOMER menu.
+.30
+This Query-by-Example allows you to select one or more customers by
+entering the values you want the program to search for in the 
+database. These values are called "search criteria". Use the RETURN 
+or arrow keys to move through the form. Enter the criteria you want 
+the program to use in searching for customers.  Your options include:
+
+    o  Literal values
+    o  A range of values (separated by ":")
+    o  A list of values (separated by "|")
+    o  Relational operators (for example ">105")
+    o  Wildcards like ? and * to match single or any number of characters
+
+4GL searches the database for customers that match your search
+criteria and displays the first customer it finds on the Customer
+form.
+.40
+The Customer form displays information about a single customer in the
+database. It contains the following fields:
+    
+   Customer Number - the customer's unique id. This field is maintained
+	by the database. When you add a new customer, the database
+	assigned a new customer number. When you update an existing 
+	customer, you cannot modify this field.
+   Company Name - the name of the customer's business. This name can be
+	up to 20 characters in length and cannot be empty.
+   Address (line 1) - up to 20 characters of street address
+	   (line 2) - an additional 20 characters of street address. 
+   City - the name of the city in the customer's address. This name
+	can be up to 15 characters in length.
+   State - the state in which the customer resides. The state is 
+	a two-character code and is stored in the "state" table
+	in the database. To see a list of valid state codes, press F5
+	or CONTROL-F.
+   Zip Code - the zip code for the customer's address. This code can
+	be up to 15 characters in length.
+   Contact Name - first and last names of the contact within the
+	company. Each name can be up to 15 characters in length.
+   Telephone - the customer's telephone number. This number should be
+	entered in the form: 
+		aaa-ppp-ssss xxxx 
+	where "aaa" is the area code, "ppp" is the phone number
+	prefix, "ssss" is the phone number suffix, and "xxxx" is the
+	extension.
+.50
+   Company Name - the name of the customer's business. This name can be
+	up to 20 characters in length and cannot be empty.
+.51
+   Address (line 1) - up to 20 characters of street address
+	   (line 2) - an additional 20 characters of street address
+
+The second line of the Address should be used only when there is not  
+sufficient room in the first line to contain the entire mailing address.
+.52
+   City - the name of the city in the customer's address. This name
+	can be up to 15 characters in length.
+.53
+   State - the state in which the customer resides. The state is 
+	a two-character code and is stored in the "state" table
+	in the database. To see a list of valid state codes, press F5
+	or CONTROL-F.
+.54
+   Zip Code - the zip code for the customer's address. This code can
+	be up to 15 characters in length.
+.55
+   Contact Name - first and last names of the contact within the
+	company. Each name can be up to 15 characters in length.
+.56
+   Telephone - the customer's telephone number. This number should be
+	entered in the form: 
+		aaa-ppp-ssss xxxx 
+	where "aaa" is the area code, "ppp" is the phone number
+	prefix, "ssss" is the phone number suffix, and "xxxx" is the
+	extension.
+.60
+The Order Add program enables you to add a new order for an existing 
+customer.  You must first select the desired customer by entering 
+the customer number. You can press F5 (or CTRL-F) from this field to
+see a popup window of customer numbers. From this popup window, use
+the F3 and F4 keys as well as the arrow keys to move to the desired
+customer and then press Accept to bring the customer back to the Order
+form.
+.61
+Once you have selected the customer, you must enter:
+    o  the date of the order - the order date defaults to today's date. 
+ 	You can override this default by entering a valid date. This
+	date is required.
+    o  the purchase order number - this field can be up to 10
+	characters in length. It is optional (can be left blank). 
+
+The order number is assigned by the program after you have saved the
+order. It is displayed in a special window when order entry is
+complete.
+.62
+Once you have selected the customer and entered the order information,
+you are ready to enter the items of the order. You may enter up to ten 
+line items into the scrolling screen array.  A number of standard 
+functions are available for manipulating the cursor in a screen
+array:
+
+    o  F1	Insert new line in the screen array.
+    o  F2	Remove the current line from the screen array.
+    o  F3	Page down one page in the screen array.
+    o  F4	Page up one page in the screen array.
+    o  F5	When in the Stock Number or Manufacturer Code fields,
+ 	or	a window will open in the middle of the screen and
+       CTRL-F	display a scrolled list of all items in stock, identified
+		by the stock number and manufacturer.  Using F3, F4, and
+		the up and down arrow keys, move the cursor to the line
+		that identifies the desired item and hit Accept.  The 
+		window will disappear and the selected information will
+		automatically appear in the proper line.
+    o  ESC	Exit input array, saving the line items.
+    o  CTRL-C	Exit the input array without saving the line items.
+    o  misc...	The arrow-keys, and the standard field editing keys
+		(CTRL-A, CTRL-D, etc.) are also available.
+.63
+The Shipping Information form allows you to view and enter shipping 
+information for the current order. The top half of the form contains 
+information about the current order.  If the order number field is 
+empty, the order has not yet been assigned a number. This assignment 
+occurs when the order is actually saved in the database.
+
+The bottom half of the form allows you to enter the following shipping
+information for the current order:
+    o  Shipping Date - the date the order is being shipped. The 
+	shipping date defaults to today's date. You can override 
+	this default by entering a valid date. This date is required.
+    o  Shipping Instructions - you can enter up to 40 characters of
+	special shipping instructions for this order. This field is 
+	optional.
+    o  Shipping Weight - the weight, in pounds, of the order. This
+	weight is used to calculate the shipping charge. If you do 
+	not charge for shipping, simply enter a weight of 0.00.
+    o  Shipping Charge - this charge is calculated as 1.5 * shipping
+	weight. If you do not charge for shipping, enter 0.00. If you 
+	use a different charge rate, override the default charge with 
+	the appropriate shipping charge.
+.70
+The "Receive" option allows you to add a new customer call for the
+current customer to the database.  The cursor moves into the Customer 
+Call form where you can enter the data for the new call. To save the 
+customer call data, press the Accept key.  To leave the form at any 
+time, without saving the data, press Cancel.  Either key returns you 
+to the CUSTOMER CALL menu.
+.71
+The "View" option allows you to query the database for existing
+calls for the current customer. The cursor moves into the Customer 
+Call form where you can enter search criteria to define the 
+customer call(s) you want to see (Refer to Chapter 12 of the 
+"INFORMIX-4GL User Guide" for a description of valid search 
+criteria.).  To initiate the database search, press the Accept 
+key. To leave the form at any time without searching, press 
+Cancel. Either key returns you to the CUSTOMER CALL menu.
+.72
+The "Exit" option leaves the CUSTOMER CALL menu and returns
+you to the CUSTOMER MODIFICATION menu.
+.80
+   Call Received at - the hour that the customer call was received.
+
+   Call Resolved on - the hour that the customer call was resolved.
+
+These times can be entered in 12-hour (1-12 AM, 1-12 PM) or 24-hour
+(0-23, no AM or PM) notation. If 12-hour notation used, you must
+specify AM or PM in the next field. If 24-hour notation used and the
+hour is between 13:00 and 23:00, the cursor skips over the AM/PM 
+field. These fields default to midnight (00:00). 
+
+Hour and minute values are NOT right-justified. To enter a single
+digit hour or minute, you must first move the cursor over one
+position with the right arrow key. 
+.81
+The second field of the time displays either AM or PM. This value
+qualifies the hour in the previous field. You just need to enter 
+the first letter: "A" or "P". These fields default to AM.
+.82
+The third field of the time displays the date the call was either
+received or resolved. This date defaults to today. You can override
+this date by entering a date in the form:
+	dd/mm/yy
+where "dd" is a day (1-31), "mm" is a month (1-12), and "yy" is the
+year (as either 2 or 4 digits).
+.83
+  Received By - the login name of the user who received the customer
+	call. This field defaults to the login name of the user 
+	running the program.
+.84
+  Call Code - a single-character code that identifies the reason for
+	the customer call. Valid codes are:
+		B: Billing Error
+		D: Damaged Goods
+		I: Incorrect Merchandise Sent
+		L: Late Shipment
+		O: Other
+
+This field only accepts these 5 codes. Any other input is rejected.
+.85
+  Call Description - flag to indicate whether this call currently has a
+	description.
+
+  Call Resolution - flag to indicate whether this call currently has a
+	resolution description.
+
+The fields display "Y" is a description exists and "N" if no
+description exists. The program initializes the field based on whether
+these descriptions have been stored in the database.
+
+To access the text of the description, press F2 (or CONTROL-E) from
+either of these fields. The program displays an edit form with the 
+240 character text available for editing.
+.90
+The "Next" option allows you to see the next customer call that has 
+been selected. The program prints a message if no next customer call
+exists.
+.91
+The "Update" option allows you to UPDATE the data for the customer 
+call currently displaying on the Customer Call form. The cursor moves 
+into the Customer Call form, stopping at the "Call Received at" field. 
+To save the modified customer call data, press the Accept key. To 
+leave the form at any time without saving the data, press Cancel. 
+Either key returns you to the CUSTOMER CALL MODIFICATION menu.
+.92
+The "Exit" option leaves the CUSTOMER CALL MODIFICATION menu and 
+returns you to the CUSTOMER CALL menu.
+.100
+This option leaves the menu and exits the program. You are returned to
+the environment from which you called the program. It can be selected by:
+	1. typing the letter "e" 
+	2. moving the cursor to the "Exit" option and pressing RETURN
+.110
+The Order Search form displays information about a single customer 
+order. You enter information describing the order you want to see in
+the top half of this form:
+
+   Customer Number - the customer number for the customer whose 
+	order you want to see. To see a list of valid customer
+	names and numbers, press F5 or CONTROL-F. You must enter a 
+	customer number.
+
+   Company Name - the name of the customer whose number you have
+	entered. This field is automatically filled in by the program.
+
+   Order Number - the order number for the order you want to see. To
+	see a list of orders for the specified customer, press F5 or
+	CONTROL-F. You must enter an order number.
+
+   Order Date - the date the order was placed. This field is
+	automatically filled in by the program.
+
+Once you have entered an order number, press the Accept key (or
+RETURN) to initiate the search for the order. The program displays 
+shipping price information for the order you specified in the 
+bottom half of this form. You can modify this information. To leave
+the form at any time, press the Cancel key.
+.120
+This vertical menu is implemented with a form file and an INPUT
+statement. This form file (f_menu) has the displayed menu options 
+as part of the SCREEN section.
+
+To choose a menu option from this vertical menu:
+   1. Enter the number of desired menu options at the prompt.
+   2. Press the Accept key or RETURN.
+
+To exit this menu, choose Option 7: Exit MAIN MENU.
+.121
+This vertical menu is implemented with a form file and an INPUT ARRAY
+statement. This form file (f_menu2) has a screen array. The program
+initializes this array with the displayed menu options.
+
+To choose a menu option from this vertical menu:
+   1. Move the cursor to the desired menu option with the arrow
+	keys, F3 (page down), F4 (page up), or RETURN.
+   2. Press the Accept key.
+
+To exit this menu, choose Option 7: Exit MAIN MENU or press the
+Cancel key.
+.130
+The "Query" option allows you to clear the current selected set of
+customers and return to the query form. From this form, you can enter
+new search criteria.
+.131
+The "Revise" option allows you to qualify the selected set of
+customer rows. The program clears the Customer form and you can 
+enter additional conditions that the selected data must meet. 
+When you press the Accept key, the program searches for customers 
+that match both the original and the additional conditions.
+.132
+The "Show-cond" option allows you to see, on the screen, the WHERE
+clause condition created by the CONSTRUCT statement. You can view the
+selection criteria for the original query, then choose the "Revise"
+option to enter additional conditions. When you choose "Show-cond"
+after "Revise", the program shows the conditions from both queries.
+.133
+The "First" option allows you to move to the first of the selected
+customer rows. This option only appears in the menu if there is more 
+than one selected customer and the first customer is not currently
+displaying.
+.134
+The "Next" option allows you to move to the next selected
+customer row. This option only appears in the menu if there is more 
+than one selected customer and the last customer is not currently
+displaying.
+.135
+The "Prior" option allows you to move to the prior (previous) selected
+customer row. This option only appears in the menu if there is more 
+than one selected customer and the first customer is not currently
+displaying.
+.136
+The "Last" option allows you to move to the last of the selected
+customer rows. This option only appears in the menu if there is more 
+than one selected customer and the last customer is not currently
+displaying.
+.137
+The "Update" option allows you to UPDATE the data for the customer 
+currently displaying on the Customer form. The cursor moves into 
+the Customer form, stopping at the "Company Name" field. To save the
+modified customer data, press the Accept key. To leave the form at any
+time without saving the data, press Cancel. Either key returns you to
+the View Customer menu.
+.138
+The "Delete" option allows you to DELETE the customer currently
+displaying on the Customer form. The program provides a confirmation 
+screen to ensure that you actually want to delete the customer. To
+delete the current customer, answer "Y" (yes). To cancel the delete
+request, answer "N" (no). The program returns you to the View Customer
+menu.
+.140
+The "Lock Table" options request a shared lock on the customer 
+table. Whether this lock request will be successful depends on 
+two things:
+
+    a) if any other user holds a lock on the customer table
+    b) the database engine you are using
+
+If the database is an IBM INFORMIX-SE engine, only one user can
+hold a shared lock on a table at a time. Your shared lock request
+fails if another user holds a lock (shared or exclusive) on the
+customer table.  
+
+If the database is an IBM INFORMIX-OnLine engine, many users can 
+simultaneously hold a shared lock on a table. Your shared lock 
+request is successful even if another user holds a shared lock 
+on the customer table. However, the lock request fails if another
+user holds an exclusive lock on this table.
+.141
+The "Try Update" option allows you to attempt an update on a customer
+row. You specify the customer number or company name of the customer
+you want to update. If the row is not locked by another user, the
+update is successful (unless it encounters a non-locking runtime 
+error). However, if the row is currently locked, the program cannot
+fetch the row for update. It attempts to fetch the locked row for a
+specified number of times. If the row is unlocked in this period, the
+update can continue. If the row is not unlocked, the update is
+cancelled.
+.142
+The "Release Lock" options allows you to release the shared lock on
+the customer table. You can release a lock only if you requested 
+the lock.
+.143
+Enter the number of times you want the program to attempt a fetch when
+it encounters a locked row. This number is called the number of
+"retries". It must be a positive integer value. 
+
+When it encounters a locked row, the fetch fails. The program will
+continue attempting the fetch for the specified number of retries. 
+If the lock is released on the row during this period, the fetch 
+is successful and the program can access the row for updating. 
+However, if the row is still locked after all retries, the update 
+request fails because the program cannot access the row.
+.150
+The Customer option presents you with a menu that allows you to:
+
+      o   Add new customers to the database
+      o   Locate customers in the database
+      o   Update customer files
+      o   Remove customers from the database
+.160

@@ -1,0 +1,337 @@
+: '
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+: 
+:			      PROPRIETARY DATA
+: 
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF 
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR 
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT 
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE. 
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:  Title:	i4gldemo 
+:  Sccsid:	@(#)i4gldemo 7.3		
+:  Description:	Demonstration Database Installation Script for the
+:               I4GL C-code.  Last modified June, 1999      
+:
+: *************************************************************************
+: '
+
+# Initialization.
+IDIR=${INFORMIXDIR}
+LD_LIBRARY_PATH=${IDIR}/lib:${IDIR}/lib/esql:${IDIR}/lib/tools:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH
+DEFAULT_HOSTS=$INFORMIXDIR/etc/sqlhosts
+HOSTS="$INFORMIXSQLHOSTS"
+DBPATH=.
+export DBPATH
+DBDATE=mdy4/
+export DBDATE
+DBMONEY=\$.
+export DBMONEY
+log=no
+dbspaceopt=0
+db=
+dbspace=
+err=no 
+i=
+count=0
+create="create database"
+wlog=""
+in=""
+ 
+# Set the CLIENT_LOC & DB_LOC before database is created.
+INFENV=${IDIR}/bin/infenv
+DEFLOCALE=en_US.8859-1
+CONVLOC=${IDIR}/bin/convloc
+ 
+if [ "x${LOCALE}" = "x" ]; then            # LOCALE is not set -- unlikely!
+    LOCALE=`$INFENV DBLANG`                # try get from DBLANG instead
+    if [ "x${LOCALE}" = "x" ]; then
+        LOCALE=`$INFENV CLIENT_LOCALE`     # try to default to CLIENT_LOCALE
+        if [ "x${LOCALE}" = "x" ]; then
+            LOCALE=`$INFENV DB_LOCALE`     # finally default to DB_LOCALE
+        fi
+    fi
+fi
+
+DEMOPATH=`$CONVLOC $LOCALE`
+
+# Read the command line args & create the database.
+# There are only 4 possible arguments : -log, dbname, -dbspace and dbspacename
+if (test $# -gt 4)
+then
+        infxmsg 33410 $0
+        exit 1
+fi
+
+#find out if logging or a specific dbspace or database name  is requested
+for i in $*
+do
+    count=`expr $count + 1`
+    case $i in
+        -log)       if (test $log = no)
+                    then
+                        log=yes
+                    else
+                        err=wha
+                    fi;;
+        -dbspace)   if (test $dbspaceopt -eq 0)
+                    then
+                        dbspaceopt=`expr $count + 1`
+                    else
+                        err=wha
+                    fi;;
+        [a-zA-Z]*)  if (test x$dbspace = x -a $dbspaceopt -eq $count)
+                    then
+                        dbspace=$i
+                    elif (test x$db = x)
+                    then
+                        db=$i
+                    else
+                        err=wha
+                    fi;;
+        -*)         err=wha
+                    infxmsg 33408 $i
+                    ;;
+        *)          err=wha
+                    infxmsg 33409
+                    ;;
+    esac
+done   
+ 
+if (test $err = wha)
+then
+        infxmsg 33410 $0
+        exit 1
+fi
+ 
+# error if -dbspace w/o dbspacename
+if (test x$dbspace = x -a $dbspaceopt -ne 0)
+then
+        infxmsg 33410 $0
+        exit 1
+fi
+
+# supply default dbname if not supplied at command line.
+if (test x$db = x)
+then
+    db=stores7;
+fi
+
+if (test X$HOSTS = "X")
+then
+    HOSTS=$DEFAULT_HOSTS
+fi
+
+if (test X$INFORMIXSERVER = "X")
+then
+    infxmsg -33401
+    exit 1
+fi
+
+echo "
+ 
+INFORMIX-4GL Sample Database and Examples Installation Script
+ 
+"
+
+TYPE=`awk '{ if ($1 == host) print substr($2,1,2); }' host=$INFORMIXSERVER $HOSTS`
+
+if (test $TYPE = "se")
+then
+    TURBO=""
+    if test -d $db.dbs
+    then
+	DROPIT=1
+     fi
+else
+    TURBO=1
+    DROPIT=1
+fi
+
+cp $IDIR/demo/fgl/${DEMOPATH}/mkstore4.4gl .
+
+$IDIR/bin/c4gl -static -nokeep -o mkstore4 mkstore4.4gl
+
+if (test $DROPIT)
+then
+#dropping existing database
+    infxmsg 33402 $db
+    ./mkstore4 -d $db
+    if test $? -ne 0
+    then
+        echo "Unable to drop existing $db database.\n"
+        exit 1
+    fi
+fi
+
+#creating database
+infxmsg 33403 $db
+
+if (test "$TURBO" -eq 1 -a $log = yes)
+then
+	wlog="with log"
+elif (test $TYPE = "se" -a $log = yes)
+then
+	logpath=`pwd`
+	wlog="with log in '$logpath/$db.log'"
+fi
+
+if (test "$TURBO" -eq 1 -a $dbspaceopt -ne 0)
+then
+	in="in"	
+fi
+
+# create database
+./mkstore4 -c ${db} "$create $db $in $dbspace $wlog"
+if test $? -ne 0
+then
+    echo "\n Unable to create $db database.\n"
+    exit 1
+else
+	echo "
+Database Created.
+"	
+	echo "
+Tables Created.
+"	
+fi
+
+rm -f ./mkstore4
+
+echo "
+Now loading data into the tables ...
+
+"
+# Not using DBLOAD to make demos to run in PURE TOOLS distribution.
+# Copy the unl files from which tables are to be loaded.
+for i in customer items manufact orders state stock syscolatt
+    do
+    cp $IDIR/demo/tools/${DEMOPATH}/$i.unl .
+    done
+
+cat > d4_load.4gl <<end_4gl
+database $db
+main
+  
+  load from "stock.unl" delimiter "|" insert into stock;
+  load from "items.unl" delimiter "|" insert into items;
+  load from "manufact.unl" delimiter "|" insert into manufact;
+  load from "orders.unl" delimiter "|" insert into orders;
+  load from "customer.unl" delimiter "|" insert into customer;
+  load from "state.unl" delimiter "|" insert into state;
+  load from "syscolatt.unl" delimiter "|" insert into syscolatt;
+   
+end main
+end_4gl
+    
+$IDIR/bin/c4gl -o d4_load d4_load.4gl
+./d4_load
+
+#creation complete
+infxmsg 33405
+
+UKEY=`(read K; echo $K)`
+Y_RESPONSE="Y"
+y_RESPONSE1="y"
+
+if (test "$UKEY" != "$Y_RESPONSE" && test "$UKEY" != "$y_RESPONSE1")
+then
+   exit 0
+fi
+
+echo "
+
+Now copying INFORMIX-4GL Demonstration Programs ...
+"
+
+for i in cust custcur customer order ordcur p_ordcur stock1
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.per .
+    done
+for i in custhelp
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.msg .
+    done
+for i in c_menu2 ch10def ch10def2 ch10key ch10key2 ch10notf ch10when \
+	 ch12cust ch12ord \
+	 ch7add ch7add2 ch7del ch7qry2 ch7query ch7upd \
+         custmenu menu1 ordmenu query1 \
+	 report1 report2 report3 report4 report5 report6 report7 \
+	 wind1 wind2
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.4gl .
+    done
+
+for i in custform orderform state_list stock_sel
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.per .
+    done
+for i in helpdemo
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.src .
+    done
+for i in d4_cust d4_demo d4_globals d4_main d4_orders d4_report d4_stock
+    do
+    cp $IDIR/demo/fgl/${DEMOPATH}/$i.4gl .
+    done
+
+echo "
+
+Now customizing INFORMIX-4GL Demonstration Programs and Forms ...
+"
+
+for f in `grep -l stores$ *.per *.4gl `
+do
+    sed s/stores/${db}/g $f > .custom
+    mv .custom $f
+done
+
+echo "
+
+Now recompiling INFORMIX-4GL Demonstration Program ...
+"
+
+$IDIR/bin/c4gl -o demo4.4ge d4_cust.4gl d4_demo.4gl d4_globals.4gl d4_main.4gl \
+        d4_orders.4gl d4_report.4gl d4_stock.4gl
+for i in d4_cust d4_demo d4_globals d4_main d4_orders d4_report d4_stock
+    do
+    rm -f $i.4ec $i.ec $i.c $i.o
+    done
+    
+echo "
+
+Now building INFORMIX-4GL Demonstration Forms and Messages ...
+"
+
+for i in cust custcur customer order ordcur p_ordcur stock1
+    do
+    $IDIR/bin/form4gl $i
+    done
+for i in custhelp
+    do
+    $IDIR/bin/mkmessage $i.msg $i.ex
+    done
+
+for i in custform orderform state_list stock_sel
+    do
+    $IDIR/bin/form4gl $i
+    done
+for i in helpdemo
+    do
+    $IDIR/bin/mkmessage $i.src $i
+    done
+
+echo "
+
+End of INFORMIX-4GL Demonstration Database Installation Script.
+
+"

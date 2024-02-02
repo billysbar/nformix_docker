@@ -1,0 +1,366 @@
+: '
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+: 
+:			      PROPRIETARY DATA
+: 
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF 
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR 
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT 
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE. 
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:
+:  Title:	del_gls
+:  Sccsid:	@(#)del_gls	1.2	4/16/98  14:54:29
+:  Description:	Deletion of uneeded GLS files
+:
+:
+:  ignores blank lines and lines starting with #, DISK, 
+:  space, or tab
+:
+: **********************************************************************
+: '
+
+
+remov_THAI()
+	{
+	echo "Removing Thai files"
+	if test -d $INFORMIXDIR/demo/fgl/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/fgl/th_th
+	fi
+	if test -d $INFORMIXDIR/msg/th_th
+	   then
+		rm -r $INFORMIXDIR/msg/th_th
+	fi
+	if test -d $INFORMIXDIR/etc/th_th
+	   then
+		rm -r $INFORMIXDIR/etc/th_th
+	fi
+	if test -d $INFORMIXDIR/forms/th_th
+	   then
+		rm -r $INFORMIXDIR/forms/th_th
+	fi
+	if test -d $INFORMIXDIR/demo/tools/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/tools/th_th
+	fi
+	if test -d $INFORMIXDIR/demo/fglbe/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/fglbe/th_th
+	fi
+	if test -d $INFORMIXDIR/demo/sql/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/sql/th_th
+	fi
+	if test -d $INFORMIXDIR/demo/sql2/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/sql2/th_th
+	fi
+	if test -d $INFORMIXDIR/demo/fgldb/th_th
+	   then
+		rm -r $INFORMIXDIR/demo/fgldb/th_th
+	fi
+	}
+
+remov_KOREAN()
+	{
+	echo "Removing Korean files"
+	if test -d $INFORMIXDIR/demo/fgl/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/fgl/ko_kr
+	fi
+	if test -d $INFORMIXDIR/msg/ko_kr
+	   then
+		rm -r $INFORMIXDIR/msg/ko_kr
+	fi
+	if test -d $INFORMIXDIR/etc/ko_kr
+	   then
+		rm -r $INFORMIXDIR/etc/ko_kr
+	fi
+	if test -d $INFORMIXDIR/forms/ko_kr
+	   then
+		rm -r $INFORMIXDIR/forms/ko_kr
+	fi
+	if test -d $INFORMIXDIR/demo/tools/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/tools/ko_kr
+	fi
+	if test -d $INFORMIXDIR/demo/fglbe/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/fglbe/ko_kr
+	fi
+	if test -d $INFORMIXDIR/demo/sql/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/sql/ko_kr
+	fi
+	if test -d $INFORMIXDIR/demo/sql2/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/sql2/ko_kr
+	fi
+	if test -d $INFORMIXDIR/demo/fgldb/ko_kr
+	   then
+		rm -r $INFORMIXDIR/demo/fgldb/ko_kr
+	fi
+	}
+
+remov_CHINESE()
+	{
+	echo "Removing Chinese files"
+	if test -d $INFORMIXDIR/demo/fgl/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/fgl/zh_cn
+	fi
+	if test -d $INFORMIXDIR/msg/zh_cn
+	   then
+		rm -r $INFORMIXDIR/msg/zh_cn
+	fi
+	if test -d $INFORMIXDIR/etc/zh_cn
+	   then
+		rm -r $INFORMIXDIR/etc/zh_cn
+	fi
+	if test -d $INFORMIXDIR/forms/zh_cn
+	   then
+		rm -r $INFORMIXDIR/forms/zh_cn
+	fi
+	if test -d $INFORMIXDIR/demo/tools/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/tools/zh_cn
+	fi
+	if test -d $INFORMIXDIR/demo/fglbe/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/fglbe/zh_cn
+	fi
+	if test -d $INFORMIXDIR/demo/sql/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/sql/zh_cn
+	fi
+	if test -d $INFORMIXDIR/demo/sql2/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/sql2/zh_cn
+	fi
+	if test -d $INFORMIXDIR/demo/fgldb/zh_cn
+	   then
+		rm -r $INFORMIXDIR/demo/fgldb/zh_cn
+	fi
+	}
+
+remov_TAIWANESE()
+	{
+	echo "Removing Taiwanese files"
+	if test -d $INFORMIXDIR/demo/fgl/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/fgl/zh_tw
+	fi
+	if test -d $INFORMIXDIR/msg/zh_tw
+	   then
+		rm -r $INFORMIXDIR/msg/zh_tw
+	fi
+	if test -d $INFORMIXDIR/etc/zh_tw
+	   then
+		rm -r $INFORMIXDIR/etc/zh_tw
+	fi
+	if test -d $INFORMIXDIR/forms/zh_tw
+	   then
+		rm -r $INFORMIXDIR/forms/zh_tw
+	fi
+	if test -d $INFORMIXDIR/demo/tools/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/tools/zh_tw
+	fi
+	if test -d $INFORMIXDIR/demo/fglbe/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/fglbe/zh_tw
+	fi
+	if test -d $INFORMIXDIR/demo/sql/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/sql/zh_tw
+	fi
+	if test -d $INFORMIXDIR/demo/sql2/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/sql2/zh_tw
+	fi
+	if test -d $INFORMIXDIR/demo/fgldb/zh_tw
+	   then
+		rm -r $INFORMIXDIR/demo/fgldb/zh_tw
+	fi
+	}
+
+
+remov_JAPANESE()
+	{
+	echo "Removing Japanese files"
+	if test -d $INFORMIXDIR/demo/fgl/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/fgl/ja_jp
+	fi
+	if test -d $INFORMIXDIR/msg/ja_jp
+	   then
+		rm -r $INFORMIXDIR/msg/ja_jp
+	fi
+	if test -d $INFORMIXDIR/etc/ja_jp
+	   then
+		rm -r $INFORMIXDIR/etc/ja_jp
+	fi
+	if test -d $INFORMIXDIR/forms/ja_jp
+	   then
+		rm -r $INFORMIXDIR/forms/ja_jp
+	fi
+	if test -d $INFORMIXDIR/demo/tools/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/tools/ja_jp
+	fi
+	if test -d $INFORMIXDIR/demo/fglbe/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/fglbe/ja_jp
+	fi
+	if test -d $INFORMIXDIR/demo/sql/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/sql/ja_jp
+	fi
+	if test -d $INFORMIXDIR/demo/sql2/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/sql2/ja_jp
+	fi
+	if test -d $INFORMIXDIR/demo/fgldb/ja_jp
+	   then
+		rm -r $INFORMIXDIR/demo/fgldb/ja_jp
+	fi
+	}
+
+echo '
+
+Deletion Script
+
+This installation procedure must be run by root (super-user).
+It will delete localization files not needed by this installation.
+'
+
+echo install >__install__
+chown root __install__ 2> /dev/null
+
+if test $? -ne 0
+    then
+    echo '
+Please rerun this installation procedure as super-user.
+'
+    rm __install__
+    exit 1
+fi
+
+: 'Need another test for Sys 5 since chown is valid for files you own'
+#
+# The owner of __install__ is root now. The chmod 4755 is used to
+# test whether the user is root.
+#
+chmod 4755 __install__ 2> /dev/null
+
+if test $? -ne 0
+then
+    echo '
+Please rerun this installation procedure as super-user.
+'
+    rm -f __install__
+    exit 1
+fi
+
+rm __install__
+
+echo '
+Press RETURN to continue,
+or the interrupt key (usually CTRL-C or DEL) to abort.
+'
+
+read I
+
+# Check INFORMIXDIR is set
+
+if test "x$INFORMIXDIR" = "x"
+then
+    echo "INFORMIXDIR is not set."
+    exit 1
+fi
+
+# Check if DB_LOCALE is set
+
+if test "x$DB_LOCALE" = "x"
+then
+    echo "DB_LOCALE is not set."
+    echo "Checking CLIENT_LOCALE . . ."
+    if test "x$CLIENT_LOCALE" = "x"
+    then
+        echo "CLIENT_LOCALE also not set"
+        echo ""
+        echo "Please choose which language to you wish to KEEP."
+        echo "1-English"
+        echo "2-Japanese"
+        echo "3-Korean"
+        echo "4-Chinese"
+        echo "5-Taiwanese"
+        echo "6-Thai"
+        echo "Q-Quit"
+        read DBLOCALE
+    else DBLOCALE=$CLIENT_LOCALE
+    fi
+else DBLOCALE=$DB_LOCALE
+fi
+
+case $DBLOCALE in
+    en_us* | 1 )
+	   DBLOCALE=English
+	   remov_JAPANESE
+	   remov_KOREAN
+	   remov_CHINESE
+	   remov_TAIWANESE
+	   remov_THAI
+	   ;;
+    ja_jp* | 2 )
+	   DBLOCALE=Japanese
+	   remov_KOREAN
+	   remov_CHINESE
+	   remov_TAIWANESE
+	   remov_THAI
+	   ;;
+    ko_kr* | 3 )
+	   DBLOCALE=Korean
+	   remov_JAPANESE
+	   remov_CHINESE
+	   remov_TAIWANESE
+	   remov_THAI
+	   ;;
+    zh_cn* | 4 )
+	   DBLOCALE=Chinese
+	   remov_JAPANESE
+	   remov_KOREAN
+	   remov_TAIWANESE
+	   remov_THAI
+	   ;;
+    zh_tw* | 5 )
+	   DBLOCALE=Tawainese
+	   remov_JAPANESE
+	   remov_KOREAN
+	   remov_CHINESE
+	   remov_THAI
+	   ;;
+    th_th | 6 )
+	   DBLOCALE=Thai
+	   remov_JAPANESE
+	   remov_KOREAN
+	   remov_CHINESE
+	   remov_TAIWANESE
+	   ;;
+    *|q) ;;
+	
+esac
+if test $DBLOCALE != "q"
+then echo "Deletion of non-$DBLOCALE files complete."
+fi
+exit 0
+
+

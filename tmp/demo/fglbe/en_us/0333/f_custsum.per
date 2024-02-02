@@ -1,0 +1,33 @@
+{####################################################################
+ # FORM: f_custsum                                                  #
+ # PURPOSE: Displays summary information about a specific customer  #
+ # 4GL PROGRAM: ex4.4gl                                             #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+ 			CUSTOMER SUMMARY        
+
+  CUSTOMER:
+    Customer Number:[f000       ]   Company Name:[f001                ]
+
+  ORDERS:
+    Number of unpaid orders:[f002  ] Total amount due:[f003          ]
+
+  CALLS:
+    Number of open calls:[f004  ]
+         
+}
+
+TABLES
+customer
+
+ATTRIBUTES
+f000 = customer.customer_num;
+f001 = customer.company;
+f002 = formonly.unpaid_ords;
+f003 = formonly.amount_due;
+f004 = formonly.open_calls;
+

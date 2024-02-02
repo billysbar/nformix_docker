@@ -1,0 +1,12 @@
+prefix=/work1/mrsrini/axisdist
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include/axis2-1.5.0
+
+Name: Axis2/C
+Version: 1.5.0
+Description: Apache Axis2/C Version 1.5.0
+Requires:
+Libs: -L${libdir} -lxml2 -lz -ldl 
+Cflags: -I${includedir}
+

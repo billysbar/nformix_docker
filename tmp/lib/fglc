@@ -1,0 +1,30 @@
+: '
+: *************************************************************************
+:
+:			   INFORMIX SOFTWARE, INC.
+:
+:			      PROPRIETARY DATA
+:
+:	THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF
+:	INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:	CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR
+:	DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT
+:	SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:	THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:	SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE.
+:	UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:  Title:	fglc
+:  Sccsid:	@(#)fglc.sh	11.1     9/15/94     11:13:14
+:  Description:
+:
+:	fglc -  invoke i4glc1 and i4glc2 for each .4gl file
+:		invoke i4glc2 for each .4ec file
+:	fglc is provided to preserve backward compatibilty
+:
+: **********************************************************************
+: '
+
+echo "$0: This script should not be used.  Use the c4gl script instead." 1>&2
+exec ${C4GL:-c4gl} -phase 12 -nokeep ${@:+"$@"}

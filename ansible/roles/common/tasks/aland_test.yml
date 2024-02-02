@@ -1,0 +1,23 @@
+---
+
+# runs group_vars 'local.yml'
+#  ansible-playbook -i staging site.yml --tags="aland_test" -v
+
+
+# runs group_vars 'in4mix.ymp'
+#  ansible-playbook -i production site.yml --tags="aland_test"
+
+
+# run against dev_server only
+#  ansible-playbook -i hosts site.yml --tags="aland_test" -l dev_server -v
+
+#- name: Create Test Directory {{ root_dir }} for {{ host_os }}
+#  command: ls
+- debug:
+    var: env, shani
+
+# host local version of python not sufficient
+
+#- name: ls dev server
+#  command: ls
+#  delegate_to: 10.111.42.52

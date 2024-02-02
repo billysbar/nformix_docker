@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName {{ clientid }}
+AuthUserFile /usr/local/apache/conf/passwords/passwd.{{ clientid }}
+require user {{ clientid }}
+Order allow,deny
+Allow from 192.168.127 192.168.169 192.168.2

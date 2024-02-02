@@ -1,0 +1,23 @@
+---
+
+# runs group_vars 'local.yml'
+#  ansible-playbook -i staging site.yml --tags="create_dir_structure" -v
+
+- debug:
+    var: env, shani, hosts, directories
+
+# Create the root directory
+- name: Create top level directory {{ hosts }}
+  file: path=/{{ hosts }} state=directory mode=0777 #owner=iown group=wgrp
+
+- name: synchronize {{ hosts }}
+  synchronize:
+    src: "{{ directories }}"
+    dest: /{{ hosts }}
+
+## Create another directory structure
+- name: Create directories within {{ clientid }} (Mode 0777)
+  file: path=/{{ host_os }}/{{ item }}  state=directory mode=0777
+  with_items:
+    - dir-hello
+    - dir-bye

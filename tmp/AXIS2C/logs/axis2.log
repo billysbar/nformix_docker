@@ -1,0 +1,28 @@
+[Sat Nov 15 08:18:32 2008] [info]  Starting Axis2 HTTP server....
+[Sat Nov 15 08:18:32 2008] [info]  Apache Axis2/C version in use : 1.5.0
+[Sat Nov 15 08:18:32 2008] [info]  Server port : 9090
+[Sat Nov 15 08:18:32 2008] [info]  Repo location : ../
+[Sat Nov 15 08:18:32 2008] [info]  Read Timeout : 60000 ms
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *request_uri_based_dispatcher added to the index 0 of the phase Transport
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *addressing_based_dispatcher added to the index 1 of the phase Transport
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *rest_dispatcher added to the index 0 of the phase Dispatch
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *soap_message_body_based_dispatcher added to the index 1 of the phase Dispatch
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *soap_action_based_dispatcher added to the index 2 of the phase Dispatch
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *dispatch_post_conditions_evaluator added to the index 0 of the phase PostDispatch
+[Sat Nov 15 08:18:32 2008] [debug] phase.c(121) axis2_handler_t *context_handler added to the index 1 of the phase PostDispatch
+[Sat Nov 15 08:18:32 2008] [debug] conf_builder.c(233) No custom dispatching order found. Continue with the default dispatching order
+[Sat Nov 15 08:18:32 2008] [debug] conf_builder.c(378) Module addressing found in axis2.xml
+[Sat Nov 15 08:18:32 2008] [debug] class_loader.c(140) ..//lib/libaxis2_http_sender.so shared lib loaded successfully
+[Sat Nov 15 08:18:32 2008] [debug] class_loader.c(140) ..//lib/libaxis2_http_receiver.so shared lib loaded successfully
+[Sat Nov 15 08:18:32 2008] [info]  No files in the path ..//services.
+[Sat Nov 15 08:18:32 2008] [debug] dep_engine.c(1283) axis2_dep_engine_load_module_dll: DLL path is : ..//modules/addressing/libaxis2_mod_addr.so
+[Sat Nov 15 08:18:32 2008] [debug] class_loader.c(140) ..//modules/addressing/libaxis2_mod_addr.so shared lib loaded successfully
+[Sat Nov 15 08:18:32 2008] [debug] dep_engine.c(1283) axis2_dep_engine_load_module_dll: DLL path is : ..//modules/logging/libaxis2_mod_log.so
+[Sat Nov 15 08:18:32 2008] [debug] class_loader.c(140) ..//modules/logging/libaxis2_mod_log.so shared lib loaded successfully
+[Sat Nov 15 08:18:32 2008] [debug] phase_holder.c(139) Add handler AddressingInHandler to phase Transport
+[Sat Nov 15 08:18:32 2008] [info]  Starting HTTP server thread
+[Sat Nov 15 08:18:35 2008] [info]  Received signal SIGINT. Server shutting down
+[Sat Nov 15 08:18:35 2008] [info]  Terminating HTTP server thread
+[Sat Nov 15 08:18:35 2008] [debug] http_svr_thread.c(181) Terminating HTTP server thread.
+[Sat Nov 15 08:18:35 2008] [info]  Successfully terminated  HTTP server thread
+[Sat Nov 15 08:18:35 2008] [info]  Shutdown complete ...

@@ -1,0 +1,427 @@
+#
+# @(#)src/classes/pfm/sun/awt/motif/font.properties.zh_TW, fontprop, ax142, 20060311 1.30.2.2
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 2002, 2003. All Rights Reserved
+# ===========================================================================
+#
+
+# Intended for Traditional Chinese
+# Intended for Linux
+# Note: modification of this file is risky and not supported
+#    see http://java.sun.com/products/jdk/1.2/docs/guide/internat/fontprop.html
+serif.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.2=-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.3=-*-song-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.5=-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+serif.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.italic.0=-jdk-lucidabright-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.italic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.2=-*-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.3=-*-song-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.italic.5=-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+serif.italic.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.bold.0=-jdk-lucidabright-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+serif.bold.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.2=-*-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.3=-*-song-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bold.5=-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+serif.bold.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+serif.bolditalic.0=-jdk-lucidabright-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+serif.bolditalic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.2=-*-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.3=-*-song-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+serif.bolditalic.5=-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+serif.bolditalic.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.2=-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.3=-*-song-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.5=-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+sansserif.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.italic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.2=-*-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.3=-*-song-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.italic.5=-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+sansserif.italic.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bold.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.2=-*-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.3=-*-song-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bold.5=-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+sansserif.bold.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+sansserif.bolditalic.0=-jdk-lucida-bold-i-normal--*-%d-75-75-p-*-iso8859-1
+sansserif.bolditalic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.2=-*-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.3=-*-song-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+sansserif.bolditalic.5=-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+sansserif.bolditalic.6=-monotype-timesnewromanwt-medium-i-normal--*-%d-75-75-p-*-iso10646-1
+
+monospaced.0=-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.2=-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.3=-*-song-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.5=-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+monospaced.6=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.italic.0=-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.italic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.2=-*-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.3=-*-song-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.italic.5=-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+monospaced.italic.6=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.bold.0=-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bold.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.2=-*-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.3=-*-song-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bold.5=-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+monospaced.bold.6=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+monospaced.bolditalic.0=-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-m-*-iso8859-1
+monospaced.bolditalic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.2=-*-mingtib-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.3=-*-song-bold-i-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+monospaced.bolditalic.5=-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+monospaced.bolditalic.6=-monotype-sansmonowt-medium-r-normal--*-%d-75-75-m-*-iso10646-1
+
+dialog.0=-jdk-lucida-medium-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.2=-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.3=-*-song-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.5=-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+dialog.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.italic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.italic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.2=-*-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.3=-*-song-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.italic.5=-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+dialog.italic.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.bold.0=-jdk-lucida-bold-r-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bold.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.2=-*-mingtib-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.3=-*-song-bold-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bold.5=-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+dialog.bold.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+
+dialog.bolditalic.0=-jdk-lucida-medium-i-normal--*-%d-75-75-p-*-iso8859-1
+dialog.bolditalic.1=-*-HanyiSong-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.2=-*-mingtib-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.3=-*-song-medium-i-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.4=-*-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+dialog.bolditalic.5=-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+dialog.bolditalic.6=-monotype-timesnewromanwt-medium-r-normal--*-%d-75-75-p-*-iso10646-1
+#
+# To enable helvetica, courier and timesroman as real fonts
+# remove aliases, and define them as real terminal fonts.
+# (i.e. timesroman.0=TimesRoman)
+#
+# timesroman.0=TimesRoman
+alias.timesroman=serif
+# helvetica.0=Helvetica
+alias.helvetica=sansserif
+# courier.0=Courier
+alias.courier=monospaced
+alias.dialoginput=monospaced
+
+# font filenames
+
+filename.lucida_bold_i=LucidaSansDemiOblique.ttf
+filename.lucida_bold_r=LucidaSansDemiBold.ttf
+filename.lucida_medium_i=LucidaSansOblique.ttf
+filename.lucida_medium_r=LucidaSansRegular.ttf
+filename.lucidabright_bold_i=LucidaBrightDemiItalic.ttf
+filename.lucidabright_bold_r=LucidaBrightDemiBold.ttf
+filename.lucidabright_medium_i=LucidaBrightItalic.ttf
+filename.lucidabright_medium_r=LucidaBrightRegular.ttf
+filename.lucidatypewriter_bold_i=LucidaTypewriterBoldOblique.ttf
+filename.lucidatypewriter_bold_r=LucidaTypewriterBold.ttf
+filename.lucidatypewriter_medium_i=LucidaTypewriterOblique.ttf
+filename.lucidatypewriter_medium_r=LucidaTypewriterRegular.ttf
+filename.sansmonowt_medium_r=mtsansdj.ttf
+filename.timesnewromanmt30_medium_r=tnrmt30.ttf
+filename.timesnewromanwt_medium_r=tnrwt_j.ttf
+
+# default char definition
+default.char=02ff
+
+
+fontcharset.serif.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.5=sun.io.CharToByteBig5
+fontcharset.serif.6=sun.awt.CharToByteSymbol
+
+fontcharset.serif.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.italic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.italic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.italic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.italic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.italic.5=sun.io.CharToByteBig5
+fontcharset.serif.italic.6=sun.awt.CharToByteSymbol
+
+fontcharset.serif.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.bold.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bold.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bold.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bold.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bold.5=sun.io.CharToByteBig5
+fontcharset.serif.bold.6=sun.awt.CharToByteSymbol
+
+fontcharset.serif.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.serif.bolditalic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bolditalic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bolditalic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bolditalic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.serif.bolditalic.5=sun.io.CharToByteBig5
+fontcharset.serif.bolditalic.6=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.5=sun.io.CharToByteBig5
+fontcharset.sansserif.6=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.italic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.italic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.italic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.italic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.italic.5=sun.io.CharToByteBig5
+fontcharset.sansserif.italic.6=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.bold.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bold.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bold.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bold.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bold.5=sun.io.CharToByteBig5
+fontcharset.sansserif.bold.6=sun.awt.CharToByteSymbol
+
+fontcharset.sansserif.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.sansserif.bolditalic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bolditalic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bolditalic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bolditalic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.sansserif.bolditalic.5=sun.io.CharToByteBig5
+fontcharset.sansserif.bolditalic.6=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.5=sun.io.CharToByteBig5
+fontcharset.monospaced.6=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.italic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.italic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.italic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.italic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.italic.5=sun.io.CharToByteBig5
+fontcharset.monospaced.italic.6=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.bold.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bold.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bold.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bold.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bold.5=sun.io.CharToByteBig5
+fontcharset.monospaced.bold.6=sun.awt.CharToByteSymbol
+
+fontcharset.monospaced.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.monospaced.bolditalic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bolditalic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bolditalic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bolditalic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.monospaced.bolditalic.5=sun.io.CharToByteBig5
+fontcharset.monospaced.bolditalic.6=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.5=sun.io.CharToByteBig5
+fontcharset.dialog.6=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.italic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.italic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.italic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.italic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.italic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.italic.5=sun.io.CharToByteBig5
+fontcharset.dialog.italic.6=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.bold.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.bold.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bold.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bold.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bold.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bold.5=sun.io.CharToByteBig5
+fontcharset.dialog.bold.6=sun.awt.CharToByteSymbol
+
+fontcharset.dialog.bolditalic.0=sun.io.CharToByteISO8859_1
+fontcharset.dialog.bolditalic.1=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bolditalic.2=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bolditalic.3=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bolditalic.4=sun.io.CharToByteUnicodeBigUnmarked
+fontcharset.dialog.bolditalic.5=sun.io.CharToByteBig5
+fontcharset.dialog.bolditalic.6=sun.awt.CharToByteSymbol
+
+
+# exclusion info
+
+
+#  X11 Specific font set (necessary for TextArea and TextField)
+
+fontset.serif.plain=\
+-*-times-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+fontset.serif.italic=\
+-*-times-medium-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+fontset.serif.bold=\
+-*-times-bold-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+fontset.serif.bolditalic=\
+-*-times-bold-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+
+fontset.sansserif.plain=\
+-jdk-lucida-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+fontset.sansserif.italic=\
+-jdk-lucida-medium-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+fontset.sansserif.bold=\
+-jdk-lucida-bold-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+fontset.sansserif.bolditalic=\
+-jdk-lucida-bold-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+
+fontset.monospaced.plain=\
+-*-courier-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+fontset.monospaced.italic=\
+-*-courier-medium-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+fontset.monospaced.bold=\
+-*-courier-bold-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+fontset.monospaced.bolditalic=\
+-*-courier-bold-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+
+#-*-helvetica-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+fontset.dialog.plain=\
+-jdk-lucida-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+fontset.dialog.italic=\
+-jdk-lucida-medium-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+fontset.dialog.bold=\
+-jdk-lucida-bold-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+fontset.dialog.bolditalic=\
+-jdk-lucida-bold-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+
+fontset.dialoginput.plain=\
+-jdk-lucidatypewriter-medium-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-r-normal--*-%d-75-75-*-*-big5-0
+fontset.dialoginput.italic=\
+-jdk-lucidatypewriter-medium-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-medium-i-normal--*-%d-75-75-*-*-big5-0
+fontset.dialoginput.bold=\
+-jdk-lucidatypewriter-bold-r-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-r-normal--*-%d-75-75-*-*-big5-0
+fontset.dialoginput.bolditalic=\
+-jdk-lucidatypewriter-bold-i-normal--*-%d-75-75-*-*-iso8859-1,\
+-*-mingtib-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-ar pl mingti2l big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1,\
+-*-song-bold-i-normal--*-%d-75-75-*-*-big5-0
+
+# ibm text performance feature
+ibm.java2d.useawtfonts=0
+
+# font substitution
+substitute.0=Monotype Sans Duospace WT=Times New Roman WT TC
+substitute.1=Times New Roman WT=Monotype Sans Duospace WT TC
+substitute.2=-timesnewromanwt=sansmonowtt
+substitute.3=-sansmonowt=timesnewromanwtt
+register.0=-Arphic-AR PL Mingti2L Big5-medium-r-normal--*-%d-75-75-*-*-iso10646-1
+

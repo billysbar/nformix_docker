@@ -1,0 +1,33 @@
+{####################################################################
+ # FORM: f_statesel 
+ # PURPOSE: Displays popup window of state codes and names  
+ #	    Data displayed from the "state" table
+ # 4GL PROGRAM: ex9.4gl, ex17.4gl, ex25.4gl
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+
+  Code        State
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+ [f001 ] [f002           ]
+}
+
+TABLES
+state
+
+ATTRIBUTES
+f001 = state.code;
+f002 = state.sname;
+
+INSTRUCTIONS
+  SCREEN RECORD sa_state[8] (state.code THRU state.sname)
+                          

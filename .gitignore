@@ -1,0 +1,5 @@
+.idea
+.DS_Store
+builder/*
+docs/install-informix.doc
+schema.zip

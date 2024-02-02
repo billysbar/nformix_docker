@@ -1,0 +1,98 @@
+#!/bin/sh -p
+
+#
+# @(#)src/tools/pfm/gdbjava_wrapper, tool, ax142, 20060311 1.5.2.1
+# ===========================================================================
+# Licensed Materials - Property of IBM
+# "Restricted Materials of IBM"
+#
+# IBM SDK, Java(tm) 2 Technology Edition, v1.4.2
+# (C) Copyright IBM Corp. 1998, 2002. All Rights Reserved
+# ===========================================================================
+#
+
+#
+# @(#) gdb wrapper for java 1.4    2002/03/25  ibm.41994
+#
+# IBM Linux version
+#
+unset ENV
+
+# Obtain the path to gdbjava
+PRG=`type -path $0` >/dev/null 2>&1
+progname=${0##*/}  
+suffix=$(expr "$progname" : '.*\(_.$\)')
+
+# Obtain the gdb path
+DEBUG_PROG=gdb
+DPRG_PATH=`type -path $DEBUG_PROG` >/dev/null 2>&1
+if [ -z $DPRG_PATH ]
+then
+    echo >&2 "gdb was not found."
+    exit 1
+fi
+
+# Resolve symlinks. See 4152645.
+TEMP_PRG=$PRG
+PRG=""
+while [ "$TEMP_PRG" != '/' ]; do
+    if [ -L "$TEMP_PRG" ]; then
+        ls=`/bin/ls -ld "$TEMP_PRG"`
+        link=`/usr/bin/expr "$ls" : '.*-> \(.*\)$'`
+        if /usr/bin/expr "$link" : '/' > /dev/null; then
+            TEMP_PRG="$link"
+        else
+            TEMP_PRG=${TEMP_PRG%/*}/$link
+        fi
+    fi
+    curdir=`basename $TEMP_PRG`
+    PRG=$curdir/$PRG
+
+    TEMP_PRG=`dirname $TEMP_PRG`
+done
+
+PRG=/$PRG
+PRG=`type -path ${PRG%/*}` >/dev/null 2>&1
+JAVAHOME=`dirname $PRG`
+progname=`basename $PRG`
+
+# Where is the JRE in relation to the executable?
+unset jre
+if [ -f "${JAVAHOME}/libjava${suffix}.so" ]; then
+    jre="${JAVAHOME}"
+fi
+if [ "x${jre}" = "x" ]; then
+    echo "Error: can't find libjava${suffix}.so"
+    exit 1
+fi
+
+if [ -d "${JAVAHOME}/classic" ]; then
+    if [ -f "${JAVAHOME}/classic/libjvm${suffix}.so" ]; then
+        jre=$jre:${JAVAHOME}/classic
+    fi
+    if [ -f "${JAVAHOME}/j9vm/libjvm${suffix}.so" ]; then
+        jre=$jre:${JAVAHOME}/j9vm
+    fi
+else 
+    if [ -d "${JAVAHOME}/j9vm" ]; then
+        if [ -f "${JAVAHOME}/j9vm/libjvm${suffix}.so" ]; then
+            jre=$jre:${JAVAHOME}/j9vm
+        fi
+    else
+        echo "Error: can't find libjvm${suffix}.so"
+        exit 1
+    fi    
+fi
+
+export LD_LIBRARY_PATH=$jre:$LD_LIBRARY_PATH
+
+prog="$JAVAHOME/java${suffix}"
+
+# Run.
+if [ -x "$prog" ]
+then
+    exec $DEBUG_PROG "$prog" "$@"
+else
+    echo >&2 "$prog was not found in $JAVAHOME"
+    exit 1
+fi

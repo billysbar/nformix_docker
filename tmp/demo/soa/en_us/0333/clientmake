@@ -1,0 +1,8 @@
+KEEP=
+AXIS2C_HOME=${INFORMIXDIR}/AXIS2C
+zipcode_client: cons_ws_zipcode.o clsoademo.4gl
+	c4gl ${KEEP} clsoademo.4gl cons_ws_zipcode.o -o zipcode_client -I${AXIS2C_HOME}/include/axis2-1.5.0 -L${AXIS2C_HOME}/lib -laxis2_engine
+
+cleanup: 
+	rm -rf zipcode_client
+

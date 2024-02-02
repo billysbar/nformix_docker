@@ -1,0 +1,33 @@
+{####################################################################
+ # FORM: f_ordersel                                                 #
+ # PURPOSE: Displays popup window of order information: order       #
+ #	    number, order date, PO number, date shipped, and date   #
+ #          paid. Order info is for a specific customer.            #
+ #          Data displayed from "order" table.                      #
+ # 4GL PROGRAM: ex12.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+  Order Number   Order Date    PO Number   Date Shipped   Date Paid
+ [f001       ] [f002       ] [f003      ] [f004       ] [f005       ]
+ [f001       ] [f002       ] [f003      ] [f004       ] [f005       ]
+ [f001       ] [f002       ] [f003      ] [f004       ] [f005       ]
+ [f001       ] [f002       ] [f003      ] [f004       ] [f005       ]
+ [f001       ] [f002       ] [f003      ] [f004       ] [f005       ]
+}
+
+TABLES
+orders
+
+ATTRIBUTES
+f001 = orders.order_num;
+f002 = orders.order_date;
+f003 = orders.po_num;
+f004 = orders.ship_date;
+f005 = orders.paid_date;
+
+INSTRUCTIONS
+  SCREEN RECORD sa_order[5] (orders.order_num THRU orders.paid_date)

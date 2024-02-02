@@ -1,0 +1,368 @@
+ <?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US" xml:lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="dc.language" scheme="rfc1766" content="en-us" />
+<!-- All rights reserved. Licensed Materials Property of IBM -->
+<!-- US Government Users Restricted Rights                   -->
+<!-- Use, duplication or disclosure restricted by            -->
+<!-- GSA ADP Schedule Contract with IBM Corp.                -->
+<meta name="dc.date" scheme="iso8601" content="2008-06-02" />
+<meta name="copyright" content="(C) Copyright IBM Corporation 2003, 2009" />
+<meta name="security" content="public" />
+<meta name="Robots" content="index,follow"/>
+<meta http-equiv="PICS-Label" content='(PICS-1.1 "http://www.icra.org/ratingsv02.html" l gen true r (cz 1 lz 1 nz 1 oz 1 vz 1) "http://www.rsac.org/ratingsv01.html" l gen true r (n 0 s 0 v 0 l 0) "http://www.classify.org/safesurf/" l gen true r (SS~~000 1))' />
+<title>Release Notes for the IBM Informix 4GL</title>
+<link rel="stylesheet" type="text/css" href="ibmidwb.css" />
+</head>
+<body>
+<a id="Top_Of_Page" name="Top_Of_Page"></a><h1>IBM Informix</h1>
+<h1>Release Notes for IBM Informix 4GL</h1><span id="igmswpro1001014" class="version">7.50.xC3</span>
+<span id="igmswpro1001019" class="release">May 2009</span>
+<br />
+<a name="wq1"></a>
+<div id="wq1">
+<h1>Contents</h1>
+
+<div class="head1"><a id="ToC_1" name="ToC_1" href="#i1087880" class="toclink">Overview of Release Notes for IBM Informix 4GL 7.50</a></div>
+<div class="head1"><a id="ToC_4" name="ToC_4" href="#i10863299" class="toclink">Products included in 7.50.xC3</a></div>
+<div class="head1"><a id="ToC_5" name="ToC_5" href="#i10878800aa" class="toclink">New Features in 7.50.xC3</a></div>
+<div class="head1"><a id="ToC_5" name="ToC_5" href="#i10878800" class="toclink">New Features in 7.50.xC2</a></div>
+<div class="head1"><a id="ToC_6" name="ToC_6" href="#i1087880b" class="toclink">New Features in 7.50.xC1</a></div>
+<div class="head1"><a id="ToC_7" name="ToC_7" href="#i1087880aa" class="toclink">Customer-reported Defects Fixed in 7.50.xC3</a></div>
+<div class="head1"><a id="ToC_7" name="ToC_7" href="#i1087880c" class="toclink">Customer-reported Defects Fixed in 7.50.xC2</a></div>
+<div class="head1"><a id="ToC_5" name="ToC_5" href="#i1087880d" class="toclink">Customer-reported Defects Fixed in 7.50.xC1</a></div>
+<div class="head1"><a id="ToC_6" name="ToC_6" href="#i1087880e" class="toclink">Known Issues and Workarounds</a></div>
+
+
+<a name="i1087880"></a>
+<h1 id="i1087880">Overview of Release Notes for IBM Informix 4GL 7.50</h1>
+<p>These release notes contain additional information not found in the product
+manuals that are included with the product. You should review these notes for
+critical information.</p>
+  <p>For 4GL 7.50.xC3 Documentation Notes refer to the DOCNOTES_7.50.txt or DOCNOTES_7.50.html
+    files in the product. The entire 4GL 7.50 documentation set is located at:</p>
+ <a href="http://www-01.ibm.com/software/data/informix/pubs/library/4gl_750.html">
+www.ibm.com/software/data/informix/pubs/library/4gl_750.html</a>
+  <p>The Quick Start Guide, Installation Guide, Web Services Administration Guide, and the
+Release, Documentation, and Machine notes are available in HTML format in the IBM Informix Dynamic Server v11.50
+Information Center located at:</p>
+<a href="http://publib.boulder.ibm.com/infocenter/idshelp/v115/index.jsp">publib.boulder.ibm.com/infocenter/idshelp/v115/index.jsp</a>
+
+  <p>For Machine Specific settings needed with the 7.50 release refer to the MACHINENOTES.750
+    file.</p>
+
+<a name="i10863299"></a>
+<h1 id="i10863299">Products included in 7.50.xC3</h1>
+
+
+<p>The products released are:</p>
+<ul>
+      <li>IBM Informix 4GL</li>
+      <li>IBM Informix 4GL/Runtime Facility</li>
+      <li>IBM Informix 4GL/Rapid Development System</li>
+      <li>IBM Informix 4GL/Rapid Development System Runtime Facility</li>
+      <li>IBM Informix 4GL Interactive Debugger</li>
+      <li>IBM Informix SQL</li>
+      <li>IBM Informix SQL/Runtime Facility</li>
+</ul>
+
+<p>Language Supplements containing the localization requirements are not
+part of the product-suite.</p>
+
+<p>The 4GL product suite contains 4GL and SQL product-specific message
+files. It does not contain the full complement of SDK product-specific
+message files. To access all message files, you must install the
+International Language Supplement (ILS).</p>
+
+<a name="i10878800aa"></a>
+<h1 id="i10878800aa">New features in 7.50.xC3</h1>
+<p>With IBM Informix 4GL 7.50.xC3, I4GL programs can subscribe to Web
+services written in I4GL or any modern programming language. The product
+contains sample demonstrations on how to publish an I4GL Web service and how to
+ subscribe to an I4GL Web service using an I4GL subscriber.
+</p>
+
+<a name="i10878800"></a>
+<h1 id="i10878800">New features in 7.50.xC2</h1>
+<p>With IBM Informix 4GL 7.50.xC2, you can deploy your 4GL functions on the
+Web without rewriting any source code. The w4gl utility uses your existing
+4GL code to create Web services. These Web services can be used by,
+for example, Java and .Net applications on the Web without you doing any
+Java or .NET programming.  Your business logic is maintained in 4GL, and
+made available to a variety of Web clients by the Web services.</p>
+
+<a name="i1087880b"></a>
+<h1 id="i1087880b">New features in 7.50.xC1</h1>
+
+<p>Informix 4GL 7.50.xC1 supports UTF-8 character encoding. To convert your
+existing databases to UTF-8, use a standard converter or enter the
+non-English characters manually. English language users can unload data
+from the existing en_us database and reload it into the new utf8 database.</p>
+
+<a name="i1087880aa"></a>
+<h1 id="i1087880aa">Customer-reported Defects fixed in 7.50.xC3</h1>
+
+<table id="wq28" width="100%" summary="" border="1" frame="border" rules="all">
+<thead valign="bottom">
+<tr valign="bottom">
+<th id="wq29" width="10%" align="left">Defect #</th>
+<th id="wq30" width="90%" align="left">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+      <td headers="wq29">IC59157</td>
+<td headers="wq30">COMMAND DISPLAY " TEXT"  AT x,x  IS TRUNCATED WHEN "TEXT" LENGTH IS GREATER THAN 80 CHARS AND CONTAINED ONLY MULTIBYTES
+</td>
+</tr>
+<tr>
+      <td headers="wq29">IC60105</td>
+<td headers="wq30">In i4gl, path names to source directories longer than 37 chars are not interpreted correctly, causing 'not a directory error'.
+</td>
+</tr>
+<tr>
+      <td headers="wq29">IC57901</td>
+<td headers="wq30">ISQL FORM display has different behavior on 7.50.On ISQL 7.50.FC1, everytime when input characters into the query field, the form refreshes.
+Problem does not happened on 7.32.</td>
+</tr>
+<tr>
+      <td headers="wq29">IC60518</td>
+<td headers="wq30">ISQL FORMS DO NOT DISPLAY DATA WITH MODE ANSI DATABASE AND DEFAULT ROLES IN USE.
+</td>
+</tr>
+<tr>
+      <td headers="wq29">IC58127</td>
+<td headers="wq30">A load or unload of a file > 2GB fails with an error message</td>
+</tr>
+<tr>
+<td headers="wq29">IC58684</td>
+<td headers="wq30">Function name change of ibm_lib4gl_loadint4 to
+    ibm_lib4gl_loadInt4 breaks existing applications</td>
+</tr>
+</tbody>
+</table>
+
+
+<a name="i1087880c"></a>
+<h1 id="i1087880c">Customer-reported Defects fixed in 7.50.xC2</h1>
+
+<table id="wq28" width="100%" summary="" border="1" frame="border" rules="all">
+<thead valign="bottom">
+<tr valign="bottom">
+<th id="wq29" width="10%" align="left">Defect #</th>
+<th id="wq30" width="90%" align="left">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+      <td headers="wq29">IC56845</td>
+<td headers="wq30">TAIWAN MIN GUO YEAR 100 PROBLEM. 4GL to support DATE
+        FORMAT: YYYMMDDC1</td>
+</tr>
+<tr>
+<td headers="wq29">IC57084</td>
+<td headers="wq30">form on screen is corrupted when we set Japanese locale</td>
+</tr>
+<tr>
+<td headers="wq29">IC57354</td>
+<td headers="wq30">Graphics mode is not working (ie instead of sharp
+       lines for window borders , we give  'q' and 'x' )</td>
+</tr>
+<tr>
+<td headers="wq29">IC58827</td>
+<td headers="wq30">An insert statement with encrypt_aes() fails if
+                      unprepared. Works if in prepared statement.</td>
+</tr>
+<tr>
+<td headers="wq29">IC57049</td>
+<td headers="wq30">Compile 4GL programs on UP-UX 11.31 titanium returns
+                      warning #2111-D: statement is unreachable</td>
+</tr>
+<tr>
+<td headers="wq29">IC57101</td>
+<td headers="wq30">4GL RDS does not give error 1146 when char field is
+                  too long to fit in window</td>
+</tr>
+<tr>
+<td headers="wq29">IC57960</td>
+<td headers="wq30">Missing characters in text display when CLIENT_LOCALE
+                      and DB_LOCALE are set to en_us.utf8.</td>
+</tr>
+<tr>
+<td headers="wq29">IC58097</td>
+<td headers="wq30">4gl display array core dump when use arrow key to
+                      scroll down</td>
+</tr>
+</tbody>
+</table>
+
+<a name="i1087880d"></a>
+<h1 id="i1087880d">Customer-reported Defects fixed in 7.50.xC1</h1>
+
+
+<table id="wq31" width="100%" summary="" border="1" frame="border" rules="all">
+<thead valign="bottom">
+<tr valign="bottom">
+<th id="wq32" width="10%" align="left">Defect #</th>
+<th id="wq33" width="90%" align="left">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr>
+<td headers="wq32"> IC51780</td>
+<td headers="wq33">i4gldemo does not print correct value in money field on invoice sheet when we set Japanese locale</td>
+</tr>
+<tr>
+<td headers="wq32">IC52360</td>
+<td headers="wq33">When we update one of column on isql form, the
+     values of other column is changed from NULL to space
+     if CLIENT_LOCALE is not same as DB_LOCALE.  </td>
+</tr>
+<tr>
+<td headers="wq32">IC52435 </td>
+<td headers="wq33">Program crashes with error 1150 : Window is too
+     small to display this </td>
+</tr>
+<tr>
+<td headers="wq32">IC52480 </td>
+<td headers="wq33">Result is null, if string exceed the length of char. </td>
+</tr>
+<tr>
+<td headers="wq32">IC53141 </td>
+<td headers="wq33">Different behavior of displaying a menu with a
+        title substituted as a variable between 7.32.UC3, 7.32.UC4 </td>
+</tr>
+<tr>
+<td headers="wq32">IC53301 </td>
+<td headers="wq33">VIEW debugger command in 4GL Interactive Debugger
+      get -16343 error if file name is capital letter. </td>
+</tr>
+<tr>
+<td headers="wq32">IC54336 </td>
+<td headers="wq33">4GL 7.32.FC4 compile form reports Unknown Error
+     message on Informix error code. </td>
+</tr>
+<tr>
+<td headers="wq32">IC54337 </td>
+<td headers="wq33">Unexpected signs after unload with I-SQL when
+     DBFORMAT was set </td>
+</tr>
+<tr>
+<td headers="wq32">IC54551 </td>
+<td headers="wq33">Using a variable char(16) and trim displays entire field. </td>
+</tr>
+<tr>
+<td headers="wq32">IC54609 </td>
+<td headers="wq33">201 error in RDS (pcode,fglpc,fglgo) if declare
+     cursor before table create, and call function to
+     loop through cursor </td>
+</tr>
+<tr>
+<td headers="wq32">IC55543 </td>
+<td headers="wq33">SDKs newer than 3.00.xC3 may not be compatible with
+     current 4GL on AIX.</td>
+</tr>
+<tr>
+<td headers="wq32">IC55660 </td>
+<td headers="wq33">The loc_t struct redefine conflict with locator.h
+      appears again due to new define in C4GL.</td>
+</tr>
+<tr>
+<td headers="wq32">IC55872 </td>
+<td headers="wq33">ACE report returns garbage characters</td>
+</tr>
+<tr>
+<td headers="wq32">IC56409 </td>
+<td headers="wq33">ACE report returns "Memory allocation has failed."</td>
+</tr>
+<tr>
+<td headers="wq32">IC56505 </td>
+<td headers="wq33">With non en_US locale, 4GL does not return the
+      carriage return of the string from C function
+</td>
+</tr>
+</tbody>
+</table>
+
+
+<a name="i1087880e"></a>
+<h1 id="i1087880e">Known Issues and Workarounds</h1>
+
+<p>A. The 4GL version 7.50.xC3 Web services functionality is not
+compatible with IDS version 7.31. </p>
+
+<p>B. In IBM Informix 4GL version 7.50.HC1 and later, the compiler "c4gl" returns
+the following error when trying to compile any 4GL program:</p>
+
+<pre class="xmp">
+/usr/ccs/bin/ld: Can't find library: "cur_colr"
+</pre>
+
+<p>Workaround:</p>
+
+<p>In HP-UX 11.31, create a symbolic link for libcur_colr.1 under
+$INFORMIXDIR/lib/esql and $INFORMIXDIR/lib/tools directories which
+points to /usr/lib/libcurses.sl.</p>
+
+<p>For example:</p>
+
+<pre class="xmp">
+ln -s /usr/lib/libcurses.sl $INFORMIXDIR/lib/esql/libcur_colr.1
+ln -s /usr/lib/libcurses.sl $INFORMIXDIR/lib/tools/libcur_colr.1
+</pre>
+
+<p>C. When using the Development version of 4GL 7.50.xC2 and later to deploy
+   the 4GL function as a web service, if any of the files or
+   directories in the directory pointed to by the $TMPDIR in the
+   configuration file do not have permissions, the PERL script
+   returns this error:</p>
+
+<pre class="xmp">
+   This is an issue with the application org.apache.axis2.wsdl.WSDL2C
+   used by this deployment tool.
+
+
+   Exception in thread "main" org.apache.axis2.wsdl.codegen.
+             CodeGenerationException: java.lang.NullPointerException
+           at org.apache.axis2.wsdl.codegen.CodeGenerationEngine.
+              generate(CodeGenerationEngine.java:278)
+           at org.apache.axis2.wsdl.WSDL2Code.main(WSDL2Code.java:35)
+           at org.apache.axis2.wsdl.WSDL2C.main(WSDL2C.java:31)
+   Caused by: java.lang.NullPointerException
+           at org.apache.axis2.wsdl.codegen.extension.JavaPrettyPrinter
+              Extension.prettify(JavaPrettyPrinterExtension.java:49)
+           at org.apache.axis2.wsdl.codegen.extension.JavaPrettyPrinter
+              Extension.prettify(JavaPrettyPrinterExtension.java:50)
+           at org.apache.axis2.wsdl.codegen.extension.AbstractPretty
+              PrinterExtension.engage(AbstractPrettyPrinterExtension.java:36)
+           at org.apache.axis2.wsdl.codegen.CodeGenerationEngine.
+              generate(CodeGenerationEngine.java:272)
+           ... 2 more
+</pre class="xmp">
+
+       <p>This error occurs frequently when /tmp is the designated $TMPDIR
+       because /tmp is shared by all the users and all the processes.</p>
+
+       <p>$TMPDIR should be used by one user only and should not contain any files
+       or directories that do not have permissions.</p>
+
+
+   <p>Workaround:</p>
+
+
+<p>Option 1: Create a new directory and designate it as a $TMPDIR. For example,</p>
+
+        <pre class="xmp">mkdir /tmp/w4gl_<i>loginid</i></pre class="xmp">
+
+<p>In the example above, <i>loginid</i> is the user's login id into the operating system.</p>
+
+
+<p>Option 2: Remove all the files or directories from $TMPDIR for which the
+                 user does not have privileges.</p>
+
+
+B) Copyright IBM Corp. 1994, 2009
+</div>

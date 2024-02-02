@@ -1,0 +1,29 @@
+: '
+: *************************************************************************
+:
+:                          INFORMIX SOFTWARE, INC.
+:
+:                             PROPRIETARY DATA
+:
+:       THIS DOCUMENT CONTAINS TRADE SECRET DATA WHICH IS THE PROPERTY OF
+:       INFORMIX SOFTWARE, INC.  THIS DOCUMENT IS SUBMITTED TO RECIPIENT IN
+:       CONFIDENCE.  INFORMATION CONTAINED HEREIN MAY NOT BE USED, COPIED OR
+:       DISCLOSED IN WHOLE OR IN PART EXCEPT AS PERMITTED BY WRITTEN AGREEMENT
+:       SIGNED BY AN OFFICER OF INFORMIX SOFTWARE, INC.
+:
+:       THIS MATERIAL IS ALSO COPYRIGHTED AS AN UNPUBLISHED WORK UNDER
+:       SECTIONS 104 AND 408 OF TITLE 17 OF THE UNITED STATES CODE.
+:       UNAUTHORIZED USE, COPYING OR OTHER REPRODUCTION IS PROHIBITED BY LAW.
+:
+:   Title:      fglc2
+:   Sccsid:     @(#)fglc2.sh	11.1     9/15/94     11:11:56
+:   Description:
+:               Shell script for running the i4glc3 (ESQL/C) preprocessor
+:		and i4glc4 program for each .ec file
+:		fglc2 is provided to preserve backward compatiblity.
+:
+: *************************************************************************
+: '
+
+echo "$0: This script should not be used.  Use the c4gl script instead." 1>&2
+exec ${C4GL:-c4gl} -phase 34 ${@:+"$@"}

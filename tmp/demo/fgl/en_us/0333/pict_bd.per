@@ -1,0 +1,39 @@
+{####################################################################
+ # FORM: pict_bd.per                                                #
+ # PURPOSE: Manages display and update of blob images               #
+ # 4GL PROGRAM: blobdemo.4gl                                        #
+ #                                                                  #
+ # Last revised: May  '91                                           #
+ ####################################################################}
+ 
+ { ///////////////////////////////////////////////////////////////////////////
+	This is the screen form for the catlist picture window.
+	That window is normally obscured by the main window, but is
+		brought to the front on request to show the cat_pict.
+	The database name "newstores" is used; you must change it if you
+		call the enhanced stores database something else.
+//////////////////////////////////////////////////////////////////////// }
+
+DATABASE stores2
+SCREEN SIZE 33
+{
+
+      [xn] Exit                   [xu] Update
+cat# [cnum ]: [sdesc          ] from [man            ]
+
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num,			noentry;
+sdesc	= stock.description,			noentry;
+man	= manufact.manu_name,			noentry;
+xn	= formonly.xn type char,
+	comments = "Press control-E now to exit with no changes" ;
+xu	= formonly.xu type char,
+	comments = "Press control-E now to update the image";
+END

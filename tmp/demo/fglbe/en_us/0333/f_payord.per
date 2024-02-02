@@ -1,0 +1,30 @@
+{####################################################################
+ # FORM: f_payord                                                   #
+ # PURPOSE: Accepts customer number, company name, and paid date    #
+ #	    for marking orders as paid in the database.             #
+ # 4GL PROGRAM: ex21.4gl                                            #
+ ####################################################################}
+
+DATABASE stores2
+
+SCREEN
+{
+ Customer's total number of orders currently unpaid:[f000  ]
+
+ Order No:[f001       ] Order Date:[f002       ] PO Number:[f003      ]
+      Ship Date:[f004       ]         Order Total: [f005       ]
+
+}
+
+TABLES
+orders 
+
+ATTRIBUTES
+f000 = FORMONLY.total_unpaid, NOENTRY;
+
+f001 = orders.order_num, NOENTRY;
+f002 = orders.order_date, NOENTRY;
+f003 = orders.po_num, NOENTRY;
+f004 = orders.ship_date, NOENTRY;
+f005 = FORMONLY.order_total, NOENTRY;
+

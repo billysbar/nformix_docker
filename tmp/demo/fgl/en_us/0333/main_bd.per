@@ -1,0 +1,73 @@
+{####################################################################
+ # FORM: main_bd                                                    #
+ # PURPOSE: Displays a scrolling array of rows in the catalog table #
+ #	    names. Displays data from "customer" table.             #
+ # 4GL PROGRAM: blobdemo.4gl                                        #
+ #                                                                  #
+ # Last revised: May  '91                                           #
+ ####################################################################}
+
+
+{ ///////////////////////////////////////////////////////////////////////
+	This is the screen form for catlist main window.
+	That window is 79 columns by 30 rows, unbordered.
+		The PROMPT, MESSAGE and COMMENT lines are all LAST
+		and the FORM line is FIRST, hence this form can be
+		28 rows long x 80 columns wide.  
+	The form is used with DISPLAY ARRAY to show a scrolling list
+		of rows from the catalog table.  The screen record at
+		the end must match the definition of cat_rows array
+		in the program.
+	The database name "stores2" is used; you must change it if you
+		call the stores2 database something else.
+//////////////////////////////////////////////////////////////////////// }
+
+DATABASE stores2
+SCREEN SIZE 30
+{
+p----------------------------------------------------------------------------q
+|   cat.#    pic?  txt?    stk.#    stock description   manufacturer         |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+|  [cnum ]   [p]   [t]    [snum ]  [sdesc          ]   [manu           ]     |
+b----------------------------------------------------------------------------d
+p----------------------------------------------------------------------------q
+|  You are viewing the catalog table -- scroll up and down with arrow keys.  |
+|     To view or update:                         Press this key:             |
+|            the cat_advert copy (varchar)            Control-V              |
+|            the cat_description copy (text)          Control-T              |
+|            the cat_picture image                    Control-P              |
+|     To exit, press ESCAPE twice, or press control-E                        |
+b----------------------------------------------------------------------------d
+}
+END
+
+TABLES
+	catalog, stock, manufact
+END
+
+ATTRIBUTES
+cnum	= catalog.catalog_num,			noentry;
+p	= formonly.has_pic	type char,	noentry;
+t	= formonly.has_desc	type char,	noentry;
+snum	= catalog.stock_num,			noentry;
+sdesc	= stock.description,			noentry;
+manu	= manufact.manu_name,			noentry;
+
+INSTRUCTIONS
+screen record scroller[15] ( catalog_num, stock_num, manu_name,
+				has_pic, has_desc, description)
+
+END
